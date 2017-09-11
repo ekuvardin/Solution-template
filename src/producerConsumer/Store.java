@@ -4,8 +4,8 @@ import java.util.concurrent.locks.ReentrantLock;
 
 class Store {
     final int maxSize;
-    //We needn't do this field volatile due to full fence when acquiring the Lock
-    int currentSize;
+
+    volatile int currentSize;
 
     private final ReentrantLock lock = new ReentrantLock();
 
