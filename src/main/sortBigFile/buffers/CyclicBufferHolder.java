@@ -1,4 +1,4 @@
-package main.sortBigFile;
+package main.sortBigFile.buffers;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.NoSuchElementException;
 
 public class CyclicBufferHolder {
 
-    final List<CyclicBuffer> list;
+    final List<ICyclicBuffer> list;
     private volatile int size;
 
     public CyclicBufferHolder(Integer[] array, int chunks) {
@@ -22,47 +22,32 @@ public class CyclicBufferHolder {
         size = chunks;
     }
 
-    public List<CyclicBuffer> getCyclicBuffer(int count) {
+    public List<ICyclicBuffer> getCyclicBuffer(int count) {
         while(true){
             if(size >= count) {
-                synchronized (list) {
+                synchronized (this) {
                     if(size >= count) {
-                        count--;
-                        return list.subList(0,count-1);
+                        List<ICyclicBuffer> res = new ArrayList<>(list.subList(0,count));
+                        list.removeAll(res);
+                        size = size - count;
+                        return res;
                     }
                 }
             }
         }
     }
 
-    public void putCyclicBuffer(List<CyclicBuffer> buffers){
-        synchronized(list){
+    public synchronized void putCyclicBuffer(List<ICyclicBuffer> buffers){
             list.addAll(buffers);
             size = size + buffers.size();
-        }
     }
 
-    public void putCyclicBuffer(CyclicBuffer buffer){
-        synchronized(list){
+    public synchronized void putCyclicBuffer(ICyclicBuffer buffer){
             list.add(buffer);
-            size = size++;
-        }
+            size++;
     }
 
-    public void fillBuffer(Integer value, int chunk) {
-        list.get(chunk).put(value);
-    }
-
-    public int getRemainingSize(int chunk) {
-        CyclicBuffer cyclicBuffer = list.get(chunk);
-        return cyclicBuffer.getCapacity() - cyclicBuffer.getSize();
-    }
-
-    public int getSize() {
-        return list.stream().mapToInt(p -> p.getSize()).sum();
-    }
-
-    static class CyclicBuffer {
+    static class CyclicBuffer implements ICyclicBuffer {
         final Integer array[];
         final int startPointer;
         final int endPointer;
@@ -77,6 +62,7 @@ public class CyclicBufferHolder {
             this.endPointer = endPointer;
         }
 
+        @Override
         public Integer getFirst() {
             if (curSize == 0) {
                 throw new NoSuchElementException();
@@ -84,6 +70,7 @@ public class CyclicBufferHolder {
             return array[head];
         }
 
+        @Override
         public Integer getLast() {
             if (curSize == 0) {
                 throw new NoSuchElementException();
@@ -91,14 +78,17 @@ public class CyclicBufferHolder {
             return array[tail];
         }
 
+        @Override
         public int getSize() {
             return curSize;
         }
 
+        @Override
         public int getCapacity() {
             return endPointer - startPointer;
         }
 
+        @Override
         public void put(Integer value) {
             if (getSize() == endPointer - startPointer) {
                 throw new RuntimeException();
@@ -117,6 +107,7 @@ public class CyclicBufferHolder {
             array[tail] = value;
         }
 
+        @Override
         public Integer pull() {
             Integer value = getFirst();
 

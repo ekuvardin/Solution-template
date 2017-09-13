@@ -1,6 +1,7 @@
 package main.sortBigFile;
 
 import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -67,8 +68,7 @@ public class SortBigFile {
         final ExecutorService executorPool =
                 Executors.newFixedThreadPool(poolSize);
 
-        try (Scanner scanner = new Scanner(new File(inputFileName));
-        ) {
+        try (Scanner scanner = new Scanner(new File(inputFileName), StandardCharsets.UTF_8.toString())) {
             final List<Callable<Integer>> partitions = initPartitions();
 
             while (scanner.hasNextInt()) {
@@ -92,33 +92,35 @@ public class SortBigFile {
         } catch (InterruptedException | IOException |
                 ExecutionException e) {
             throw new RuntimeException(e);
-        } finally{
+        } finally {
             executorPool.shutdownNow();
         }
     }
 
-
-    /*
-        TODO
-        Not working. Do smt with merge.
-     */
     public void merge() {
-
         try {
             for (int j = 1; ; j = j + maxCountOfChunks) {
-                kWayMerge(j, j + maxCountOfChunks - 1);
-                if (j >= counter.get() - 1) {
+                kWayMerge(j, Integer.min(j + maxCountOfChunks - 1, counter.get()));
+                if (j + maxCountOfChunks >= counter.get() - 1) {
                     break;
                 }
+            }
+            File file = new File(outputFileName + counter.get());
+            if(!file.renameTo(new File(outputFileName))){
+                System.out.println("Can't rename destination file to "+outputFileName);
             }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+
     }
 
-    private void kWayMerge(final int start, final int end) throws FileNotFoundException, IOException {
+    private void kWayMerge(final int start, final int end) throws IOException {
+        if (start >= end) {
+            return;
+        }
         MergeFiles mergeFiles = new MergeFiles();
-        mergeFiles.merge(start, end, outputFileName, array,outputFileName + counter.incrementAndGet());
+        mergeFiles.merge(start, end, outputFileName, array, outputFileName + counter.incrementAndGet());
     }
 
 }

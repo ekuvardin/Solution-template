@@ -24,9 +24,6 @@ public class SortInteger {
         OptionSpec<String> inputFile = parser.accepts("inpf", "Name of input file.")
                 .withRequiredArg().ofType(String.class).required().describedAs("inpf");
 
-        OptionSpec<String> tempOutputFile = parser.accepts("tmpf", "Name of temp file.")
-                .withRequiredArg().ofType(String.class).describedAs("tmpf");
-
         OptionSpec<String> outputResultFile = parser.accepts("resf", "Name of result file.")
                 .withRequiredArg().ofType(String.class).required().describedAs("resf");
 
@@ -44,8 +41,8 @@ public class SortInteger {
                 set.valueOf(maxChunkLen),
                 set.valueOf(maxCountOfChunks),
                 set.valueOf(poolSize),
-                "AvgNumbers.txt",
-                "AvgNumbers1.txt");
+                set.valueOf(inputFile),
+                set.valueOf(outputResultFile));
 
         sortBigFile.sortResults();
         sortBigFile.merge();
