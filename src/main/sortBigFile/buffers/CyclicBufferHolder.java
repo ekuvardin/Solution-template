@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-public class CyclicBufferHolder {
+public class CyclicBufferHolder<T extends Comparable<T>> {
 
     final List<ICyclicBuffer> list;
     private volatile int size;
 
-    public CyclicBufferHolder(Integer[] array, int chunks) {
+    public CyclicBufferHolder(T[] array, int chunks) {
         list = new ArrayList<>(chunks);
 
         int chunk = array.length / chunks;
@@ -47,8 +47,8 @@ public class CyclicBufferHolder {
             size++;
     }
 
-    static class CyclicBuffer implements ICyclicBuffer {
-        final Integer array[];
+    static class CyclicBuffer<T extends Comparable<T>> implements ICyclicBuffer<T> {
+        final T array[];
         final int startPointer;
         final int endPointer;
 
@@ -56,14 +56,14 @@ public class CyclicBufferHolder {
         int tail = -1;
         int curSize = 0;
 
-        private CyclicBuffer(Integer[] array, int startPointer, int endPointer) {
+        private CyclicBuffer(T[] array, int startPointer, int endPointer) {
             this.array = array;
             this.startPointer = startPointer;
             this.endPointer = endPointer;
         }
 
         @Override
-        public Integer getFirst() {
+        public T getFirst() {
             if (curSize == 0) {
                 throw new NoSuchElementException();
             }
@@ -71,7 +71,7 @@ public class CyclicBufferHolder {
         }
 
         @Override
-        public Integer getLast() {
+        public T getLast() {
             if (curSize == 0) {
                 throw new NoSuchElementException();
             }
@@ -89,7 +89,7 @@ public class CyclicBufferHolder {
         }
 
         @Override
-        public void put(Integer value) {
+        public void put(T value) {
             if (getSize() == endPointer - startPointer) {
                 throw new RuntimeException();
             }
@@ -108,8 +108,8 @@ public class CyclicBufferHolder {
         }
 
         @Override
-        public Integer pull() {
-            Integer value = getFirst();
+        public T pull() {
+            T value = getFirst();
 
             if (--curSize == 0) {
                 head = tail = -1;

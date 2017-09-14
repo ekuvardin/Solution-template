@@ -42,7 +42,8 @@ public class SortInteger {
                 set.valueOf(maxCountOfChunks),
                 set.valueOf(poolSize),
                 set.valueOf(inputFile),
-                set.valueOf(outputResultFile));
+                set.valueOf(outputResultFile),
+                Integer.class);
 
         sortBigFile.sortResults();
         sortBigFile.merge();

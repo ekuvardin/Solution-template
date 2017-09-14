@@ -4,16 +4,17 @@ import main.sortBigFile.buffers.CyclicBufferHolder;
 import main.sortBigFile.buffers.SectionWriters;
 import main.sortBigFile.readers.ArrayReaderImpl;
 import main.sortBigFile.readers.IArrayReader;
-import main.sortBigFile.writers.ArrayWriterImpl;
+import main.sortBigFile.writers.ArrayWriter;
 import main.sortBigFile.writers.IArrayWriter;
+import main.sortBigFile.writers.IntegerScanner;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public class MergeFiles {
+public class MergeFiles<T extends Comparable<T>> {
 
-    public void merge(int start, int end, String outputFileName, Integer[] array, String newName) throws IOException {
+    public void merge(int start, int end, String outputFileName, T[] array, String newName) throws IOException {
         List<Scanner> scanners = createScanners(start, end, outputFileName);
 
         if (scanners.size() == 0) {
@@ -22,7 +23,7 @@ public class MergeFiles {
 
         CyclicBufferHolder cyclicBufferHolder = new CyclicBufferHolder(array, scanners.size());
         SectionWriters sectionWriters = new SectionWriters(cyclicBufferHolder, scanners);
-        IArrayWriter arrayWriter = new ArrayWriterImpl(sectionWriters);
+        IArrayWriter arrayWriter = new ArrayWriter(sectionWriters, new IntegerScanner());
         IArrayReader arrayReader = new ArrayReaderImpl(sectionWriters);
 
         try (FileWriter fw = new FileWriter(newName, false);
@@ -35,7 +36,7 @@ public class MergeFiles {
                 sectionWriters.tryFreeMemory();
             } while (sectionWriters.getUsedScanners().size() > 0);
 
-            arrayReader.mergeTillEnd(out);
+            arrayReader.mergeTillEmpty(out);
         }
     }
 

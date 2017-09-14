@@ -1,15 +1,16 @@
 package main.sortBigFile.buffers;
 
-public interface ICyclicBuffer {
-    Integer getFirst();
+public interface ICyclicBuffer<T extends Comparable<T>> {
 
-    Integer getLast();
+    T getFirst();
+
+    T getLast();
 
     int getSize();
 
     int getCapacity();
 
-    void put(Integer value);
+    void put(T value);
 
-    Integer pull();
+    T pull();
 }

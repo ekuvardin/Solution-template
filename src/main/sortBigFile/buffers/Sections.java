@@ -6,9 +6,9 @@ import main.sortBigFile.buffers.ICyclicBuffer;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class Sections {
+public class Sections<T extends Comparable<T>> {
 
-    protected final Map<Integer, ICyclicBuffer> usedSections;
+    protected final Map<Integer, ICyclicBuffer<T>> usedSections;
 
     private CyclicBufferHolder cyclicBufferHolder;
 
@@ -23,7 +23,7 @@ public class Sections {
     }
 
     public void tryFreeMemory() {
-        for (Map.Entry<Integer, ICyclicBuffer> val : usedSections.entrySet()) {
+        for (Map.Entry<Integer, ICyclicBuffer<T>> val : usedSections.entrySet()) {
             free(val.getKey());
         }
     }
@@ -40,7 +40,7 @@ public class Sections {
         }
     }
 
-    public Map<Integer, ICyclicBuffer> getUsedSections() {
+    public Map<Integer, ICyclicBuffer<T>> getUsedSections() {
         return Collections.unmodifiableMap(usedSections);
     }
 
