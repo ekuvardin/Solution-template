@@ -9,7 +9,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class SortFiles<T extends Comparable<T>> {
 
@@ -20,16 +19,16 @@ public class SortFiles<T extends Comparable<T>> {
     private final int[] lastPointer;
     private final String outputFileName;
     private final String inputFileName;
-    private AtomicInteger counter;
+    private FileNamesHolder holder;
     private final IValueScanner<T> valueScanner;
 
-    public SortFiles(T[] array, int maxCountOfChunks, int maxChunkLen, String outputFileName, AtomicInteger counter, int poolSize, String inputFileName, IValueScanner<T> valueScanner) {
+    public SortFiles(T[] array, int maxCountOfChunks, int maxChunkLen, String outputFileName, FileNamesHolder holder, int poolSize, String inputFileName, IValueScanner<T> valueScanner) {
         this.array = array;
         this.maxCountOfChunks = maxCountOfChunks;
         this.lastPointer = new int[maxCountOfChunks];
         this.maxChunkLen = maxChunkLen;
         this.outputFileName = outputFileName;
-        this.counter = counter;
+        this.holder = holder;
         this.inputFileName = inputFileName;
         this.poolSize = poolSize;
         this.valueScanner = valueScanner;
@@ -45,16 +44,19 @@ public class SortFiles<T extends Comparable<T>> {
                 if (lastPointer[index] != 0) {
                     Arrays.sort(array, index * maxChunkLen, index * maxChunkLen + lastPointer[index]);
 
+                    String fileName = holder.getNewUniqueName(outputFileName);
                     try (
-                            FileWriter fw = new FileWriter(outputFileName + counter.incrementAndGet(), false);
+                            FileWriter fw = new FileWriter( fileName, false);
                             BufferedWriter bw = new BufferedWriter(fw);
                             PrintWriter out = new PrintWriter(bw)) {
                         for (int ii = index * maxChunkLen; ii < index * maxChunkLen + lastPointer[index]; ii++) {
                             out.println(array[ii]);
                         }
+                    } finally{
+                        holder.pull(fileName);
                     }
 
-                };
+                }
                 return null;
             });
         }

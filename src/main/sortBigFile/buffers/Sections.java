@@ -1,8 +1,5 @@
 package main.sortBigFile.buffers;
 
-import main.sortBigFile.buffers.CyclicBufferHolder;
-import main.sortBigFile.buffers.ICyclicBuffer;
-
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -10,13 +7,13 @@ public class Sections<T extends Comparable<T>> {
 
     protected final Map<Integer, ICyclicBuffer<T>> usedSections;
 
-    private CyclicBufferHolder cyclicBufferHolder;
+    private CyclicBufferHolder<T> cyclicBufferHolder;
 
-    public Sections(CyclicBufferHolder cyclicBufferHolder, int size) {
+    public Sections(CyclicBufferHolder<T> cyclicBufferHolder, int size) {
         this.cyclicBufferHolder = cyclicBufferHolder;
         usedSections = new ConcurrentHashMap<>(size);
 
-        Iterator<ICyclicBuffer> cl = cyclicBufferHolder.getCyclicBuffer(size).iterator();
+        Iterator<ICyclicBuffer<T>> cl = cyclicBufferHolder.getCyclicBuffer(size).iterator();
         for (int i = 0; i < size; i++) {
             usedSections.put(i, cl.next());
         }
@@ -28,12 +25,12 @@ public class Sections<T extends Comparable<T>> {
         }
     }
 
-    protected ICyclicBuffer getBufferAt(Integer index) {
+    protected ICyclicBuffer<T> getBufferAt(Integer index) {
         return usedSections.get(index);
     }
 
     protected void free(Integer index) {
-        ICyclicBuffer val = getBufferAt(index);
+        ICyclicBuffer<T> val = getBufferAt(index);
         if (val != null && val.getSize() == 0) {
             usedSections.remove(index);
             cyclicBufferHolder.putCyclicBuffer(val);
@@ -44,7 +41,7 @@ public class Sections<T extends Comparable<T>> {
         return Collections.unmodifiableMap(usedSections);
     }
 
-    public Collection<ICyclicBuffer> getBuffers() {
+    public Collection<ICyclicBuffer<T>> getBuffers() {
         return Collections.unmodifiableCollection(usedSections.values());
     }
 }

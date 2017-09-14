@@ -6,7 +6,7 @@ import java.util.NoSuchElementException;
 
 public class CyclicBufferHolder<T extends Comparable<T>> {
 
-    final List<ICyclicBuffer> list;
+    private final List<ICyclicBuffer<T>> list;
     private volatile int size;
 
     public CyclicBufferHolder(T[] array, int chunks) {
@@ -15,19 +15,19 @@ public class CyclicBufferHolder<T extends Comparable<T>> {
         int chunk = array.length / chunks;
         for (int i = 0, start = 0; i < chunks; i++) {
             final int end = (i == chunks - 1) ? array.length : start + chunk;
-            list.add(new CyclicBuffer(array, start, end));
+            list.add(new CyclicBuffer<>(array, start, end));
             start = end;
         }
 
         size = chunks;
     }
 
-    public List<ICyclicBuffer> getCyclicBuffer(int count) {
-        while(true){
-            if(size >= count) {
+    public List<ICyclicBuffer<T>> getCyclicBuffer(int count) {
+        while (true) {
+            if (size >= count) {
                 synchronized (this) {
-                    if(size >= count) {
-                        List<ICyclicBuffer> res = new ArrayList<>(list.subList(0,count));
+                    if (size >= count) {
+                        List<ICyclicBuffer<T>> res = new ArrayList<>(list.subList(0, count));
                         list.removeAll(res);
                         size = size - count;
                         return res;
@@ -37,14 +37,14 @@ public class CyclicBufferHolder<T extends Comparable<T>> {
         }
     }
 
-    public synchronized void putCyclicBuffer(List<ICyclicBuffer> buffers){
-            list.addAll(buffers);
-            size = size + buffers.size();
+    public synchronized void putCyclicBuffer(List<ICyclicBuffer<T>> buffers) {
+        list.addAll(buffers);
+        size = size + buffers.size();
     }
 
-    public synchronized void putCyclicBuffer(ICyclicBuffer buffer){
-            list.add(buffer);
-            size++;
+    public synchronized void putCyclicBuffer(ICyclicBuffer<T> val) {
+        list.add(val);
+        size++;
     }
 
     static class CyclicBuffer<T extends Comparable<T>> implements ICyclicBuffer<T> {

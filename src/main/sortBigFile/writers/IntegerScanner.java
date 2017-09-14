@@ -2,7 +2,7 @@ package main.sortBigFile.writers;
 
 import java.util.Scanner;
 
-public class IntegerScanner<Integer> implements IValueScanner {
+public class IntegerScanner implements IValueScanner<Integer> {
 
     @Override
     public boolean hasNext(Scanner scanner) {
