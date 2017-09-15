@@ -45,4 +45,11 @@ public class SectionWriters<T extends Comparable<T>> extends Sections<T> {
             super.free(index);
         }
     }
+
+    @Override
+    public void close() throws Exception {
+        this.tryFreeMemory();
+        usedScanners.values().forEach(Scanner::close);
+        usedScanners.clear();
+    }
 }

@@ -7,6 +7,7 @@ import main.sortBigFile.writers.IValueScanner;
 
 import java.io.*;
 import java.lang.reflect.Array;
+import java.util.List;
 
 public class SortBigFile<T extends Comparable<T>> {
 
@@ -34,15 +35,12 @@ public class SortBigFile<T extends Comparable<T>> {
 
     public void merge() {
         try {
-            while(holder.getSize() > 1){
+            while (holder.getSize() > 1) {
                 kWayMerge(Integer.min(maxCountOfChunks, holder.getSize()));
             }
 
-            File file = new File(holder.get(1).get(0));
-            if (!file.renameTo(new File(outputFileName))) {
-                System.out.println("Can't rename destination file to " + outputFileName);
-            }
-        } catch (IOException e) {
+            renameFile();
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
 
@@ -51,15 +49,29 @@ public class SortBigFile<T extends Comparable<T>> {
     public void mergeParallel(int maxChunkInTask) {
         try {
             MergeFilesParallel mergeFilesParallel = new MergeFilesParallel<>(new CyclicBufferHolder<>(array, maxCountOfChunks), outputFileName, holder, scanner);
-            mergeFilesParallel.merge(holder.getSize(), maxChunkInTask, poolSize);
+            mergeFilesParallel.merge(maxChunkInTask, poolSize);
+            renameFile();
         } catch (IOException e) {
             e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
-    private void kWayMerge(final int size) throws IOException {
+    private void kWayMerge(final int size) throws Exception {
         MergeFiles mergeFiles = new MergeFiles<>(new CyclicBufferHolder<>(array, size), holder, scanner);
         mergeFiles.merge(size, outputFileName);
     }
 
+    private void renameFile() {
+        if (holder.getSize() == 1) {
+            List<String> fileNames = holder.get(1);
+
+            File file = new File(fileNames.get(0));
+            if (!file.renameTo(new File(outputFileName))) {
+                System.out.println("Can't rename destination file to " + outputFileName);
+            }
+        } else {
+            System.out.println("Some sort files becames unsorted: " + holder.get(holder.getSize()));
+        }
+    }
 }

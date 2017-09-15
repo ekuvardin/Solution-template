@@ -25,22 +25,22 @@ public class MergeFiles<T extends Comparable<T>> {
         this.valueScanner = valueScanner;
     }
 
-    public void merge(int size, String outputFileName) throws IOException {
+    public void merge(int size, String outputFileName) throws Exception {
         List<Scanner> scanners = createScanners(size);
 
         if (scanners.size() == 0) {
             return;
         }
 
-        SectionWriters<T> sectionWriters = new SectionWriters<>(cyclicBufferHolder, scanners);
-        IArrayWriter arrayWriter = new ArrayWriter<>(sectionWriters, valueScanner);
-        IArrayReader arrayReader = new ArrayReaderImpl<>(sectionWriters);
-
         String newName = holder.getNewUniqueName(outputFileName);
         try (FileWriter fw = new FileWriter(newName, false);
              BufferedWriter bw = new BufferedWriter(fw);
-             PrintWriter out = new PrintWriter(bw)
+             PrintWriter out = new PrintWriter(bw);
+             SectionWriters<T> sectionWriters = new SectionWriters<>(cyclicBufferHolder, scanners);
         ) {
+            IArrayWriter arrayWriter = new ArrayWriter<>(sectionWriters, valueScanner);
+            IArrayReader arrayReader = new ArrayReaderImpl<>(sectionWriters);
+
             do {
                 arrayWriter.fillBuffer();
                 arrayReader.merge(out);
@@ -49,7 +49,6 @@ public class MergeFiles<T extends Comparable<T>> {
 
             arrayReader.mergeTillEmpty(out);
         } finally{
-            sectionWriters.tryFreeMemory();
             holder.pull(newName);
         }
     }

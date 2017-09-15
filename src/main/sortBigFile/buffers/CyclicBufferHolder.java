@@ -1,6 +1,7 @@
 package main.sortBigFile.buffers;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -37,7 +38,7 @@ public class CyclicBufferHolder<T extends Comparable<T>> {
         }
     }
 
-    public synchronized void putCyclicBuffer(List<ICyclicBuffer<T>> buffers) {
+    public synchronized void putCyclicBuffer(Collection<ICyclicBuffer<T>> buffers) {
         list.addAll(buffers);
         size = size + buffers.size();
     }

@@ -3,7 +3,7 @@ package main.sortBigFile.buffers;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class Sections<T extends Comparable<T>> {
+public class Sections<T extends Comparable<T>> implements AutoCloseable {
 
     protected final Map<Integer, ICyclicBuffer<T>> usedSections;
 
@@ -43,5 +43,12 @@ public class Sections<T extends Comparable<T>> {
 
     public Collection<ICyclicBuffer<T>> getBuffers() {
         return Collections.unmodifiableCollection(usedSections.values());
+    }
+
+    @Override
+    public void close() throws Exception {
+        this.tryFreeMemory();
+        cyclicBufferHolder.putCyclicBuffer(usedSections.values());
+        usedSections.clear();
     }
 }

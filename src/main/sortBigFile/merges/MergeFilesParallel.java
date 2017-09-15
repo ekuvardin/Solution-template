@@ -24,14 +24,9 @@ public class MergeFilesParallel<T extends Comparable<T>> {
         this.valueScanner = valueScanner;
     }
 
-    // TODO
-    // I don't know why when uncomment condition in MergeReducer.onCompletion and removes cycle below
-    // then program hangs
-    public void merge(int size, int maxChunkInTask, int poolSize) throws IOException {
-        while (holder.getSize() > 1) {
+    public void merge(int maxChunkInTask, int poolSize) throws IOException {
             MergeReducer mergeReducer = new MergeReducer(null, holder.getSize(), maxChunkInTask);
             new ForkJoinPool(poolSize).invoke(mergeReducer);
-        }
     }
 
 
@@ -41,7 +36,7 @@ public class MergeFilesParallel<T extends Comparable<T>> {
         private final int maxChunkInTask;
         private List<MergeReducer> forks;
 
-        public MergeReducer(CountedCompleter<Void> parent, int size, int maxChunkInTask) {
+        private MergeReducer(CountedCompleter<Void> parent, int size, int maxChunkInTask) {
             super(parent);
             this.size = size;
             this.maxChunkInTask = maxChunkInTask;
@@ -76,11 +71,7 @@ public class MergeFilesParallel<T extends Comparable<T>> {
         @Override
         public void onCompletion(CountedCompleter<?> caller) {
             if (caller != this) {
-             /*   for (MergeReducer subTask : forks) {
-                    subTask.join();
-                }
-
-                execMerge(forks.size());*/
+                execMerge(forks.size());
             }
         }
 
@@ -95,7 +86,7 @@ public class MergeFilesParallel<T extends Comparable<T>> {
             try {
                 MergeFiles mergeFiles = new MergeFiles<>(cyclicBufferHolder, holder, valueScanner);
                 mergeFiles.merge(size, outputFileName);
-            } catch (IOException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
                 this.cancel(true);
             }
