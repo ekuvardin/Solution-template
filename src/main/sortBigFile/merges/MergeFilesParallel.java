@@ -2,6 +2,7 @@ package main.sortBigFile.merges;
 
 import main.sortBigFile.FileNamesHolder;
 import main.sortBigFile.buffers.CyclicBufferHolder;
+import main.sortBigFile.writers.IValueScanner;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -9,16 +10,18 @@ import java.util.List;
 import java.util.concurrent.CountedCompleter;
 import java.util.concurrent.ForkJoinPool;
 
-public class MergeFilesParallel {
+public class MergeFilesParallel<T extends Comparable<T>> {
 
-    private final CyclicBufferHolder cyclicBufferHolder;
+    private final CyclicBufferHolder<T> cyclicBufferHolder;
     private final String outputFileName;
     private final FileNamesHolder holder;
+    private final IValueScanner<T> valueScanner;
 
-    public MergeFilesParallel(CyclicBufferHolder cyclicBufferHolder, String outputFileName, FileNamesHolder holder) {
+    public MergeFilesParallel(CyclicBufferHolder<T> cyclicBufferHolder, String outputFileName, FileNamesHolder holder, IValueScanner<T> valueScanner) {
         this.cyclicBufferHolder = cyclicBufferHolder;
         this.outputFileName = outputFileName;
         this.holder = holder;
+        this.valueScanner = valueScanner;
     }
 
     // TODO
@@ -90,7 +93,7 @@ public class MergeFilesParallel {
 
         private void execMerge(int size) {
             try {
-                MergeFiles mergeFiles = new MergeFiles(cyclicBufferHolder, holder);
+                MergeFiles mergeFiles = new MergeFiles<>(cyclicBufferHolder, holder, valueScanner);
                 mergeFiles.merge(size, outputFileName);
             } catch (IOException e) {
                 e.printStackTrace();

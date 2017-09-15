@@ -26,7 +26,7 @@ public class SortInteger {
         OptionSpec<String> outputResultFile = parser.accepts("resf", "Name of result file.")
                 .withRequiredArg().ofType(String.class).required().describedAs("resf");
 
-        OptionSpec<Boolean> useParalleMerge = parser.accepts("pm", "Use parallel merge while sorting.")
+        OptionSpec<Boolean> useParallelMerge = parser.accepts("pm", "Use parallel merge while sorting.")
                 .withRequiredArg().ofType(Boolean.class).defaultsTo(Boolean.FALSE).describedAs("pm");
 
         OptionSet set;
@@ -51,7 +51,7 @@ public class SortInteger {
         sortBigFile.sortResults();
 
 
-        if(set.valueOf(useParalleMerge)) {
+        if(set.valueOf(useParallelMerge)) {
             sortBigFile.mergeParallel(set.valueOf(maxCountOfChunks) / set.valueOf(poolSize));
         } else{
             sortBigFile.merge();

@@ -1,14 +1,13 @@
 package main.sortBigFile.buffers;
 
-import java.awt.event.ComponentAdapter;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class SectionWriters extends Sections {
+public class SectionWriters<T extends Comparable<T>> extends Sections<T> {
 
     private final Map<Integer, Scanner> usedScanners;
 
-    public SectionWriters(CyclicBufferHolder cyclicBufferHolder, List<Scanner> lst) {
+    public SectionWriters(CyclicBufferHolder<T> cyclicBufferHolder, List<Scanner> lst) {
         super(cyclicBufferHolder, lst.size());
 
         int size = lst.size();

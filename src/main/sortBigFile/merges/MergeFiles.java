@@ -7,20 +7,22 @@ import main.sortBigFile.readers.ArrayReaderImpl;
 import main.sortBigFile.readers.IArrayReader;
 import main.sortBigFile.writers.ArrayWriter;
 import main.sortBigFile.writers.IArrayWriter;
-import main.sortBigFile.writers.IntegerScanner;
+import main.sortBigFile.writers.IValueScanner;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public class MergeFiles {
+public class MergeFiles<T extends Comparable<T>> {
 
-    private CyclicBufferHolder cyclicBufferHolder;
+    private CyclicBufferHolder<T> cyclicBufferHolder;
     private FileNamesHolder holder;
+    private IValueScanner<T> valueScanner;
 
-    public MergeFiles(CyclicBufferHolder cyclicBufferHolder, FileNamesHolder holder){
+    public MergeFiles(CyclicBufferHolder<T> cyclicBufferHolder, FileNamesHolder holder, IValueScanner<T> valueScanner){
         this.cyclicBufferHolder = cyclicBufferHolder;
         this.holder = holder;
+        this.valueScanner = valueScanner;
     }
 
     public void merge(int size, String outputFileName) throws IOException {
@@ -30,9 +32,9 @@ public class MergeFiles {
             return;
         }
 
-        SectionWriters sectionWriters = new SectionWriters(cyclicBufferHolder, scanners);
-        IArrayWriter arrayWriter = new ArrayWriter(sectionWriters, new IntegerScanner());
-        IArrayReader arrayReader = new ArrayReaderImpl(sectionWriters);
+        SectionWriters<T> sectionWriters = new SectionWriters<>(cyclicBufferHolder, scanners);
+        IArrayWriter arrayWriter = new ArrayWriter<>(sectionWriters, valueScanner);
+        IArrayReader arrayReader = new ArrayReaderImpl<>(sectionWriters);
 
         String newName = holder.getNewUniqueName(outputFileName);
         try (FileWriter fw = new FileWriter(newName, false);

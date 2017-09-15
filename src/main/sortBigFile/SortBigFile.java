@@ -16,6 +16,7 @@ public class SortBigFile<T extends Comparable<T>> {
     private final T[] array;
     private final int poolSize;
     private final FileNamesHolder holder;
+    private final IValueScanner<T> scanner;
 
     public SortBigFile(int maxChunkLen, int maxCountOfChunks, int poolSize, String inputFileName, String outputFileName, Class<T> cls, IValueScanner<T> scanner) {
         this.maxCountOfChunks = maxCountOfChunks;
@@ -23,6 +24,7 @@ public class SortBigFile<T extends Comparable<T>> {
         this.poolSize = poolSize;
         this.array = (T[]) Array.newInstance(cls, maxCountOfChunks * maxChunkLen);
         this.holder = new FileNamesHolder();
+        this.scanner = scanner;
         this.sortFiles = new SortFiles<>(array, maxCountOfChunks, maxChunkLen, outputFileName, holder, poolSize, inputFileName, scanner);
     }
 
@@ -48,7 +50,7 @@ public class SortBigFile<T extends Comparable<T>> {
 
     public void mergeParallel(int maxChunkInTask) {
         try {
-            MergeFilesParallel mergeFilesParallel = new MergeFilesParallel(new CyclicBufferHolder<>(array, maxCountOfChunks), outputFileName, holder);
+            MergeFilesParallel mergeFilesParallel = new MergeFilesParallel<>(new CyclicBufferHolder<>(array, maxCountOfChunks), outputFileName, holder, scanner);
             mergeFilesParallel.merge(holder.getSize(), maxChunkInTask, poolSize);
         } catch (IOException e) {
             e.printStackTrace();
@@ -56,7 +58,7 @@ public class SortBigFile<T extends Comparable<T>> {
     }
 
     private void kWayMerge(final int size) throws IOException {
-        MergeFiles mergeFiles = new MergeFiles(new CyclicBufferHolder<>(array, size), holder);
+        MergeFiles mergeFiles = new MergeFiles<>(new CyclicBufferHolder<>(array, size), holder, scanner);
         mergeFiles.merge(size, outputFileName);
     }
 
