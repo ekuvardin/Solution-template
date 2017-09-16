@@ -4,6 +4,7 @@ import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
+import main.sortBigFile.mergeSort.SortBigFile;
 import main.sortBigFile.writers.IntegerScanner;
 
 public class SortInteger {

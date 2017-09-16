@@ -1,5 +1,6 @@
-package main.sortBigFile;
+package main.sortBigFile.mergeSort;
 
+import main.sortBigFile.readers.FileNamesHolder;
 import main.sortBigFile.writers.IValueScanner;
 
 import java.io.*;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.*;
 
-public class SortFiles<T extends Comparable<T>> {
+public class SortFilesPartMemory<T extends Comparable<T>> {
 
     private final T[] array;
     private final int maxCountOfChunks;
@@ -22,7 +23,7 @@ public class SortFiles<T extends Comparable<T>> {
     private FileNamesHolder holder;
     private final IValueScanner<T> valueScanner;
 
-    public SortFiles(T[] array, int maxCountOfChunks, int maxChunkLen, String outputFileName, FileNamesHolder holder, int poolSize, String inputFileName, IValueScanner<T> valueScanner) {
+    public SortFilesPartMemory(T[] array, int maxCountOfChunks, int maxChunkLen, String outputFileName, FileNamesHolder holder, int poolSize, String inputFileName, IValueScanner<T> valueScanner) {
         this.array = array;
         this.maxCountOfChunks = maxCountOfChunks;
         this.lastPointer = new int[maxCountOfChunks];

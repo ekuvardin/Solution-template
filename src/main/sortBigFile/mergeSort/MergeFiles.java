@@ -1,6 +1,6 @@
-package main.sortBigFile.merges;
+package main.sortBigFile.mergeSort;
 
-import main.sortBigFile.FileNamesHolder;
+import main.sortBigFile.readers.FileNamesHolder;
 import main.sortBigFile.buffers.CyclicBufferHolder;
 import main.sortBigFile.buffers.SectionWriters;
 import main.sortBigFile.readers.ArrayReaderImpl;
