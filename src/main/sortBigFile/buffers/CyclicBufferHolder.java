@@ -51,76 +51,71 @@ public class CyclicBufferHolder<T extends Comparable<T>> {
     static class CyclicBuffer<T extends Comparable<T>> implements ICyclicBuffer<T> {
         final T array[];
         final int startPointer;
-        final int endPointer;
+        final int capacity;
+        final IIndexStrategy indexStrategy;
 
-        int head = -1;
-        int tail = -1;
-        int curSize = 0;
+        int head;
+        int tail;
 
         private CyclicBuffer(T[] array, int startPointer, int endPointer) {
             this.array = array;
             this.startPointer = startPointer;
-            this.endPointer = endPointer;
+            this.capacity = endPointer - startPointer;
+
+            if ((this.capacity & -this.capacity) == this.capacity) {
+                indexStrategy = ((p1) -> p1 & (this.capacity - 1));
+            } else {
+                indexStrategy = ((p1) -> p1 % this.capacity);
+            }
         }
 
         @Override
         public T getFirst() {
-            if (curSize == 0) {
+            if (getSize() == 0) {
                 throw new NoSuchElementException();
             }
-            return array[head];
+            return array[indexStrategy.getIndex(head) + startPointer];
         }
 
         @Override
         public T getLast() {
-            if (curSize == 0) {
+            if (getSize() == 0) {
                 throw new NoSuchElementException();
             }
-            return array[tail];
+            return array[indexStrategy.getIndex(tail - 1) + startPointer];
         }
 
         @Override
         public int getSize() {
-            return curSize;
+            return tail - head;
         }
 
         @Override
         public int getCapacity() {
-            return endPointer - startPointer;
+            return capacity;
         }
 
         @Override
         public void put(T value) {
-            if (getSize() == endPointer - startPointer) {
+            if (getSize() == capacity) {
                 throw new RuntimeException();
             }
 
-            curSize++;
-
-            if (tail == -1) {
-                head = tail = startPointer;
-            } else if (tail == endPointer - 1) {
-                tail = startPointer;
-            } else {
-                tail++;
-            }
-
-            array[tail] = value;
+            array[indexStrategy.getIndex(tail) + startPointer] = value;
+            tail++;
         }
 
         @Override
         public T pull() {
             T value = getFirst();
-
-            if (--curSize == 0) {
-                head = tail = -1;
-            } else if (head == endPointer - 1) {
-                head = startPointer;
-            } else {
-                head++;
-            }
+            head++;
 
             return value;
+        }
+
+        @FunctionalInterface
+        protected interface IIndexStrategy {
+            int getIndex(int p1);
         }
     }
 }
