@@ -25,7 +25,7 @@ public class MergeFilesParallel<T extends Comparable<T>> {
     }
 
     public void merge(int maxChunkInTask, int poolSize) throws IOException {
-            MergeReducer mergeReducer = new MergeReducer(null, holder.getSize(), maxChunkInTask);
+            MergeReducer mergeReducer = new MergeReducer(null, holder.getSize(), Integer.min(maxChunkInTask, holder.getSize()));
             new ForkJoinPool(poolSize).invoke(mergeReducer);
     }
 

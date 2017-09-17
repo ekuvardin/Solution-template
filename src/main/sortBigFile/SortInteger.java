@@ -51,7 +51,6 @@ public class SortInteger {
 
         sortBigFile.sortResults();
 
-
         if(set.valueOf(useParallelMerge)) {
             sortBigFile.mergeParallel(set.valueOf(maxCountOfChunks) / set.valueOf(poolSize));
         } else{
