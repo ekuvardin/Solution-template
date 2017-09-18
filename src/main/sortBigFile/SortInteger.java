@@ -48,14 +48,15 @@ public class SortInteger {
             return;
         }
 
-        SortBigFile sortBigFile = new SortBigFile<>(
-                set.valueOf(maxChunkLen),
-                set.valueOf(maxCountOfChunks),
-                set.valueOf(poolSize),
-                set.valueOf(inputFile),
-                set.valueOf(outputResultFile),
-                Integer.class,
-                new IntegerScanner());
+        SortBigFile sortBigFile =
+                SortBigFile.createSortBigFile()
+                        .setMaxChunkLen(set.valueOf(maxChunkLen))
+                        .setMaxCountOfChunks(set.valueOf(maxCountOfChunks))
+                        .setPoolSize(set.valueOf(poolSize))
+                        .setInputFileName(set.valueOf(inputFile))
+                        .setOutputFileName(set.valueOf(outputResultFile))
+                        .setValueScanner(new IntegerScanner())
+                        .build(Integer.class);
 
         sortBigFile.sortResults();
 

@@ -18,14 +18,15 @@ public class SortIntegerTest {
         Generator.main();
         // Run example  SortInteger.main() with this arguments
         // -chk 32768 -ct 40 -pl 4 -inpf AvgNumbers.txt -resf Out.txt -pm true
-        SortBigFile sortBigFile = new SortBigFile<>(
-                32768,
-                40,
-                4,
-                "AvgNumbers.txt",
-                "Out.txt",
-                Integer.class,
-                new IntegerScanner());
+        SortBigFile sortBigFile =
+                SortBigFile.createSortBigFile()
+                        .setMaxChunkLen(32768)
+                        .setMaxCountOfChunks(40)
+                        .setPoolSize(4)
+                        .setInputFileName("AvgNumbers.txt")
+                        .setOutputFileName("Out.txt")
+                        .setValueScanner(new IntegerScanner())
+                        .build(Integer.class);
 
         sortBigFile.sortResults();
         sortBigFile.mergeParallel(40 / 4);
@@ -37,14 +38,15 @@ public class SortIntegerTest {
         Generator.main();
         // Run example  SortInteger.main() with this arguments
         // -chk 32768 -ct 40 -pl 4 -inpf AvgNumbers.txt -resf Out.txt
-        SortBigFile sortBigFile = new SortBigFile<>(
-                32768,
-                40,
-                4,
-                "AvgNumbers.txt",
-                "Out.txt",
-                Integer.class,
-                new IntegerScanner());
+        SortBigFile sortBigFile =
+                SortBigFile.createSortBigFile()
+                        .setMaxChunkLen(32768)
+                        .setMaxCountOfChunks(40)
+                        .setPoolSize(4)
+                        .setInputFileName("AvgNumbers.txt")
+                        .setOutputFileName("Out.txt")
+                        .setValueScanner(new IntegerScanner())
+                        .build(Integer.class);
 
         sortBigFile.sortResults();
         sortBigFile.merge();
@@ -57,10 +59,10 @@ public class SortIntegerTest {
             int prevValue = scanner.hasNextInt() ? scanner.nextInt() : 0;
             while (scanner.hasNextInt()) {
                 int currentValue = scanner.nextInt();
-                if(prevValue <= currentValue){
+                if (prevValue <= currentValue) {
                     prevValue = currentValue;
                 } else {
-                    System.err.println(String.format("Array was sorted incorrectly. For ex: prev:%d, current:%d",prevValue,currentValue));
+                    System.err.println(String.format("Array was sorted incorrectly. For ex: prev:%d, current:%d", prevValue, currentValue));
                     return false;
                 }
             }
