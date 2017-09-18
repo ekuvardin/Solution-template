@@ -7,8 +7,16 @@ import joptsimple.OptionSpec;
 import main.sortBigFile.mergeSort.SortBigFile;
 import main.sortBigFile.writers.IntegerScanner;
 
+/**
+ * Runner for sort integer array
+ */
 public class SortInteger {
 
+    /**
+     * Arguments for program
+     *
+     * @param args argument of comand line
+     */
     public static void main(String[] args) {
         OptionParser parser = new OptionParser();
 
@@ -51,9 +59,9 @@ public class SortInteger {
 
         sortBigFile.sortResults();
 
-        if(set.valueOf(useParallelMerge)) {
+        if (set.valueOf(useParallelMerge)) {
             sortBigFile.mergeParallel(set.valueOf(maxCountOfChunks) / set.valueOf(poolSize));
-        } else{
+        } else {
             sortBigFile.merge();
         }
     }

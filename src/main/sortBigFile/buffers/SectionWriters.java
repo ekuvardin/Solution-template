@@ -3,6 +3,11 @@ package main.sortBigFile.buffers;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Class linking file readers and section where we could write
+ *
+ * @param <T> type of sorting elements
+ */
 public class SectionWriters<T extends Comparable<T>> extends Sections<T> {
 
     private final Map<Integer, Scanner> usedScanners;
@@ -20,6 +25,11 @@ public class SectionWriters<T extends Comparable<T>> extends Sections<T> {
         }
     }
 
+    /**
+     * Return array readers
+     *
+     * @return array readers
+     */
     public Map<Integer, Scanner> getUsedScanners() {
         return usedScanners;
     }
@@ -47,9 +57,9 @@ public class SectionWriters<T extends Comparable<T>> extends Sections<T> {
     }
 
     @Override
-    public void close() throws Exception {
-        this.tryFreeMemory();
+    public void close() {
         usedScanners.values().forEach(Scanner::close);
         usedScanners.clear();
+        super.close();
     }
 }

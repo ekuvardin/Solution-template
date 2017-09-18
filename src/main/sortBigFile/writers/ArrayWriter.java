@@ -5,12 +5,17 @@ import main.sortBigFile.buffers.SectionWriters;
 
 import java.util.*;
 
+/**
+ * Scan files and write result to corresponding buffer
+ *
+ * @param <T> type of reading elements
+ */
 public class ArrayWriter<T extends Comparable<T>> implements IArrayWriter {
 
-    private SectionWriters sectionWriters;
+    private SectionWriters<T> sectionWriters;
     private IValueScanner<T> valueScanner;
 
-    public ArrayWriter(SectionWriters sectionWriters, IValueScanner<T> valueScanner) {
+    public ArrayWriter(SectionWriters<T> sectionWriters, IValueScanner<T> valueScanner) {
         this.sectionWriters = sectionWriters;
         this.valueScanner = valueScanner;
     }

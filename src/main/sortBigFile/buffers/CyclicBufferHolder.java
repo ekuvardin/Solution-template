@@ -5,6 +5,12 @@ import java.util.Collection;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+/**
+ * Class for holding collection of cyclic arrays. It is container for holding cyclic arrays.
+ * Threads may concurrently get buffers and after work have to return it to CyclicBufferHolder
+ *
+ * @param <T> type of sorting elements
+ */
 public class CyclicBufferHolder<T extends Comparable<T>> {
 
     private final List<ICyclicBuffer<T>> list;
@@ -23,6 +29,12 @@ public class CyclicBufferHolder<T extends Comparable<T>> {
         size = chunks;
     }
 
+    /**
+     * Get count number of ICyclicBuffer arrays
+     *
+     * @param count number of arrays to be requested
+     * @return List of ICyclicBuffer arrays
+     */
     public List<ICyclicBuffer<T>> getCyclicBuffer(int count) {
         while (true) {
             if (size >= count) {
@@ -38,16 +50,31 @@ public class CyclicBufferHolder<T extends Comparable<T>> {
         }
     }
 
+    /**
+     * Return arrays back to holder
+     *
+     * @param buffers List of returning arrays
+     */
     public synchronized void putCyclicBuffer(Collection<ICyclicBuffer<T>> buffers) {
         list.addAll(buffers);
         size = size + buffers.size();
     }
 
+    /**
+     * Return array back to holder
+     *
+     * @param val returning array
+     */
     public synchronized void putCyclicBuffer(ICyclicBuffer<T> val) {
         list.add(val);
         size++;
     }
 
+    /**
+     * Simple cyclic buffer array
+     *
+     * @param <T> type of elements in array
+     */
     static class CyclicBuffer<T extends Comparable<T>> implements ICyclicBuffer<T> {
         final T array[];
         final int startPointer;
@@ -111,6 +138,11 @@ public class CyclicBufferHolder<T extends Comparable<T>> {
             head++;
 
             return value;
+        }
+
+        @Override
+        public void reset() {
+            head = tail = 0;
         }
 
         @FunctionalInterface

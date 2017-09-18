@@ -3,8 +3,8 @@ package main.sortBigFile.mergeSort;
 import main.sortBigFile.readers.FileNamesHolder;
 import main.sortBigFile.buffers.CyclicBufferHolder;
 import main.sortBigFile.buffers.SectionWriters;
-import main.sortBigFile.readers.ArrayReaderImpl;
-import main.sortBigFile.readers.IArrayReader;
+import main.sortBigFile.readers.MergeArrayReader;
+import main.sortBigFile.readers.IMergeArrayReader;
 import main.sortBigFile.writers.ArrayWriter;
 import main.sortBigFile.writers.IArrayWriter;
 import main.sortBigFile.writers.IValueScanner;
@@ -25,7 +25,7 @@ public class MergeFiles<T extends Comparable<T>> {
         this.valueScanner = valueScanner;
     }
 
-    public void merge(int size, String outputFileName) throws Exception {
+    public void merge(int size, String outputFileName) throws IOException {
         List<Scanner> scanners = createScanners(size);
 
         if (scanners.size() == 0) {
@@ -36,14 +36,15 @@ public class MergeFiles<T extends Comparable<T>> {
         try (FileWriter fw = new FileWriter(newName, false);
              BufferedWriter bw = new BufferedWriter(fw);
              PrintWriter out = new PrintWriter(bw);
-             SectionWriters<T> sectionWriters = new SectionWriters<>(cyclicBufferHolder, scanners);
+             SectionWriters<T> sectionWriters = new SectionWriters<>(cyclicBufferHolder, scanners)
         ) {
             IArrayWriter arrayWriter = new ArrayWriter<>(sectionWriters, valueScanner);
-            IArrayReader arrayReader = new ArrayReaderImpl<>(sectionWriters);
+            IMergeArrayReader arrayReader = new MergeArrayReader<>(sectionWriters);
 
             do {
                 arrayWriter.fillBuffer();
-                arrayReader.merge(out);
+
+                arrayReader.mergeTillMinMax(out);
                 sectionWriters.tryFreeMemory();
             } while (sectionWriters.getUsedScanners().size() > 0);
 

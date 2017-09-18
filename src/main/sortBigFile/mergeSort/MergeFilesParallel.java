@@ -4,12 +4,16 @@ import main.sortBigFile.readers.FileNamesHolder;
 import main.sortBigFile.buffers.CyclicBufferHolder;
 import main.sortBigFile.writers.IValueScanner;
 
-import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountedCompleter;
 import java.util.concurrent.ForkJoinPool;
 
+/**
+ * Merge file in parallel using concurrent running several k-way merge
+ *
+ * @param <T> type of sorting elements
+ */
 public class MergeFilesParallel<T extends Comparable<T>> {
 
     private final CyclicBufferHolder<T> cyclicBufferHolder;
@@ -24,40 +28,50 @@ public class MergeFilesParallel<T extends Comparable<T>> {
         this.valueScanner = valueScanner;
     }
 
-    public void merge(int maxChunkInTask, int poolSize) throws IOException {
-            MergeReducer mergeReducer = new MergeReducer(null, holder.getSize(), Integer.min(maxChunkInTask, holder.getSize()));
+    /**
+     * Start parallel merge
+     *
+     * @param maxFileInTask max file count taking part in one k-way merge
+     * @param poolSize max pool size
+     */
+    public void merge(int maxFileInTask, int poolSize) {
+            MergeReducer mergeReducer = new MergeReducer(null, holder.getSize(), Integer.min(maxFileInTask, holder.getSize()));
             new ForkJoinPool(poolSize).invoke(mergeReducer);
     }
 
-
+    /**
+     * Class splits k-way merge until max file in task becomes<=maxFileInTask.
+     * Then wait until sibling tasks execute and collects result.
+     * Do k-way merge using files from sibling tasks.
+     */
     class MergeReducer extends CountedCompleter<Void> {
 
         private final int size;
-        private final int maxChunkInTask;
+        private final int maxFileInTask;
         private List<MergeReducer> forks;
 
         private MergeReducer(CountedCompleter<Void> parent, int size, int maxChunkInTask) {
             super(parent);
             this.size = size;
-            this.maxChunkInTask = maxChunkInTask;
+            this.maxFileInTask = maxChunkInTask;
             this.forks = new ArrayList<>(maxChunkInTask);
         }
 
         @Override
         public void compute() {
-            if (size <= maxChunkInTask) {
+            if (size <= maxFileInTask) {
                 execMerge(size);
             } else {
-                int delta = size / maxChunkInTask;
-                if (delta <= maxChunkInTask) {
-                    delta = maxChunkInTask;
+                int delta = size / maxFileInTask;
+                if (delta <= maxFileInTask) {
+                    delta = maxFileInTask;
                 }
 
                 for (int newSize = delta; newSize < size; newSize = newSize + delta) {
                     addTask(delta);
                 }
 
-                int rem = size % maxChunkInTask;
+                int rem = size % maxFileInTask;
                 if (rem != 1) {
                     addTask(rem == 0 ? delta : rem);
                 }
@@ -77,7 +91,7 @@ public class MergeFilesParallel<T extends Comparable<T>> {
 
         private void addTask(int curSize) {
             this.addToPendingCount(1);
-            MergeReducer mapReducer = new MergeReducer(this, curSize, maxChunkInTask);
+            MergeReducer mapReducer = new MergeReducer(this, curSize, maxFileInTask);
             mapReducer.fork();
             forks.add(mapReducer);
         }

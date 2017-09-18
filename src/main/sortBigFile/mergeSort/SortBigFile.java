@@ -1,9 +1,6 @@
 package main.sortBigFile.mergeSort;
 
 import main.sortBigFile.buffers.CyclicBufferHolder;
-import main.sortBigFile.mergeSort.MergeFiles;
-import main.sortBigFile.mergeSort.MergeFilesParallel;
-import main.sortBigFile.mergeSort.SortFilesPartMemory;
 import main.sortBigFile.readers.FileNamesHolder;
 import main.sortBigFile.writers.IValueScanner;
 
@@ -13,6 +10,11 @@ import java.util.List;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 
+/**
+ * Sort big file
+ *
+ * @param <T> type of sorting elements
+ */
 public class SortBigFile<T extends Comparable<T>> {
 
     private SortFilesPartMemory<T> sortFilesPartMemory;
@@ -56,10 +58,16 @@ public class SortBigFile<T extends Comparable<T>> {
         this.sortFilesPartMemory = new SortFilesPartMemory<>(array, maxCountOfChunks, maxChunkLen, getFilePathToTempFiles(), holder, poolSize, inputFileName, valueScanner);
     }
 
+    /**
+     * Split input file on maxCountOfChunks and sort them independently
+     */
     public void sortResults() {
         sortFilesPartMemory.sortResults();
     }
 
+    /**
+     * Merge files which appeared from sortResults step
+     */
     public void merge() {
         try {
             while (holder.getSize() > 1) {
@@ -67,24 +75,24 @@ public class SortBigFile<T extends Comparable<T>> {
             }
 
             renameFile();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
-    }
-
-    public void mergeParallel(int maxChunkInTask) {
-        try {
-            MergeFilesParallel mergeFilesParallel = new MergeFilesParallel<>(new CyclicBufferHolder<>(array, maxCountOfChunks), getFilePathToTempFiles(), holder, valueScanner);
-            mergeFilesParallel.merge(maxChunkInTask, poolSize);
-            renameFile();
         } catch (IOException e) {
-            e.printStackTrace();
             throw new RuntimeException(e);
         }
+
     }
 
-    private void kWayMerge(final int size) throws Exception {
+    /**
+     * Merge parallel files which appeared from sortResults step
+     *
+     * @param maxFileInTask maximum file that can be used during single k-way merge
+     */
+    public void mergeParallel(int maxFileInTask) {
+        MergeFilesParallel mergeFilesParallel = new MergeFilesParallel<>(new CyclicBufferHolder<>(array, maxCountOfChunks), getFilePathToTempFiles(), holder, valueScanner);
+        mergeFilesParallel.merge(maxFileInTask, poolSize);
+        renameFile();
+    }
+
+    private void kWayMerge(final int size) throws IOException {
         MergeFiles mergeFiles = new MergeFiles<>(new CyclicBufferHolder<>(array, size), holder, valueScanner);
         mergeFiles.merge(size, getFilePathToTempFiles());
     }

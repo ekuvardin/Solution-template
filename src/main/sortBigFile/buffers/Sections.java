@@ -3,6 +3,11 @@ package main.sortBigFile.buffers;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
+/**
+ * Class for holding cyclic buffers that are used by program
+ *
+ * @param <T> type of sorting elements
+ */
 public class Sections<T extends Comparable<T>> implements AutoCloseable {
 
     protected final Map<Integer, ICyclicBuffer<T>> usedSections;
@@ -19,16 +24,30 @@ public class Sections<T extends Comparable<T>> implements AutoCloseable {
         }
     }
 
+    /**
+     * free occupied memory
+     */
     public void tryFreeMemory() {
         for (Map.Entry<Integer, ICyclicBuffer<T>> val : usedSections.entrySet()) {
             free(val.getKey());
         }
     }
 
+    /**
+     * Get array by identified index
+     *
+     * @param index array index
+     * @return array by index or null
+     */
     protected ICyclicBuffer<T> getBufferAt(Integer index) {
         return usedSections.get(index);
     }
 
+    /**
+     * Free memory of single element identified by index
+     *
+     * @param index array index
+     */
     protected void free(Integer index) {
         ICyclicBuffer<T> val = getBufferAt(index);
         if (val != null && val.getSize() == 0) {
@@ -37,17 +56,27 @@ public class Sections<T extends Comparable<T>> implements AutoCloseable {
         }
     }
 
+    /**
+     * Get occupied Sections with identifiers
+     *
+     * @return occupied Sections with identifiers
+     */
     public Map<Integer, ICyclicBuffer<T>> getUsedSections() {
         return Collections.unmodifiableMap(usedSections);
     }
 
+    /**
+     * Get occupied Sections
+     *
+     * @return occupied Sections
+     */
     public Collection<ICyclicBuffer<T>> getBuffers() {
         return Collections.unmodifiableCollection(usedSections.values());
     }
 
     @Override
-    public void close() throws Exception {
-        this.tryFreeMemory();
+    public void close() {
+        usedSections.values().stream().forEach(ICyclicBuffer::reset);
         cyclicBufferHolder.putCyclicBuffer(usedSections.values());
         usedSections.clear();
     }

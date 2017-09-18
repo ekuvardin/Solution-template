@@ -11,6 +11,10 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.concurrent.*;
 
+/**
+ * Sort input file by splitting them to smaller
+ * @param <T> type of sorting elements
+ */
 public class SortFilesPartMemory<T extends Comparable<T>> {
 
     private final T[] array;
@@ -74,6 +78,9 @@ public class SortFilesPartMemory<T extends Comparable<T>> {
 
     }
 
+    /**
+     * Split input file on maxCountOfChunks and sort them independently
+     */
     public void sortResults() {
 
         final ExecutorService executorPool =
@@ -98,7 +105,6 @@ public class SortFilesPartMemory<T extends Comparable<T>> {
                 }
 
                 run(executorPool, partitions);
-
             }
         } catch (InterruptedException | IOException |
                 ExecutionException e) {

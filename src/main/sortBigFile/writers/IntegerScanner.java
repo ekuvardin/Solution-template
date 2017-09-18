@@ -2,6 +2,9 @@ package main.sortBigFile.writers;
 
 import java.util.Scanner;
 
+/**
+ * Scanner Integer elements
+ */
 public class IntegerScanner implements IValueScanner<Integer> {
 
     @Override

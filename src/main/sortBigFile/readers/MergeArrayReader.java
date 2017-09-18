@@ -6,11 +6,16 @@ import main.sortBigFile.buffers.Sections;
 import java.io.PrintWriter;
 import java.util.*;
 
-public class ArrayReaderImpl<T extends Comparable<T>> implements IArrayReader {
+/**
+ * Read arrays, make k-way merge and write to file
+ *
+ * @param <T> type of sorting elements
+ */
+public class MergeArrayReader<T extends Comparable<T>> implements IMergeArrayReader {
 
     private Sections<T> sections;
 
-    public ArrayReaderImpl(Sections<T> sections) {
+    public MergeArrayReader(Sections<T> sections) {
         this.sections = sections;
     }
 
@@ -18,22 +23,22 @@ public class ArrayReaderImpl<T extends Comparable<T>> implements IArrayReader {
     public void mergeTillEmpty(PrintWriter out) {
         List<ICyclicBuffer<T>> tmpCol = new ArrayList<>(sections.getBuffers());
         tmpCol.removeIf(p -> p.getSize() == 0);
-
-        mergeTillStopKey(out, Optional.empty(), tmpCol);
+        mergeTillStopKey(out, null, tmpCol);
     }
 
     @Override
-    public void merge(PrintWriter out) {
+    public void mergeTillMinMax(PrintWriter out) {
         List<ICyclicBuffer<T>> tmpCol = new ArrayList<>(sections.getBuffers());
         tmpCol.removeIf(p -> p.getSize() == 0);
 
-        mergeTillStopKey(out, tmpCol.stream().map(ICyclicBuffer::getLast).min(T::compareTo), tmpCol);
+        T minMax = tmpCol.stream().map(ICyclicBuffer::getLast).min(T::compareTo).orElse(null);
+        mergeTillStopKey(out, minMax, tmpCol);
     }
 
-    private void mergeTillStopKey(PrintWriter out, Optional<T> minMax, List<ICyclicBuffer<T>> tmpCol) {
+    private void mergeTillStopKey(PrintWriter out, T minMax, List<ICyclicBuffer<T>> tmpCol) {
         Optional<T> min = tmpCol.stream().map(ICyclicBuffer::getFirst).min(T::compareTo);
 
-        while (min.isPresent() && (!minMax.isPresent() || minMax.get().compareTo(min.get()) >= 0)) {
+        while (min.isPresent() && (minMax == null || minMax.compareTo(min.get()) >= 0)) {
             for (ICyclicBuffer cyclicBuffer : tmpCol) {
                 while (cyclicBuffer.getSize() != 0 && min.get().equals(cyclicBuffer.getFirst())) {
                     cyclicBuffer.pull();
