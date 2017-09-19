@@ -4,8 +4,9 @@ import joptsimple.OptionException;
 import joptsimple.OptionParser;
 import joptsimple.OptionSet;
 import joptsimple.OptionSpec;
-import main.sortBigFile.mergeSort.SortBigFile;
-import main.sortBigFile.writers.IntegerScanner;
+import main.sortBigFile.sort.SortBigFile;
+import main.sortBigFile.readers.integerReader.IntegerCompareStrategy;
+import main.sortBigFile.writers.integerWriters.IntegerScanner;
 
 /**
  * Runner for sort integer array
@@ -48,15 +49,16 @@ public class SortInteger {
             return;
         }
 
-        SortBigFile sortBigFile =
-                SortBigFile.createSortBigFile()
+        SortBigFile<Integer> sortBigFile =
+                SortBigFile.createSortBigFile(Integer.class)
                         .setMaxChunkLen(set.valueOf(maxChunkLen))
                         .setMaxCountOfChunks(set.valueOf(maxCountOfChunks))
                         .setPoolSize(set.valueOf(poolSize))
                         .setInputFileName(set.valueOf(inputFile))
                         .setOutputFileName(set.valueOf(outputResultFile))
                         .setValueScanner(new IntegerScanner())
-                        .build(Integer.class);
+                        .setCompareStrategy(new IntegerCompareStrategy())
+                        .build();
 
         sortBigFile.sortResults();
 

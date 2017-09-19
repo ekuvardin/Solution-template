@@ -1,7 +1,8 @@
-package main.sortBigFile.mergeSort;
+package main.sortBigFile.sort.kWayMerge;
 
-import main.sortBigFile.readers.FileNamesHolder;
+import main.sortBigFile.sort.FileNamesHolder;
 import main.sortBigFile.buffers.CyclicBufferHolder;
+import main.sortBigFile.readers.ICompareStrategy;
 import main.sortBigFile.writers.IValueScanner;
 
 import java.util.ArrayList;
@@ -14,18 +15,20 @@ import java.util.concurrent.ForkJoinPool;
  *
  * @param <T> type of sorting elements
  */
-public class MergeFilesParallel<T extends Comparable<T>> {
+public class MergeFilesParallel<T> {
 
     private final CyclicBufferHolder<T> cyclicBufferHolder;
     private final String outputFileName;
     private final FileNamesHolder holder;
     private final IValueScanner<T> valueScanner;
+    private final ICompareStrategy<T> compareStrategy;
 
-    public MergeFilesParallel(CyclicBufferHolder<T> cyclicBufferHolder, String outputFileName, FileNamesHolder holder, IValueScanner<T> valueScanner) {
+    public MergeFilesParallel(CyclicBufferHolder<T> cyclicBufferHolder, String outputFileName, FileNamesHolder holder, IValueScanner<T> valueScanner, ICompareStrategy<T> compareStrategy) {
         this.cyclicBufferHolder = cyclicBufferHolder;
         this.outputFileName = outputFileName;
         this.holder = holder;
         this.valueScanner = valueScanner;
+        this.compareStrategy = compareStrategy;
     }
 
     /**
@@ -98,7 +101,7 @@ public class MergeFilesParallel<T extends Comparable<T>> {
 
         private void execMerge(int size) {
             try {
-                MergeFiles mergeFiles = new MergeFiles<>(cyclicBufferHolder, holder, valueScanner);
+                MergeFiles mergeFiles = new MergeFiles<>(cyclicBufferHolder, holder, valueScanner, compareStrategy);
                 mergeFiles.merge(size, outputFileName);
             } catch (Exception e) {
                 e.printStackTrace();

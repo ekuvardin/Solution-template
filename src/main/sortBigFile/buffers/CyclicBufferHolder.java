@@ -11,7 +11,7 @@ import java.util.NoSuchElementException;
  *
  * @param <T> type of sorting elements
  */
-public class CyclicBufferHolder<T extends Comparable<T>> {
+public class CyclicBufferHolder<T> {
 
     private final List<ICyclicBuffer<T>> list;
     private volatile int size;
@@ -75,7 +75,7 @@ public class CyclicBufferHolder<T extends Comparable<T>> {
      *
      * @param <T> type of elements in array
      */
-    static class CyclicBuffer<T extends Comparable<T>> implements ICyclicBuffer<T> {
+    static class CyclicBuffer<T> implements ICyclicBuffer<T> {
         final T array[];
         final int startPointer;
         final int capacity;
@@ -145,6 +145,9 @@ public class CyclicBufferHolder<T extends Comparable<T>> {
             head = tail = 0;
         }
 
+        /**
+         * Define how we identify element in array
+         */
         @FunctionalInterface
         protected interface IIndexStrategy {
             int getIndex(int p1);

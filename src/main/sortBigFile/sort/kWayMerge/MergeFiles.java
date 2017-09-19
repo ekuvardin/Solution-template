@@ -1,8 +1,9 @@
-package main.sortBigFile.mergeSort;
+package main.sortBigFile.sort.kWayMerge;
 
-import main.sortBigFile.readers.FileNamesHolder;
+import main.sortBigFile.sort.FileNamesHolder;
 import main.sortBigFile.buffers.CyclicBufferHolder;
 import main.sortBigFile.buffers.SectionWriters;
+import main.sortBigFile.readers.ICompareStrategy;
 import main.sortBigFile.readers.MergeArrayReader;
 import main.sortBigFile.readers.IMergeArrayReader;
 import main.sortBigFile.writers.ArrayWriter;
@@ -13,18 +14,32 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 
-public class MergeFiles<T extends Comparable<T>> {
+/**
+ * Merge file using k-way merge
+ *
+ * @param <T> type of sorting elements
+ */
+public class MergeFiles<T> {
 
-    private CyclicBufferHolder<T> cyclicBufferHolder;
-    private FileNamesHolder holder;
-    private IValueScanner<T> valueScanner;
+    private final CyclicBufferHolder<T> cyclicBufferHolder;
+    private final FileNamesHolder holder;
+    private final IValueScanner<T> valueScanner;
+    private final ICompareStrategy<T> compareStrategy;
 
-    public MergeFiles(CyclicBufferHolder<T> cyclicBufferHolder, FileNamesHolder holder, IValueScanner<T> valueScanner){
+    public MergeFiles(CyclicBufferHolder<T> cyclicBufferHolder, FileNamesHolder holder, IValueScanner<T> valueScanner, ICompareStrategy<T> compareStrategy) {
         this.cyclicBufferHolder = cyclicBufferHolder;
         this.holder = holder;
         this.valueScanner = valueScanner;
+        this.compareStrategy = compareStrategy;
     }
 
+    /**
+     * Merge files using k-way merge
+     *
+     * @param size           size of files which are taking part in merge
+     * @param outputFileName name of file with results of merge
+     * @throws IOException
+     */
     public void merge(int size, String outputFileName) throws IOException {
         List<Scanner> scanners = createScanners(size);
 
@@ -33,13 +48,15 @@ public class MergeFiles<T extends Comparable<T>> {
         }
 
         String newName = holder.getNewUniqueName(outputFileName);
-        try (FileWriter fw = new FileWriter(newName, false);
+
+        try (FileOutputStream fileOutputStream = new FileOutputStream(new File(newName));
+             OutputStreamWriter fw = new OutputStreamWriter(fileOutputStream, StandardCharsets.UTF_8);
              BufferedWriter bw = new BufferedWriter(fw);
              PrintWriter out = new PrintWriter(bw);
              SectionWriters<T> sectionWriters = new SectionWriters<>(cyclicBufferHolder, scanners)
         ) {
             IArrayWriter arrayWriter = new ArrayWriter<>(sectionWriters, valueScanner);
-            IMergeArrayReader arrayReader = new MergeArrayReader<>(sectionWriters);
+            IMergeArrayReader arrayReader = new MergeArrayReader<>(sectionWriters, compareStrategy);
 
             do {
                 arrayWriter.fillBuffer();
@@ -49,7 +66,7 @@ public class MergeFiles<T extends Comparable<T>> {
             } while (sectionWriters.getUsedScanners().size() > 0);
 
             arrayReader.mergeTillEmpty(out);
-        } finally{
+        } finally {
             holder.pull(newName);
         }
     }

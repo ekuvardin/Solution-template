@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @param <T> type of sorting elements
  */
-public class Sections<T extends Comparable<T>> implements AutoCloseable {
+public class Sections<T> implements AutoCloseable {
 
     protected final Map<Integer, ICyclicBuffer<T>> usedSections;
 
@@ -76,7 +76,7 @@ public class Sections<T extends Comparable<T>> implements AutoCloseable {
 
     @Override
     public void close() {
-        usedSections.values().stream().forEach(ICyclicBuffer::reset);
+        usedSections.values().forEach(ICyclicBuffer::reset);
         cyclicBufferHolder.putCyclicBuffer(usedSections.values());
         usedSections.clear();
     }

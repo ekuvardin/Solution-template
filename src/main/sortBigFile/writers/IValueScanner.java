@@ -3,11 +3,11 @@ package main.sortBigFile.writers;
 import java.util.Scanner;
 
 /**
- * Interface describing behavior with reading elements
+ * Define how to iterate over <T> elements
  *
  * @param <T> type of reading elements
  */
-public interface IValueScanner<T extends Comparable<T>> {
+public interface IValueScanner<T> {
 
     /**
      * Check have we next element in scanner
@@ -18,10 +18,10 @@ public interface IValueScanner<T extends Comparable<T>> {
     boolean hasNext(Scanner scanner);
 
     /**
-     * Read next value from reader
+     * Read next value from scanner
      *
      * @param scanner file reader
-     * @return next value from reader
+     * @return next value from scanner
      */
     T nextValue(Scanner scanner);
 }

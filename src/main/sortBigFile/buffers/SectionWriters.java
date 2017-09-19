@@ -8,7 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @param <T> type of sorting elements
  */
-public class SectionWriters<T extends Comparable<T>> extends Sections<T> {
+public class SectionWriters<T> extends Sections<T> {
 
     private final Map<Integer, Scanner> usedScanners;
 

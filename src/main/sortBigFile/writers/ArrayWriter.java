@@ -10,10 +10,10 @@ import java.util.*;
  *
  * @param <T> type of reading elements
  */
-public class ArrayWriter<T extends Comparable<T>> implements IArrayWriter {
+public class ArrayWriter<T> implements IArrayWriter {
 
-    private SectionWriters<T> sectionWriters;
-    private IValueScanner<T> valueScanner;
+    private final SectionWriters<T> sectionWriters;
+    private final IValueScanner<T> valueScanner;
 
     public ArrayWriter(SectionWriters<T> sectionWriters, IValueScanner<T> valueScanner) {
         this.sectionWriters = sectionWriters;

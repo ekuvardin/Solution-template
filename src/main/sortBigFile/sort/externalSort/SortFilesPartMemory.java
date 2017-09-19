@@ -1,6 +1,6 @@
-package main.sortBigFile.mergeSort;
+package main.sortBigFile.sort.externalSort;
 
-import main.sortBigFile.readers.FileNamesHolder;
+import main.sortBigFile.sort.FileNamesHolder;
 import main.sortBigFile.writers.IValueScanner;
 
 import java.io.*;
@@ -15,7 +15,7 @@ import java.util.concurrent.*;
  * Sort input file by splitting them to smaller
  * @param <T> type of sorting elements
  */
-public class SortFilesPartMemory<T extends Comparable<T>> {
+public class SortFilesPartMemory<T> {
 
     private final T[] array;
     private final int maxCountOfChunks;
@@ -24,7 +24,7 @@ public class SortFilesPartMemory<T extends Comparable<T>> {
     private final int[] lastPointer;
     private final String outputFileName;
     private final String inputFileName;
-    private FileNamesHolder holder;
+    private final FileNamesHolder holder;
     private final IValueScanner<T> valueScanner;
 
     public SortFilesPartMemory(T[] array, int maxCountOfChunks, int maxChunkLen, String outputFileName, FileNamesHolder holder, int poolSize, String inputFileName, IValueScanner<T> valueScanner) {
@@ -51,7 +51,8 @@ public class SortFilesPartMemory<T extends Comparable<T>> {
 
                     String fileName = holder.getNewUniqueName(outputFileName);
                     try (
-                            FileWriter fw = new FileWriter( fileName, false);
+                            FileOutputStream fileOutputStream = new FileOutputStream(new File(fileName));
+                            OutputStreamWriter fw = new OutputStreamWriter(fileOutputStream, StandardCharsets.UTF_8);
                             BufferedWriter bw = new BufferedWriter(fw);
                             PrintWriter out = new PrintWriter(bw)) {
                         for (int ii = index * maxChunkLen; ii < index * maxChunkLen + lastPointer[index]; ii++) {

@@ -1,7 +1,10 @@
-package main.sortBigFile.mergeSort;
+package main.sortBigFile.sort;
 
 import main.sortBigFile.buffers.CyclicBufferHolder;
-import main.sortBigFile.readers.FileNamesHolder;
+import main.sortBigFile.readers.ICompareStrategy;
+import main.sortBigFile.sort.externalSort.SortFilesPartMemory;
+import main.sortBigFile.sort.kWayMerge.MergeFiles;
+import main.sortBigFile.sort.kWayMerge.MergeFilesParallel;
 import main.sortBigFile.writers.IValueScanner;
 
 import java.io.*;
@@ -15,7 +18,7 @@ import java.text.SimpleDateFormat;
  *
  * @param <T> type of sorting elements
  */
-public class SortBigFile<T extends Comparable<T>> {
+public class SortBigFile<T> {
 
     private SortFilesPartMemory<T> sortFilesPartMemory;
     private String outputFileName;
@@ -27,8 +30,10 @@ public class SortBigFile<T extends Comparable<T>> {
     private String tempFolderName;
     private String inputFileName;
     private int maxChunkLen;
+    private ICompareStrategy<T> compareStrategy;
 
-    private SortBigFile(){}
+    private SortBigFile() {
+    }
 
     /**
      * Split input file on maxCountOfChunks and sort them independently
@@ -58,17 +63,24 @@ public class SortBigFile<T extends Comparable<T>> {
      * @param maxFileInTask maximum file that can be used during single k-way merge
      */
     public void mergeParallel(int maxFileInTask) {
-        MergeFilesParallel mergeFilesParallel = new MergeFilesParallel<>(new CyclicBufferHolder<>(array, maxCountOfChunks), getFilePathToTempFiles(), holder, valueScanner);
+        MergeFilesParallel mergeFilesParallel = new MergeFilesParallel<>(new CyclicBufferHolder<>(array, maxCountOfChunks), getFilePathToTempFiles(), holder, valueScanner, compareStrategy);
         mergeFilesParallel.merge(maxFileInTask, poolSize);
         renameFile();
     }
 
-    public static Builder createSortBigFile(){
-        return new Builder();
+    /**
+     * Get builder for building class SortBigFile
+     *
+     * @param cls class of sorting elements
+     * @param <E> type of sorting elements
+     * @return builder
+     */
+    public static <E> Builder<E> createSortBigFile(Class<E> cls) {
+        return new Builder<E>(cls);
     }
 
     private void kWayMerge(final int size) throws IOException {
-        MergeFiles mergeFiles = new MergeFiles<>(new CyclicBufferHolder<>(array, size), holder, valueScanner);
+        MergeFiles mergeFiles = new MergeFiles<>(new CyclicBufferHolder<>(array, size), holder, valueScanner, compareStrategy);
         mergeFiles.merge(size, getFilePathToTempFiles());
     }
 
@@ -89,14 +101,16 @@ public class SortBigFile<T extends Comparable<T>> {
         return String.format("%s//%s", tempFolderName, outputFileName);
     }
 
-    public static class Builder<T extends Comparable<T>>{
-        SortBigFile<T> sortBigFile;
+    public static class Builder<T> {
+        private SortBigFile<T> sortBigFile;
+        private Class<T> cls;
 
-        private Builder(){
-            sortBigFile = new SortBigFile<>();
+        private Builder(Class<T> cls) {
+            this.sortBigFile = new SortBigFile<>();
+            this.cls = cls;
         }
 
-        public SortBigFile<T> build(Class<T> cls){
+        public SortBigFile<T> build() {
             sortBigFile.array = (T[]) Array.newInstance(cls, sortBigFile.maxCountOfChunks * sortBigFile.maxChunkLen);
             Date now = new Date();
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy_MM_dd_hh_mm_ss");
@@ -117,7 +131,7 @@ public class SortBigFile<T extends Comparable<T>> {
             return value;
         }
 
-        public Builder setMaxChunkLen(int maxChunkLen){
+        public Builder<T> setMaxChunkLen(int maxChunkLen) {
             if (maxChunkLen <= 0)
                 throw new IllegalArgumentException("expected maxCountOfChunks must be greater than zero");
 
@@ -125,7 +139,7 @@ public class SortBigFile<T extends Comparable<T>> {
             return this;
         }
 
-        public Builder setMaxCountOfChunks(int maxCountOfChunks){
+        public Builder<T> setMaxCountOfChunks(int maxCountOfChunks) {
             if (maxCountOfChunks <= 0)
                 throw new IllegalArgumentException("expected maxCountOfChunks must be greater than zero");
 
@@ -133,7 +147,7 @@ public class SortBigFile<T extends Comparable<T>> {
             return this;
         }
 
-        public Builder setOutputFileName(String outputFileName) {
+        public Builder<T> setOutputFileName(String outputFileName) {
             if (outputFileName == null)
                 throw new IllegalArgumentException("expected non null outputFileName");
 
@@ -141,7 +155,7 @@ public class SortBigFile<T extends Comparable<T>> {
             return this;
         }
 
-        public Builder setInputFileName(String inputFileName) {
+        public Builder<T> setInputFileName(String inputFileName) {
             if (inputFileName == null)
                 throw new IllegalArgumentException("expected non null inputFileName");
 
@@ -149,7 +163,7 @@ public class SortBigFile<T extends Comparable<T>> {
             return this;
         }
 
-        public Builder setPoolSize(int poolSize) {
+        public Builder<T> setPoolSize(int poolSize) {
             if (poolSize <= 0)
                 throw new IllegalArgumentException("expected poolSize must be greater than zero");
 
@@ -157,8 +171,13 @@ public class SortBigFile<T extends Comparable<T>> {
             return this;
         }
 
-        public Builder setValueScanner(IValueScanner<T> valueScanner) {
+        public Builder<T> setValueScanner(IValueScanner<T> valueScanner) {
             sortBigFile.valueScanner = valueScanner;
+            return this;
+        }
+
+        public Builder<T> setCompareStrategy(ICompareStrategy<T> compareStrategy) {
+            sortBigFile.compareStrategy = compareStrategy;
             return this;
         }
     }

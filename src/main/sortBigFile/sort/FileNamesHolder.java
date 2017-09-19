@@ -1,4 +1,4 @@
-package main.sortBigFile.readers;
+package main.sortBigFile.sort;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -8,7 +8,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class FileNamesHolder {
 
-    private Queue<String> files = new ArrayDeque<>();
+    private final Queue<String> files = new ArrayDeque<>();
     private volatile int size = 0;
     private AtomicInteger lastGen = new AtomicInteger();
 

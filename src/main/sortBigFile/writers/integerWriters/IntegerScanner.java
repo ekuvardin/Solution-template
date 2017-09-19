@@ -1,9 +1,11 @@
-package main.sortBigFile.writers;
+package main.sortBigFile.writers.integerWriters;
+
+import main.sortBigFile.writers.IValueScanner;
 
 import java.util.Scanner;
 
 /**
- * Scanner Integer elements
+ * Define how to iterate over Integer elements
  */
 public class IntegerScanner implements IValueScanner<Integer> {
 

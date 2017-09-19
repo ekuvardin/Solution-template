@@ -1,9 +1,9 @@
 package main.sortBigFileTest;
 
 import main.sortBigFile.Generator;
-import main.sortBigFile.SortInteger;
-import main.sortBigFile.mergeSort.SortBigFile;
-import main.sortBigFile.writers.IntegerScanner;
+import main.sortBigFile.sort.SortBigFile;
+import main.sortBigFile.readers.integerReader.IntegerCompareStrategy;
+import main.sortBigFile.writers.integerWriters.IntegerScanner;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -11,6 +11,9 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.Scanner;
 
+/**
+ * Integration tests for sorting Integer array
+ */
 public class SortIntegerTest {
 
     @Test
@@ -19,14 +22,15 @@ public class SortIntegerTest {
         // Run example  SortInteger.main() with this arguments
         // -chk 32768 -ct 40 -pl 4 -inpf AvgNumbers.txt -resf Out.txt -pm true
         SortBigFile sortBigFile =
-                SortBigFile.createSortBigFile()
+                SortBigFile.createSortBigFile(Integer.class)
                         .setMaxChunkLen(32768)
                         .setMaxCountOfChunks(40)
                         .setPoolSize(4)
                         .setInputFileName("AvgNumbers.txt")
                         .setOutputFileName("Out.txt")
                         .setValueScanner(new IntegerScanner())
-                        .build(Integer.class);
+                        .setCompareStrategy(new IntegerCompareStrategy())
+                        .build();
 
         sortBigFile.sortResults();
         sortBigFile.mergeParallel(40 / 4);
@@ -39,14 +43,15 @@ public class SortIntegerTest {
         // Run example  SortInteger.main() with this arguments
         // -chk 32768 -ct 40 -pl 4 -inpf AvgNumbers.txt -resf Out.txt
         SortBigFile sortBigFile =
-                SortBigFile.createSortBigFile()
+                SortBigFile.createSortBigFile(Integer.class)
                         .setMaxChunkLen(32768)
                         .setMaxCountOfChunks(40)
                         .setPoolSize(4)
                         .setInputFileName("AvgNumbers.txt")
                         .setOutputFileName("Out.txt")
                         .setValueScanner(new IntegerScanner())
-                        .build(Integer.class);
+                        .setCompareStrategy(new IntegerCompareStrategy())
+                        .build();
 
         sortBigFile.sortResults();
         sortBigFile.merge();

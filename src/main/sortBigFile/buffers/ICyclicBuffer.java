@@ -5,7 +5,7 @@ package main.sortBigFile.buffers;
  *
  * @param <T> type of sorting elements
  */
-public interface ICyclicBuffer<T extends Comparable<T>> {
+public interface ICyclicBuffer<T> {
 
     /**
      * Return first element in array
