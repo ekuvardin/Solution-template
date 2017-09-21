@@ -15,7 +15,7 @@ public class TransposeCacheLine extends CacheLineBound {
 
     @Override
     public void calcResult(long[][] p1, long[][] p2, long[][] res) {
-        int step = cacheLineSize/8;
+        int step = cacheLineSize/LONG_SIZE;
 
         long[][] tmp = new long[p2[0].length][p2.length];
 

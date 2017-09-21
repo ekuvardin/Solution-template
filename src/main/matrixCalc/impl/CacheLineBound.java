@@ -8,6 +8,7 @@ import main.matrixCalc.SquareMatrix;
 public class CacheLineBound extends SquareMatrix {
 
     protected final int cacheLineSize;
+    protected final int LONG_SIZE = 8;
 
     public CacheLineBound() {
         this.cacheLineSize = 64;
@@ -22,7 +23,7 @@ public class CacheLineBound extends SquareMatrix {
 
     @Override
     public void calcResult(long[][] p1, long[][] p2, long[][] res) {
-        int step = cacheLineSize / 8;//8 -long size
+        int step = cacheLineSize / LONG_SIZE;//8 -long size
 
         int colSize = p1[0].length;
         for (int i = 0; i < p1.length; i += step)
@@ -46,7 +47,7 @@ public class CacheLineBound extends SquareMatrix {
     protected void checkMatrix(long[][] p1, long[][] p2) {
         super.checkMatrix(p1, p2);
 
-        if (p1.length % this.cacheLineSize / 4 != 0 || p2.length % this.cacheLineSize / 4 != 0 || p1[0].length % this.cacheLineSize / 4 != 0) {
+        if (p1.length % this.cacheLineSize / LONG_SIZE != 0 || p2.length % this.cacheLineSize / LONG_SIZE != 0 || p1[0].length % this.cacheLineSize / LONG_SIZE != 0) {
             throw new RuntimeException("Array size doesn't multiple by cache line size");
         }
     }
