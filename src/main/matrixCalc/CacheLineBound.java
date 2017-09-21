@@ -2,7 +2,7 @@ package main.matrixCalc;
 
 public class CacheLineBound extends SquareMatrix {
 
-    private final int cacheLineSize;
+    protected final int cacheLineSize;
 
     public CacheLineBound() {
         this.cacheLineSize = 64;
