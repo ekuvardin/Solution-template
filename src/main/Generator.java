@@ -1,4 +1,4 @@
-package main.sortBigFile;
+package main;
 
 import java.io.*;
 import java.util.Random;

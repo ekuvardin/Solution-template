@@ -1,6 +1,6 @@
 package main.sortBigFileTest;
 
-import main.sortBigFile.Generator;
+import main.Generator;
 import main.sortBigFile.sort.SortBigFile;
 import main.sortBigFile.readers.integerReader.IntegerCompareStrategy;
 import main.sortBigFile.writers.integerWriters.IntegerScanner;
