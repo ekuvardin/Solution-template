@@ -1,5 +1,10 @@
-package main.matrixCalc;
+package main.matrixCalc.impl;
 
+import main.matrixCalc.SquareMatrix;
+
+/**
+ * Multiply matrix in chunk with line size of cache
+ */
 public class CacheLineBound extends SquareMatrix {
 
     protected final int cacheLineSize;
@@ -17,7 +22,7 @@ public class CacheLineBound extends SquareMatrix {
 
     @Override
     public void calcResult(long[][] p1, long[][] p2, long[][] res) {
-        int step = cacheLineSize / 4;
+        int step = cacheLineSize / 8;//8 -long size
 
         int colSize = p1[0].length;
         for (int i = 0; i < p1.length; i += step)

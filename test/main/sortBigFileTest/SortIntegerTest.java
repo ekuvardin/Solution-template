@@ -18,7 +18,7 @@ public class SortIntegerTest {
 
     @Test
     public void sortIntegerParallelTest() throws IOException {
-        Generator.main();
+        Generator.main("-res AvgNumbers.txt".split(" "));
         // Run example  SortInteger.main() with this arguments
         // -chk 32768 -ct 40 -pl 4 -inpf AvgNumbers.txt -resf Out.txt -pm true
         SortBigFile sortBigFile =
@@ -39,7 +39,7 @@ public class SortIntegerTest {
 
     @Test
     public void sortIntegerTest() throws IOException {
-        Generator.main();
+        Generator.main("-res AvgNumbers.txt".split(" "));
         // Run example  SortInteger.main() with this arguments
         // -chk 32768 -ct 40 -pl 4 -inpf AvgNumbers.txt -resf Out.txt
         SortBigFile sortBigFile =

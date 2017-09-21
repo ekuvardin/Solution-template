@@ -1,20 +1,29 @@
 package main.sortBigFileTest.main.MatricCalc;
 
 import main.Generator;
-import main.matrixCalc.CacheLineBound;
-import main.matrixCalc.MatrixCalc;
-import main.matrixCalc.Simple;
-import main.matrixCalc.Transpose;
+import main.matrixCalc.*;
+import main.matrixCalc.impl.*;
+import org.junit.Assert;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Scanner;
-import java.util.concurrent.TimeUnit;
 
+/**
+ * Integration tests for matrix multiply
+ */
 public class Runner {
+
+    @BeforeClass
+    public static void beforeTests() throws FileNotFoundException, UnsupportedEncodingException {
+        Generator.main("-res AvgNumbers.txt".split(" "));
+    }
 
     @Test
     public void testSimple() {
@@ -30,22 +39,10 @@ public class Runner {
                 {752, 101, 39, 33}, {1208, 204, 49, 34}, {1945, 288, 71, 46}, {1168, 164, 40, 28}
         };
 
-        try (Scanner scanner = new Scanner(new File("Out.txt"), StandardCharsets.UTF_8.toString())) {
-            for (int i = 0; i < p1.length; i++) {
-                for (int j = 0; j < p1[0].length && scanner.hasNextLong(); j++) {
-                    p2[i][j] = p1[i][j] = scanner.nextLong();
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e);
-        }
-
-
         //MatrixCalc matrixCalc = new CacheLineBound();
         MatrixCalc matrixCalc = new Simple();
-        long[][] res = matrixCalc.multiplyResult(p1, p2);
-        Arrays.equals(res, p3);
+        long[][] res = matrixCalc.multiply(p1, p2);
+        Assert.assertArrayEquals(res, p3);
     }
 
     @Test
@@ -53,7 +50,6 @@ public class Runner {
         long[][] p1 = new long[128][128];
         long[][] p2 = new long[128][128];
 
-        Generator.main();
         try (Scanner scanner = new Scanner(new File("AvgNumbers.txt"), StandardCharsets.UTF_8.toString())) {
             for (int i = 0; i < p1.length; i++) {
                 for (int j = 0; j < p1[0].length && scanner.hasNextLong(); j++) {
@@ -64,7 +60,7 @@ public class Runner {
 
         MatrixCalc matrixCalcExpected = new Simple();
         MatrixCalc matrixCalcActual = new Transpose();
-        Arrays.equals(matrixCalcExpected.multiplyResult(p1, p2),matrixCalcActual.multiplyResult(p1, p2));
+        Assert.assertArrayEquals(matrixCalcExpected.multiply(p1, p2),matrixCalcActual.multiply(p1, p2));
     }
 
     @Test
@@ -72,7 +68,6 @@ public class Runner {
         long[][] p1 = new long[128][128];
         long[][] p2 = new long[128][128];
 
-        Generator.main();
         try (Scanner scanner = new Scanner(new File("AvgNumbers.txt"), StandardCharsets.UTF_8.toString())) {
             for (int i = 0; i < p1.length; i++) {
                 for (int j = 0; j < p1[0].length && scanner.hasNextLong(); j++) {
@@ -83,6 +78,24 @@ public class Runner {
 
         MatrixCalc matrixCalcExpected = new Simple();
         MatrixCalc matrixCalcActual = new CacheLineBound(64);
-        Arrays.equals(matrixCalcExpected.multiplyResult(p1, p2),matrixCalcActual.multiplyResult(p1, p2));
+        Assert.assertArrayEquals(matrixCalcExpected.multiply(p1, p2),matrixCalcActual.multiply(p1, p2));
+    }
+
+    @Test
+    public void testTransposeCacheLineBound() throws IOException {
+        long[][] p1 = new long[128][128];
+        long[][] p2 = new long[128][128];
+
+        try (Scanner scanner = new Scanner(new File("AvgNumbers.txt"), StandardCharsets.UTF_8.toString())) {
+            for (int i = 0; i < p1.length; i++) {
+                for (int j = 0; j < p1[0].length && scanner.hasNextLong(); j++) {
+                    p2[i][j] = p1[i][j] = scanner.nextLong();
+                }
+            }
+        }
+
+        MatrixCalc matrixCalcExpected = new Simple();
+        MatrixCalc matrixCalcActual = new TransposeCacheLine(64);
+        Arrays.equals(matrixCalcExpected.multiply(p1, p2),matrixCalcActual.multiply(p1, p2));
     }
 }

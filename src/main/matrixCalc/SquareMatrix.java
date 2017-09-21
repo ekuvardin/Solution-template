@@ -1,5 +1,8 @@
 package main.matrixCalc;
 
+/**
+ * Define square matrix restrictions
+ */
 public abstract class SquareMatrix extends MatrixCalc {
 
     @Override

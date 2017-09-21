@@ -1,5 +1,10 @@
-package main.matrixCalc;
+package main.matrixCalc.impl;
 
+import main.matrixCalc.MatrixCalc;
+
+/*
+ * Simple matrix multiplication
+*/
 public class Simple extends MatrixCalc {
 
     @Override

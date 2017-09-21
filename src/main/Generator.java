@@ -1,5 +1,10 @@
 package main;
 
+import joptsimple.OptionException;
+import joptsimple.OptionParser;
+import joptsimple.OptionSet;
+import joptsimple.OptionSpec;
+
 import java.io.*;
 import java.util.Random;
 
@@ -10,12 +15,29 @@ import java.util.Random;
   https://stackoverflow.com/questions/24959247/java-create-large-text-file-with-random-numbers
  */
 public class Generator {
-    public static void main(String... ignored) throws FileNotFoundException, UnsupportedEncodingException {
+    public static void main(String[] args) throws FileNotFoundException, UnsupportedEncodingException {
+        OptionParser parser = new OptionParser();
+
+        OptionSpec<String> resultFileName = parser.accepts("res", "Result file name.")
+                .withRequiredArg().ofType(String.class).describedAs("res").defaultsTo("AvgNumbers.txt");
+
+        OptionSpec<Double> size = parser.accepts("size", "Result file name.")
+                .withRequiredArg().ofType(Double.class).defaultsTo(0.01d).describedAs("size");
+
+        OptionSet set;
+
+        try {
+            set = parser.parse(args);
+        } catch (OptionException e) {
+            System.err.println("ERROR: " + e.getMessage());
+            System.err.println();
+            return;
+        }
         //Size in Gbs of my file that I want
-        double wantedSize = Double.parseDouble(System.getProperty("size", "0.01"));
+        double wantedSize = set.valueOf(size);
 
         Random random = new Random();
-        File file = new File("AvgNumbers.txt");
+        File file = new File(set.valueOf(resultFileName));
         long start = System.currentTimeMillis();
         PrintWriter writer = new PrintWriter(new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file), "UTF-8")), false);
         int counter = 0;

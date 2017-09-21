@@ -1,18 +1,21 @@
-package main.matrixCalc;
+package main.matrixCalc.impl;
 
+/*
+ * Matrix multiplication with transformation and line cache chunk
+*/
 public class TransposeCacheLine extends CacheLineBound {
 
-    public TransposeCacheLine() {
-        super(64);
-    }
+   public TransposeCacheLine(){
+       super();
+   }
 
-    public TransposeCacheLine(int cacheLineSize) {
-        super(cacheLineSize);
-    }
+   public TransposeCacheLine(int cacheLineSize){
+       super(cacheLineSize);
+   }
 
     @Override
     public void calcResult(long[][] p1, long[][] p2, long[][] res) {
-        int step = cacheLineSize/4;
+        int step = cacheLineSize/8;
 
         long[][] tmp = new long[p2[0].length][p2.length];
 

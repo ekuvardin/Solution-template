@@ -1,5 +1,10 @@
-package main.matrixCalc;
+package main.matrixCalc.impl;
 
+import main.matrixCalc.MatrixCalc;
+
+/*
+ * Matrix multiplication with transformation
+*/
 public class Transpose extends MatrixCalc {
 
     @Override
