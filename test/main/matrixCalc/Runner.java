@@ -1,4 +1,4 @@
-package main.sortBigFileTest.main.MatricCalc;
+package main.matrixCalc;
 
 import main.Generator;
 import main.matrixCalc.*;
