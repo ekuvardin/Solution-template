@@ -8,6 +8,8 @@ import main.sortBigFile.sort.SortBigFile;
 import main.sortBigFile.readers.integerReader.IntegerCompareStrategy;
 import main.sortBigFile.writers.integerWriters.IntegerScanner;
 
+import java.util.List;
+
 /**
  * Runner for sort integer array
  */
@@ -60,12 +62,12 @@ public class SortInteger {
                         .setCompareStrategy(new IntegerCompareStrategy())
                         .build();
 
-        sortBigFile.sortResults();
+        List<String> sorted= sortBigFile.sortResults();
 
         if (set.valueOf(useParallelMerge)) {
-            sortBigFile.mergeParallel(set.valueOf(maxCountOfChunks) / set.valueOf(poolSize));
+            sortBigFile.mergeParallel(set.valueOf(maxCountOfChunks) / set.valueOf(poolSize), sorted);
         } else {
-            sortBigFile.merge();
+            sortBigFile.merge(sorted);
         }
     }
 }

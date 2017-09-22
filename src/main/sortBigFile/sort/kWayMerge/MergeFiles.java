@@ -22,34 +22,31 @@ import java.util.*;
 public class MergeFiles<T> {
 
     private final CyclicBufferHolder<T> cyclicBufferHolder;
-    private final FileNamesHolder holder;
     private final IValueScanner<T> valueScanner;
     private final ICompareStrategy<T> compareStrategy;
+    private final List<String> fileNames;
 
-    public MergeFiles(CyclicBufferHolder<T> cyclicBufferHolder, FileNamesHolder holder, IValueScanner<T> valueScanner, ICompareStrategy<T> compareStrategy) {
+    public MergeFiles(CyclicBufferHolder<T> cyclicBufferHolder, IValueScanner<T> valueScanner, ICompareStrategy<T> compareStrategy, List<String> fileNames) {
         this.cyclicBufferHolder = cyclicBufferHolder;
-        this.holder = holder;
         this.valueScanner = valueScanner;
         this.compareStrategy = compareStrategy;
+        this.fileNames = fileNames;
     }
 
     /**
      * Merge files using k-way merge
      *
-     * @param size           size of files which are taking part in merge
      * @param outputFileName name of file with results of merge
      * @throws IOException
      */
-    public void merge(int size, String outputFileName) throws IOException {
-        List<Scanner> scanners = createScanners(size);
+    public void merge(String outputFileName) throws IOException {
+        List<Scanner> scanners = createScanners();
 
         if (scanners.size() == 0) {
             return;
         }
 
-        String newName = holder.getNewUniqueName(outputFileName);
-
-        try (FileOutputStream fileOutputStream = new FileOutputStream(new File(newName));
+        try (FileOutputStream fileOutputStream = new FileOutputStream(new File(outputFileName));
              OutputStreamWriter fw = new OutputStreamWriter(fileOutputStream, StandardCharsets.UTF_8);
              BufferedWriter bw = new BufferedWriter(fw);
              PrintWriter out = new PrintWriter(bw);
@@ -66,14 +63,11 @@ public class MergeFiles<T> {
             } while (sectionWriters.getUsedScanners().size() > 0);
 
             arrayReader.mergeTillEmpty(out);
-        } finally {
-            holder.pull(newName);
         }
     }
 
-    private List<Scanner> createScanners(int size) throws FileNotFoundException {
-        List<Scanner> scanners = new ArrayList<>(size);
-        List<String> fileNames = holder.get(size);
+    private List<Scanner> createScanners() throws FileNotFoundException {
+        List<Scanner> scanners = new ArrayList<>(fileNames.size());
         for (String name : fileNames) {
             File file = new File(name);
             if (file.exists()) {

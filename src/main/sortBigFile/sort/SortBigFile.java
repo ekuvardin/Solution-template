@@ -9,9 +9,12 @@ import main.sortBigFile.writers.IValueScanner;
 
 import java.io.*;
 import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.concurrent.ExecutionException;
 
 /**
  * Sort big file
@@ -25,7 +28,6 @@ public class SortBigFile<T> {
     private int maxCountOfChunks;
     private T[] array;
     private int poolSize;
-    private FileNamesHolder holder;
     private IValueScanner<T> valueScanner;
     private String tempFolderName;
     private String inputFileName;
@@ -38,20 +40,30 @@ public class SortBigFile<T> {
     /**
      * Split input file on maxCountOfChunks and sort them independently
      */
-    public void sortResults() {
-        sortFilesPartMemory.sortResults();
+    public List<String> sortResults() {
+        return sortFilesPartMemory.sortResults();
     }
 
     /**
      * Merge files which appeared from sortResults step
      */
-    public void merge() {
+    public void merge(final List<String> fileNames) {
+        if(fileNames == null || fileNames.isEmpty())
+            return;
+
         try {
-            while (holder.getSize() > 1) {
-                kWayMerge(Integer.min(maxCountOfChunks, holder.getSize()));
+            List<String> newList = new ArrayList<>(fileNames);
+
+
+            while (newList.size() > 1) {
+                List<String> temp = newList.subList(0, Integer.min(maxCountOfChunks, newList.size()));
+                newList.add(kWayMerge(temp));
+
+                for(int i=0;i<newList.size()-1;i++)
+                    newList.remove(0);
             }
 
-            renameFile();
+            renameFile(newList.get(0));
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -62,10 +74,14 @@ public class SortBigFile<T> {
      *
      * @param maxFileInTask maximum file that can be used during single k-way merge
      */
-    public void mergeParallel(int maxFileInTask) {
-        MergeFilesParallel mergeFilesParallel = new MergeFilesParallel<>(new CyclicBufferHolder<>(array, maxCountOfChunks), getFilePathToTempFiles(), holder, valueScanner, compareStrategy);
-        mergeFilesParallel.merge(maxFileInTask, poolSize);
-        renameFile();
+    public void mergeParallel(int maxFileInTask, List<String> fileNames)  {
+        try {
+            MergeFilesParallel mergeFilesParallel = new MergeFilesParallel<>(new CyclicBufferHolder<>(array, maxCountOfChunks), getFilePathToTempFiles(), valueScanner, compareStrategy, fileNames);
+            renameFile(mergeFilesParallel.merge(maxFileInTask, poolSize));
+        } catch(InterruptedException | ExecutionException e){
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -76,24 +92,23 @@ public class SortBigFile<T> {
      * @return builder
      */
     public static <E> Builder<E> createSortBigFile(Class<E> cls) {
-        return new Builder<E>(cls);
+        return new Builder<>(cls);
     }
 
-    private void kWayMerge(final int size) throws IOException {
-        MergeFiles mergeFiles = new MergeFiles<>(new CyclicBufferHolder<>(array, size), holder, valueScanner, compareStrategy);
-        mergeFiles.merge(size, getFilePathToTempFiles());
+    private String kWayMerge(List<String> fileNames) throws IOException {
+        MergeFiles mergeFiles = new MergeFiles<>(new CyclicBufferHolder<>(array, fileNames.size()), valueScanner, compareStrategy, fileNames);
+        String newName = FileNamesHolder.getNewUniqueName(getFilePathToTempFiles());
+        mergeFiles.merge(newName);
+        return newName;
     }
 
-    private void renameFile() {
-        if (holder.getSize() == 1) {
-            List<String> fileNames = holder.get(1);
-
-            File file = new File(fileNames.get(0));
-            if (!file.renameTo(new File(outputFileName))) {
+    private void renameFile(String lastFile) {
+        if (lastFile != null) {
+            File file = new File(lastFile);
+            if (!file.renameTo(new File(outputFileName)))
                 System.out.println("Can't rename destination file to " + outputFileName);
-            }
         } else {
-            System.out.println("Some sort files become unsorted: " + holder.get(holder.getSize()));
+            System.out.println("Last file is null");
         }
     }
 
@@ -123,8 +138,7 @@ public class SortBigFile<T> {
             File file = new File(sortBigFile.outputFileName);
             file.delete();
 
-            sortBigFile.holder = new FileNamesHolder();
-            sortBigFile.sortFilesPartMemory = new SortFilesPartMemory<>(sortBigFile.array, sortBigFile.maxCountOfChunks, sortBigFile.maxChunkLen, sortBigFile.getFilePathToTempFiles(), sortBigFile.holder, sortBigFile.poolSize, sortBigFile.inputFileName, sortBigFile.valueScanner);
+            sortBigFile.sortFilesPartMemory = new SortFilesPartMemory<>(sortBigFile.array, sortBigFile.maxCountOfChunks, sortBigFile.maxChunkLen, sortBigFile.getFilePathToTempFiles(), sortBigFile.poolSize, sortBigFile.inputFileName, sortBigFile.valueScanner);
 
             SortBigFile<T> value = sortBigFile;
             sortBigFile = null;

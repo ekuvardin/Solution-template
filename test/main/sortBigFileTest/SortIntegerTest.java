@@ -32,8 +32,7 @@ public class SortIntegerTest {
                         .setCompareStrategy(new IntegerCompareStrategy())
                         .build();
 
-        sortBigFile.sortResults();
-        sortBigFile.mergeParallel(40 / 4);
+        sortBigFile.mergeParallel(40 / 4 ,sortBigFile.sortResults());
         Assert.assertTrue(testSortCorrectness(new File("Out.txt")));
     }
 
@@ -53,8 +52,7 @@ public class SortIntegerTest {
                         .setCompareStrategy(new IntegerCompareStrategy())
                         .build();
 
-        sortBigFile.sortResults();
-        sortBigFile.merge();
+        sortBigFile.merge(sortBigFile.sortResults());
         Assert.assertTrue(testSortCorrectness(new File("Out.txt")));
     }
 
