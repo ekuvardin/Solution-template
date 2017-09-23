@@ -5,6 +5,7 @@ import main.sortBigFile.buffers.CyclicBufferHolder;
 import main.sortBigFile.readers.ICompareStrategy;
 import main.sortBigFile.writers.IValueScanner;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.CountedCompleter;
@@ -17,32 +18,27 @@ import java.util.stream.Collectors;
  *
  * @param <T> type of sorting elements
  */
-public class MergeFilesParallel<T> {
+public class MultipleThreadMerge<T> extends SingleThreadMerge<T> {
 
-    private final CyclicBufferHolder<T> cyclicBufferHolder;
-    private final String outputFileName;
-    private final IValueScanner<T> valueScanner;
-    private final ICompareStrategy<T> compareStrategy;
-    private final List<String> fileNames;
+    private final int poolSize;
+    private final int maxFileInTask;
 
-    public MergeFilesParallel(CyclicBufferHolder<T> cyclicBufferHolder, String outputFileName, IValueScanner<T> valueScanner, ICompareStrategy<T> compareStrategy, List<String> fileNames) {
-        this.cyclicBufferHolder = cyclicBufferHolder;
-        this.outputFileName = outputFileName;
-        this.valueScanner = valueScanner;
-        this.compareStrategy = compareStrategy;
-        this.fileNames = fileNames;
+    public MultipleThreadMerge(CyclicBufferHolder<T> cyclicBufferHolder, IValueScanner<T> valueScanner, ICompareStrategy<T> compareStrategy, int poolSize, int maxFileInTask) {
+        super(cyclicBufferHolder, valueScanner, compareStrategy);
+        this.poolSize = poolSize;
+        this.maxFileInTask = maxFileInTask;
     }
 
-    /**
-     * Start parallel merge
-     *
-     * @param maxFileInTask max file count taking part in one k-way merge
-     * @param poolSize      max pool size
-     */
-    public String merge(int maxFileInTask, int poolSize) throws InterruptedException, ExecutionException {
-        MergeReducer mergeReducer = new MergeReducer(null, fileNames, Integer.min(maxFileInTask, fileNames.size()));
-        new ForkJoinPool(poolSize).invoke(mergeReducer);
-        return mergeReducer.get();
+    @Override
+    public String merge(final List<String> fileNames, String outputFilePath) {
+        try {
+            MergeReducer mergeReducer = new MergeReducer(null, fileNames, Integer.min(maxFileInTask, fileNames.size()),outputFilePath);
+            new ForkJoinPool(poolSize).invoke(mergeReducer);
+            return mergeReducer.get();
+        } catch (InterruptedException| ExecutionException e){
+            e.printStackTrace();
+            throw new RuntimeException(e);
+        }
     }
 
     /**
@@ -56,15 +52,18 @@ public class MergeFilesParallel<T> {
         private final int maxFileInTask;
         private List<MergeReducer> forks;
         private String result;
+        private final String outputFileName;
 
-        private MergeReducer(CountedCompleter<String> parent, List<String> fileNames, int maxChunkInTask) {
+        private MergeReducer(CountedCompleter<String> parent, List<String> fileNames, int maxChunkInTask, String outputFileName) {
             super(parent);
             this.fileNames = fileNames;
             this.maxFileInTask = maxChunkInTask;
             this.forks = new ArrayList<>(maxChunkInTask);
+            this.outputFileName = outputFileName;
         }
 
-        public String getResult() {
+        @Override
+        public String getRawResult() {
             return result;
         }
 
@@ -72,7 +71,7 @@ public class MergeFilesParallel<T> {
         public void compute() {
             final int size = fileNames.size();
             if (size <= maxFileInTask) {
-                result = execMerge(fileNames);
+                result = execMerge(fileNames, outputFileName);
             } else {
                 int delta = size / maxFileInTask;
                 if (delta <= maxFileInTask) {
@@ -99,25 +98,22 @@ public class MergeFilesParallel<T> {
         @Override
         public void onCompletion(CountedCompleter<?> caller) {
             if (caller != this) {
-                List<String> fileTmp = forks.stream().map(MergeReducer::getResult).collect(Collectors.toList());
-                result = execMerge(fileTmp);
+                List<String> fileTmp = forks.stream().map(MergeReducer::getRawResult).collect(Collectors.toList());
+                result = execMerge(fileTmp, outputFileName);
             }
         }
 
         private void addTask(List<String> fileTmp) {
             this.addToPendingCount(1);
-            MergeReducer mapReducer = new MergeReducer(this, fileTmp, maxFileInTask);
+            MergeReducer mapReducer = new MergeReducer(this, fileTmp, maxFileInTask, outputFileName);
             mapReducer.fork();
             forks.add(mapReducer);
         }
 
-        private String execMerge(List<String> fileNames) {
+        private String execMerge(List<String> fileNames, String outputFileName) {
             try {
-                MergeFiles mergeFiles = new MergeFiles<>(cyclicBufferHolder, valueScanner, compareStrategy, fileNames);
-                String newName = FileNamesHolder.getNewUniqueName(outputFileName);
-                mergeFiles.merge(newName);
-                return newName;
-            } catch (Exception e) {
+                return kWayMerge(fileNames, FileNamesHolder.getNewUniqueName(outputFileName));
+            } catch (IOException e) {
                 e.printStackTrace();
                 this.cancel(true);
                 return null;

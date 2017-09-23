@@ -6,10 +6,7 @@ import main.sortBigFile.writers.IValueScanner;
 import java.io.*;
 import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 import java.util.concurrent.*;
 
 /**
@@ -37,8 +34,8 @@ public class SortFilesPartMemory<T> {
         this.valueScanner = valueScanner;
     }
 
-    private List<Callable<String>> initPartitions(final Scanner scanner) throws ExecutionException, InterruptedException {
-        final List<Callable<String>> partitions =
+    private List<Callable<Void>> initPartitions(final Scanner scanner, final List<String> fileNames) throws ExecutionException, InterruptedException {
+        final List<Callable<Void>> partitions =
                 new ArrayList<>(maxCountOfChunks);
 
         for (int i = 0; i < maxCountOfChunks; i++) {
@@ -58,7 +55,7 @@ public class SortFilesPartMemory<T> {
                         for (int ii = startKey; ii < stopKey; ii++)
                             out.println(array[ii]);
 
-                        return fileName;
+                        fileNames.add(fileName);
                     }
                 }
                 return null;
@@ -68,16 +65,13 @@ public class SortFilesPartMemory<T> {
         return partitions;
     }
 
-    private List<String> run(ExecutorService executorPool, List<Callable<String>> partitions) throws InterruptedException, ExecutionException {
-        final List<Future<String>> resultFromParts =
+    private void run(ExecutorService executorPool, List<Callable<Void>> partitions) throws InterruptedException, ExecutionException {
+        final List<Future<Void>> resultFromParts =
                 executorPool.invokeAll(partitions, 100000, TimeUnit.SECONDS);
 
-        List<String> res = new ArrayList<>(partitions.size());
-        for (Future<String> future : resultFromParts) {
-            res.add(future.get());
+        for (Future<Void> future : resultFromParts) {
+            future.get();
         }
-
-        return res;
     }
 
     private int fillBuffer(Scanner scanner, int start, int stop) {
@@ -97,8 +91,10 @@ public class SortFilesPartMemory<T> {
                 Executors.newFixedThreadPool(poolSize);
 
         try (Scanner scanner = new Scanner(new File(inputFileName), StandardCharsets.UTF_8.toString())) {
-            final List<Callable<String>> partitions = initPartitions(scanner);
-            return run(executorPool, partitions);
+            final List<String> fileNames = Collections.synchronizedList(new ArrayList<>(maxCountOfChunks));
+            final List<Callable<Void>> partitions = initPartitions(scanner, fileNames);
+            run(executorPool, partitions);
+            return fileNames;
         } catch (InterruptedException | IOException |
                 ExecutionException e) {
             e.printStackTrace();

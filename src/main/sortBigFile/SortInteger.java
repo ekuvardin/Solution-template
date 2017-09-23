@@ -60,14 +60,9 @@ public class SortInteger {
                         .setOutputFileName(set.valueOf(outputResultFile))
                         .setValueScanner(new IntegerScanner())
                         .setCompareStrategy(new IntegerCompareStrategy())
+                        .userParallelMerge(true)
                         .build();
 
-        List<String> sorted= sortBigFile.sortResults();
-
-        if (set.valueOf(useParallelMerge)) {
-            sortBigFile.mergeParallel(set.valueOf(maxCountOfChunks) / set.valueOf(poolSize), sorted);
-        } else {
-            sortBigFile.merge(sorted);
-        }
+        sortBigFile.sortResults();
     }
 }

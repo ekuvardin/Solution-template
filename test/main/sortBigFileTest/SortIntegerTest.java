@@ -30,9 +30,10 @@ public class SortIntegerTest {
                         .setOutputFileName("Out.txt")
                         .setValueScanner(new IntegerScanner())
                         .setCompareStrategy(new IntegerCompareStrategy())
+                        .userParallelMerge(true)
                         .build();
 
-        sortBigFile.mergeParallel(40 / 4 ,sortBigFile.sortResults());
+        sortBigFile.sortResults();
         Assert.assertTrue(testSortCorrectness(new File("Out.txt")));
     }
 
@@ -45,14 +46,14 @@ public class SortIntegerTest {
                 SortBigFile.createSortBigFile(Integer.class)
                         .setMaxChunkLen(32768)
                         .setMaxCountOfChunks(40)
-                        .setPoolSize(4)
                         .setInputFileName("AvgNumbers.txt")
                         .setOutputFileName("Out.txt")
                         .setValueScanner(new IntegerScanner())
                         .setCompareStrategy(new IntegerCompareStrategy())
+                        .userParallelMerge(false)
                         .build();
 
-        sortBigFile.merge(sortBigFile.sortResults());
+        sortBigFile.sortResults();
         Assert.assertTrue(testSortCorrectness(new File("Out.txt")));
     }
 

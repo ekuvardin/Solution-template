@@ -70,6 +70,10 @@ public class CyclicBufferHolder<T> {
         size++;
     }
 
+    public int getSize() {
+        return size;
+    }
+
     /**
      * Simple cyclic buffer array
      *

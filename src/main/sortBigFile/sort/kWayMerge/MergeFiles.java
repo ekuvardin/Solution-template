@@ -19,28 +19,30 @@ import java.util.*;
  *
  * @param <T> type of sorting elements
  */
-public class MergeFiles<T> {
+public class MergeFiles<T> implements Cloneable{
 
     private final CyclicBufferHolder<T> cyclicBufferHolder;
     private final IValueScanner<T> valueScanner;
     private final ICompareStrategy<T> compareStrategy;
-    private final List<String> fileNames;
 
-    public MergeFiles(CyclicBufferHolder<T> cyclicBufferHolder, IValueScanner<T> valueScanner, ICompareStrategy<T> compareStrategy, List<String> fileNames) {
+    public MergeFiles(CyclicBufferHolder<T> cyclicBufferHolder, IValueScanner<T> valueScanner, ICompareStrategy<T> compareStrategy) {
         this.cyclicBufferHolder = cyclicBufferHolder;
         this.valueScanner = valueScanner;
         this.compareStrategy = compareStrategy;
-        this.fileNames = fileNames;
     }
 
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
     /**
      * Merge files using k-way merge
      *
      * @param outputFileName name of file with results of merge
      * @throws IOException
      */
-    public void merge(String outputFileName) throws IOException {
-        List<Scanner> scanners = createScanners();
+    public void merge(List<String> fileNames, String outputFileName) throws IOException {
+        List<Scanner> scanners = createScanners(fileNames);
 
         if (scanners.size() == 0) {
             return;
@@ -66,7 +68,7 @@ public class MergeFiles<T> {
         }
     }
 
-    private List<Scanner> createScanners() throws FileNotFoundException {
+    private List<Scanner> createScanners(List<String> fileNames) throws FileNotFoundException {
         List<Scanner> scanners = new ArrayList<>(fileNames.size());
         for (String name : fileNames) {
             File file = new File(name);
