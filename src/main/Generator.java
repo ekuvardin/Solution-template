@@ -21,7 +21,7 @@ public class Generator {
         OptionSpec<String> resultFileName = parser.accepts("res", "Result file name.")
                 .withRequiredArg().ofType(String.class).describedAs("res").defaultsTo("AvgNumbers.txt");
 
-        OptionSpec<Double> size = parser.accepts("size", "Result file name.")
+        OptionSpec<Double> size = parser.accepts("size", "Approximate file size.")
                 .withRequiredArg().ofType(Double.class).defaultsTo(0.01d).describedAs("size");
 
         OptionSet set;
@@ -62,6 +62,6 @@ public class Generator {
             }
         }
         long time = System.currentTimeMillis() - start;
-        System.out.printf("Took %.1f seconds to create a file of %.3f GB", time / 1e3, file.length() / 1e9);
+        System.out.println(String.format("Took %.1f seconds to create a file of %.3f GB", time / 1e3, file.length() / 1e9));
     }
 }

@@ -20,7 +20,7 @@ public class SortIntegerTest {
     public void sortIntegerParallelTest() throws IOException {
         Generator.main("-res AvgNumbers.txt".split(" "));
         // Run example  SortInteger.main() with this arguments
-        // -chk 32768 -ct 40 -pl 4 -inpf AvgNumbers.txt -resf Out.txt -pm true
+        // -chk 32768 -ct 40 -pm false -inpf AvgNumbers.txt -resf Out.txt -pm true
         SortBigFile sortBigFile =
                 SortBigFile.createSortBigFile(Integer.class)
                         .setMaxChunkLen(32768)
@@ -41,7 +41,7 @@ public class SortIntegerTest {
     public void sortIntegerTest() throws IOException {
         Generator.main("-res AvgNumbers.txt".split(" "));
         // Run example  SortInteger.main() with this arguments
-        // -chk 32768 -ct 40 -pl 4 -inpf AvgNumbers.txt -resf Out.txt
+        // -chk 32768 -ct 40 -pl 4 -inpf AvgNumbers.txt -resf Out.txt -pm true
         SortBigFile sortBigFile =
                 SortBigFile.createSortBigFile(Integer.class)
                         .setMaxChunkLen(32768)

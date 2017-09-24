@@ -60,7 +60,7 @@ public class SortInteger {
                         .setOutputFileName(set.valueOf(outputResultFile))
                         .setValueScanner(new IntegerScanner())
                         .setCompareStrategy(new IntegerCompareStrategy())
-                        .userParallelMerge(true)
+                        .userParallelMerge(set.valueOf(useParallelMerge))
                         .build();
 
         sortBigFile.sortResults();

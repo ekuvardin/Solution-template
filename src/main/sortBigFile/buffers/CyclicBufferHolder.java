@@ -70,6 +70,11 @@ public class CyclicBufferHolder<T> {
         size++;
     }
 
+    /**
+     * Get count of buffers
+     *
+     * @return count of buffers
+     */
     public int getSize() {
         return size;
     }

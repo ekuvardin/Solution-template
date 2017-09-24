@@ -3,7 +3,7 @@ package main.sortBigFile.sort;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * Holds all files which system generate.
+ * Class to generate new file name
  */
 public final class FileNamesHolder {
 

@@ -1,6 +1,5 @@
 package main.sortBigFile.sort.kWayMerge;
 
-import main.sortBigFile.sort.FileNamesHolder;
 import main.sortBigFile.buffers.CyclicBufferHolder;
 import main.sortBigFile.buffers.SectionWriters;
 import main.sortBigFile.readers.ICompareStrategy;
@@ -19,7 +18,7 @@ import java.util.*;
  *
  * @param <T> type of sorting elements
  */
-public class MergeFiles<T> implements Cloneable{
+public class MergeFiles<T> {
 
     private final CyclicBufferHolder<T> cyclicBufferHolder;
     private final IValueScanner<T> valueScanner;
@@ -31,15 +30,12 @@ public class MergeFiles<T> implements Cloneable{
         this.compareStrategy = compareStrategy;
     }
 
-    @Override
-    protected Object clone() throws CloneNotSupportedException {
-        return super.clone();
-    }
     /**
      * Merge files using k-way merge
      *
+     * @param fileNames      list of merge files
      * @param outputFileName name of file with results of merge
-     * @throws IOException
+     * @throws IOException throw when trying to open files in fileNames
      */
     public void merge(List<String> fileNames, String outputFileName) throws IOException {
         List<Scanner> scanners = createScanners(fileNames);

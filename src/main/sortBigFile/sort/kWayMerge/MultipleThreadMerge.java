@@ -14,7 +14,7 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
 
 /**
- * Merge file in parallel using concurrent running several k-way merge
+ * Merge files in parallel using concurrent running several k-way merge
  *
  * @param <T> type of sorting elements
  */

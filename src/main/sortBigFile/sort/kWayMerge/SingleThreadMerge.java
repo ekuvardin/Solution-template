@@ -11,6 +11,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Queue;
 
+/**
+ * Merge several files i single thread
+ *
+ * @param <T>  type of sorting elements
+ */
 public class SingleThreadMerge<T> implements IMergeStrategy {
 
     protected final CyclicBufferHolder<T> cyclicBufferHolder;
@@ -29,7 +34,7 @@ public class SingleThreadMerge<T> implements IMergeStrategy {
             return null;
 
         try {
-            Queue<String> queue = new ArrayDeque<String>(fileNames);
+            Queue<String> queue = new ArrayDeque<>(fileNames);
 
             while (queue.size() > 1) {
                 int size = Integer.min(cyclicBufferHolder.getSize(), queue.size());

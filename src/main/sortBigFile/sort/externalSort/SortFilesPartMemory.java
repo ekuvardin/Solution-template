@@ -4,7 +4,6 @@ import main.sortBigFile.sort.FileNamesHolder;
 import main.sortBigFile.writers.IValueScanner;
 
 import java.io.*;
-import java.lang.reflect.Array;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.*;
@@ -85,6 +84,8 @@ public class SortFilesPartMemory<T> {
 
     /**
      * Split input file on maxCountOfChunks and sort them independently
+     *
+     * @return return created files
      */
     public List<String> sortResults() {
         final ExecutorService executorPool =

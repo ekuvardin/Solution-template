@@ -2,6 +2,9 @@ package main.sortBigFile.readers.integerReader;
 
 import main.sortBigFile.readers.ICompareStrategy;
 
+/**
+ * How to compare Integer
+ */
 public class IntegerCompareStrategy implements ICompareStrategy<Integer> {
 
     @Override

@@ -1,12 +1,9 @@
 package main.sortBigFile.sort;
 
-import java.util.ArrayDeque;
-
 import main.sortBigFile.buffers.CyclicBufferHolder;
 import main.sortBigFile.readers.ICompareStrategy;
 import main.sortBigFile.sort.externalSort.SortFilesPartMemory;
 import main.sortBigFile.sort.kWayMerge.IMergeStrategy;
-import main.sortBigFile.sort.kWayMerge.MergeFiles;
 import main.sortBigFile.sort.kWayMerge.MultipleThreadMerge;
 import main.sortBigFile.sort.kWayMerge.SingleThreadMerge;
 import main.sortBigFile.writers.IValueScanner;
@@ -15,7 +12,6 @@ import java.io.*;
 import java.lang.reflect.Array;
 import java.util.*;
 import java.text.SimpleDateFormat;
-import java.util.concurrent.ExecutionException;
 
 /**
  * Sort big file
