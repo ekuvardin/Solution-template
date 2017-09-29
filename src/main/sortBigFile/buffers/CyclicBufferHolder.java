@@ -110,6 +110,7 @@ public class CyclicBufferHolder<T> {
             if (getSize() == 0) {
                 throw new NoSuchElementException();
             }
+
             return array[indexStrategy.getIndex(head) + startPointer];
         }
 
@@ -144,6 +145,7 @@ public class CyclicBufferHolder<T> {
         @Override
         public T pull() {
             T value = getFirst();
+            array[indexStrategy.getIndex(head) + startPointer] = null;//Let's GC do it's work
             head++;
 
             return value;

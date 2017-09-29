@@ -62,6 +62,6 @@ public class Generator {
             }
         }
         long time = System.currentTimeMillis() - start;
-        System.out.println(String.format("Took %.1f seconds to create a file of %.3f GB", time / 1e3, file.length() / 1e9));
+        System.out.println(String.format("Took %.1f seconds to create template file of %.3f GB", time / 1e3, file.length() / 1e9));
     }
 }
