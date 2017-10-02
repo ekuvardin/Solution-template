@@ -1,8 +1,7 @@
 # Solution-template
+ (Benchmarks live in project Benchmark)
 
-Solution examples
-
-   main.SortBigFile - example of K-way merge big file
+  ## main.SortBigFile - example of K-way merge big file**
    
           In order to launch program call main.sortBigFile.SortInteger
           
@@ -20,4 +19,4 @@ Solution examples
               
               pm   - use parallel merge. Available values true/false
               
-   main.ProducerConsumer - simple solution of Producer-Consumer problem. Run Worker to see results
+  ## main.ProducerConsumer - simple solution of Producer-Consumer problem. Run Worker to see results
