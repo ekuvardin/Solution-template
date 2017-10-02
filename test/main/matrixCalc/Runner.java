@@ -1,7 +1,6 @@
 package main.matrixCalc;
 
 import main.Generator;
-import main.matrixCalc.*;
 import main.matrixCalc.impl.*;
 import org.junit.Assert;
 import org.junit.BeforeClass;
