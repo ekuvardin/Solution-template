@@ -3,6 +3,3 @@
 .classpath
 .project
 jcstress.*
-/target/
-*.idea
-*.iml

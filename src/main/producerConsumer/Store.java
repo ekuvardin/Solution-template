@@ -3,6 +3,11 @@ package main.producerConsumer;
 import java.lang.reflect.Array;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Simple store using TTAS na lock to guard array
+ *
+ * @param <T> stored item
+ */
 public class Store<T> implements IStore<T> {
     private final int maxSize;
     private final T[] array;
@@ -36,6 +41,7 @@ public class Store<T> implements IStore<T> {
         }
     }
 
+    @Override
     public void put(T item) {
         while (true) {
             //Simple TTAS

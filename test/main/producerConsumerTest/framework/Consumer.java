@@ -1,20 +1,17 @@
 package main.producerConsumerTest.framework;
 
 import main.producerConsumer.IStore;
-import main.producerConsumer.StoreOnArray;
-import main.producerConsumerTest.StoreOnArrayTests;
 
-public class Consumer extends RunnerTemplate {
-
-    public Consumer(IStore<Integer> store, int count) {
-        super(store, count);
-    }
+public class Consumer implements StoreStrategy<Integer> {
 
     @Override
-    public void run() {
+    public int getResults(IStore<Integer> store, int count) {
+        int tmp = count;
         do {
             store.get();
-            count--;
-        } while (count > 0);
+            tmp--;
+        } while (tmp > 0);
+
+        return tmp;
     }
 }
