@@ -2,7 +2,6 @@ package main.executor;
 
 import javax.annotation.Nonnull;
 import java.util.Iterator;
-import java.util.Queue;
 import java.util.concurrent.*;
 
 public class Executor {
@@ -10,9 +9,6 @@ public class Executor {
     private final ConcurrentLinkedQueue<Runnable> tasks;
     private final ChainingThread workingThread = new ChainingThread();
     private final StateMachine stateMachine = new StateMachine();
-
-    @Nonnull
-    private volatile IExecutionStrategy curStrategy = new SpinStrategy();
 
     public Executor(int workers) {
         if (workers <= 0)
@@ -23,8 +19,7 @@ public class Executor {
         final Runnable mainRun = () -> {
             workingThread.add();
             try {
-                for(StateMachine.State curState = stateMachine.getCurrentState(); )
-                for (IExecutionStrategy strategy = curStrategy; strategy.process(tasks); strategy = curStrategy) {
+                for (IExecutionStrategy strategy = stateMachine.getCurrentState(); strategy.process(tasks, stateMachine); strategy = stateMachine.getCurrentState()) {
                 }
             } finally {
                 workingThread.remove();
@@ -38,10 +33,10 @@ public class Executor {
     }
 
     public void submit(@Nonnull Runnable r) {
-        IExecutionStrategy locStrategy = curStrategy;
-        if (locStrategy instanceof SpinStrategy) {
+        State state = stateMachine.getCurrentState();
+        if (state == State.RUNNING) {
             tasks.offer(r);
-            ((SpinStrategy) locStrategy).unParkThread();
+            State.RUNNING.unParkThread();
         } else {
             throw new RejectedExecutionException("Submit tasks are forbidden");
         }
@@ -58,26 +53,16 @@ public class Executor {
     }
 
     public synchronized void shutdown() {
-        changeState(new SoftShutdown());
+        stateMachine.changeState(State.EXECUTE_ALL_TASK_THEN_TERMINATE);
     }
 
     public synchronized void shutdownNow() {
-        changeState(new EndExecution());
+        stateMachine.changeState(State.TERMINATE);
         for (Thread thread : workingThread.workingThreads()) {
             if (thread != null) {
                 thread.interrupt();
             }
         }
     }
-
-    private void changeState(@Nonnull IExecutionStrategy strategy) {
-        IExecutionStrategy locStrategy = curStrategy;
-        curStrategy = strategy;
-        if (locStrategy instanceof SpinStrategy) {
-            ((SpinStrategy) locStrategy).unParkAllThread();
-        }
-    }
-
-
 }
 
