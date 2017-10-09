@@ -9,6 +9,7 @@ public class Executor {
 
     private final ConcurrentLinkedQueue<Runnable> tasks;
     private final ChainingThread workingThread = new ChainingThread();
+    private final StateMachine stateMachine = new StateMachine();
 
     @Nonnull
     private volatile IExecutionStrategy curStrategy = new SpinStrategy();
@@ -22,6 +23,7 @@ public class Executor {
         final Runnable mainRun = () -> {
             workingThread.add();
             try {
+                for(StateMachine.State curState = stateMachine.getCurrentState(); )
                 for (IExecutionStrategy strategy = curStrategy; strategy.process(tasks); strategy = curStrategy) {
                 }
             } finally {
@@ -76,85 +78,6 @@ public class Executor {
         }
     }
 
-    @FunctionalInterface
-    interface IExecutionStrategy {
 
-        boolean process(Queue<Runnable> tasks);
-
-    }
-
-    class EndExecution implements IExecutionStrategy {
-
-        @Override
-        public boolean process(Queue<Runnable> tasks) {
-            return false;
-        }
-    }
-
-    class SoftShutdown implements IExecutionStrategy {
-
-        @Override
-        public boolean process(Queue<Runnable> tasks) {
-            for (Runnable r = tasks.poll(); curStrategy == this && r != null; r = tasks.poll()) {
-                r.run();
-                Thread.yield();
-            }
-
-            return false;
-        }
-    }
-
-    class SpinStrategy implements IExecutionStrategy {
-
-        private final int spinCount = 100;
-        private final Object lock = new Object();
-
-        @Override
-        public boolean process(Queue<Runnable> tasks) {
-            boolean res = true;
-            do {
-                Runnable r = tasks.poll();
-
-                // simple spin
-                for (int i = 0; i < spinCount && curStrategy == this && r == null; i++) {
-                    Thread.yield();
-                    r = tasks.poll();
-                }
-
-                // found task
-                if (curStrategy == this && r != null)
-                    r.run();
-
-            } while (curStrategy == this && !(res = parkThread(tasks)));// park thread when spin too long
-
-            return res;
-        }
-
-        private boolean parkThread(Queue<Runnable> tasks) {
-            synchronized (lock) {
-                if (tasks.isEmpty() && curStrategy == this) {
-                    try {
-                        lock.wait();
-                    } catch (InterruptedException e) {
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        }
-
-        private void unParkThread() {
-            synchronized (lock) {
-                lock.notify();
-            }
-        }
-
-        private void unParkAllThread() {
-            synchronized (lock) {
-                lock.notifyAll();
-            }
-        }
-    }
 }
 
