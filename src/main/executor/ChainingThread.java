@@ -47,7 +47,7 @@ public class ChainingThread {
 
     public boolean isEmpty() {
         for (Entry curNode = tail.get(); curNode != null; curNode = curNode.prev) {
-            if (curNode.get() != null && !curNode.inUsed) {
+            if (curNode.get() != null && curNode.inUsed) {
                 return false;
             }
         }

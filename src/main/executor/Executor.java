@@ -46,7 +46,7 @@ public class Executor {
     }
 
     public synchronized boolean awaitTermination(long seconds) {
-        changeState(new SoftShutdown());
+        shutdown();
         workingThread.waitEmpty(seconds);
         return workingThread.isEmpty();
     }
@@ -56,7 +56,7 @@ public class Executor {
     }
 
     public synchronized void shutdown() {
-        changeState(new EndExecution());
+        changeState(new SoftShutdown());
     }
 
     public synchronized void shutdownNow() {
