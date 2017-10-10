@@ -12,20 +12,18 @@ import java.util.concurrent.TimeUnit;
 
 public class executorTests {
 
-    private CountDownLatch latch;
-    private Executor executor;
+    private volatile CountDownLatch latch;
+    private volatile Executor executor;
 
     @Before
-    public void preInitTest(){
+    public void preInitTest() {
         latch = new CountDownLatch(4);
     }
 
     @After
-    public void postTest(){
-        executor.shutdown();
-        if(!executor.awaitTermination(2)){
+    public void postTest() {
+        if (executor != null)
             executor.shutdownNow();
-        }
     }
 
     @Test(timeout = 5000)
@@ -57,20 +55,25 @@ public class executorTests {
         Assert.assertTrue(latch.getCount() > 0);
     }
 
-    @Test(timeout = 15000)
+    @Test(timeout = 20000)
     public void shutdownShouldExecuteAllTasks() throws InterruptedException {
         initExecutor(latch, 1);
 
         executor.shutdown();
-        latch.await(10, TimeUnit.SECONDS);
+        latch.await();
 
         checkRemainingTasks(executor);
     }
 
-    @Test(timeout = 20000)
+    @Test(timeout = 200000)
     public void awaitTerminationShouldNotExecuteAllTasks() throws InterruptedException {
+        latch = new CountDownLatch(10);
         initExecutor(latch, 1);
 
+        // Wait for single thread to run
+        while (latch.getCount() == 10) {
+            Thread.yield();
+        }
         // All task can't execute so fast
         Assert.assertEquals(false, executor.awaitTermination(1));
         executor.shutdown();
@@ -82,7 +85,7 @@ public class executorTests {
 
         latch.await();
 
-        Assert.assertEquals(true, executor.awaitTermination(1));
+        Assert.assertEquals(true, executor.awaitTermination(1000));
         checkRemainingTasks(executor);
     }
 
@@ -92,10 +95,10 @@ public class executorTests {
 
         executor.shutdownNow();
 
+        // Wait for some threads continue running and can execute tasks
         latch.await(10, TimeUnit.SECONDS);
 
         Assert.assertTrue(latch.getCount() > 0);
-        checkRemainingTasks(executor);
     }
 
     private void initExecutor(final CountDownLatch latch, int workers) throws InterruptedException {
@@ -119,7 +122,7 @@ public class executorTests {
         Thread.sleep(2000);
     }
 
-    private void checkRemainingTasks(Executor executor){
+    private void checkRemainingTasks(Executor executor) {
         int i = 0;
         for (Iterator<Runnable> iter = executor.getRemainingTasks(); iter.hasNext(); iter.next()) {
             i++;
