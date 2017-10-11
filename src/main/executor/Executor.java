@@ -6,6 +6,7 @@ import main.executor.states.StateMachine;
 
 import javax.annotation.Nonnull;
 import java.util.Iterator;
+import java.util.Queue;
 import java.util.concurrent.*;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -40,10 +41,10 @@ public class Executor {
         if (workers <= 0)
             throw new RuntimeException("Count of workers must be greater than zero");
 
-        final Runnable mainRun = new MainRunner();
+        final Runnable mainRun = new MainRunner(this.stateMachine, this.tasks);
 
         for (int i = 0; i < workers; i++) {
-            ChainingThread.Worker thread = new ChainingThread.Worker(mainRun, this.workingThread);
+            Worker thread = new Worker(mainRun, this.workingThread);
             thread.start();
         }
     }
@@ -51,12 +52,12 @@ public class Executor {
     /**
      * Try submit task. If submitting tasks are forbidden then throw RejectedExecutionException
      *
-     * @param r submitting runnable
+     * @param runnable submitting runnable
      */
-    public void submit(@Nonnull Runnable r) {
+    public void submit(@Nonnull Runnable runnable) {
         IExecutionStrategy strategy = stateMachine.getCurrentStrategy();
         if (strategy.canSubmitTask()) {
-            tasks.add(r);
+            tasks.add(runnable);
             strategy.onTrySubmitTask();
         } else {
             throw new RejectedExecutionException("Submitting task are forbidden");
@@ -114,13 +115,45 @@ public class Executor {
     }
 
     /**
+     * Class-wrapper for manually add Thread to chain due to MainRunner may start later
+     * then we immediately shutdown Executor after creation
+     */
+    private static class Worker extends Thread {
+
+        private final ChainingThread.Entry localEntry;
+
+        Worker(final Runnable target, final ChainingThread chainingThread) {
+            super(target);
+            localEntry = chainingThread.add(this);
+            localEntry.enter();
+        }
+
+        @Override
+        public synchronized void run() {
+            try {
+                super.run();
+            } finally {
+                localEntry.exit();
+            }
+        }
+    }
+
+    /**
      * All working threads run within this class and do actions according to current IExecutionStrategy
      */
-    class MainRunner implements Runnable {
+    private static class MainRunner implements Runnable {
+
+        private final StateMachine stateMachine;
+        private final Queue<Runnable> tasks;
+
+        MainRunner(final StateMachine stateMachine, final Queue<Runnable> tasks) {
+            this.stateMachine = stateMachine;
+            this.tasks = tasks;
+        }
 
         @Override
         public void run() {
-            for (IExecutionStrategy strategy = stateMachine.getCurrentStrategy(); strategy.process(tasks); strategy = stateMachine.getCurrentStrategy()) {
+            for (IExecutionStrategy strategy = this.stateMachine.getCurrentStrategy(); strategy.process(this.tasks); strategy = this.stateMachine.getCurrentStrategy()) {
                 Thread.yield();
             }
         }

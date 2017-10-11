@@ -12,50 +12,38 @@ public class ChainingThread {
 
     private final AtomicReference<Entry> tail = new AtomicReference<>();
 
-    /**
-     * Class-wrapper for manually add Thread to chain due to MainRunner may start later
-     * then we immediately shutdown Executor after creation
-     */
-    static class Worker extends Thread {
+    public Entry add(Thread thread){
+        Entry curEntry = new Entry(thread);
+        Entry lastNode;
 
-        private final ChainingThread.Entry localEntry;
-
-        public Worker(Runnable target, ChainingThread chainingThread) {
-            super(target);
-
-            localEntry = new Entry(this);
-            Entry lastNode;
-
-            do {
-                lastNode = chainingThread.tail.get();
-                localEntry.prev = lastNode;
-            }
-            while (!chainingThread.tail.compareAndSet(lastNode, localEntry));
-
-            localEntry.inUsed = true;
+        do {
+            lastNode = tail.get();
+            curEntry.prev = lastNode;
         }
+        while (!tail.compareAndSet(lastNode, curEntry));
 
-        @Override
-        public synchronized void run() {
-            try {
-                super.run();
-            } finally {
-                localEntry.inUsed = false;
-            }
-        }
+        return curEntry;
     }
 
     /**
      * If threads are cleaned by GC then we can simply
      * skip this reference
      */
-    static class Entry extends WeakReference<Worker> {
+    static class Entry extends WeakReference<Thread> {
 
-        Entry prev = null;
-        volatile boolean inUsed = false;
+        private Entry prev = null;
+        private volatile boolean inUsed = false;
 
-        Entry(Worker thread) {
+        Entry(Thread thread) {
             super(thread);
+        }
+
+        public void enter(){
+            inUsed = true;
+        }
+
+        public void exit(){
+            inUsed = false;
         }
     }
 
