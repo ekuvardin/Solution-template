@@ -24,8 +24,9 @@ public class SpinStrategy implements IExecutionStrategy {
                 }
 
                 // found task
-                if (!stop && r != null)
+                if (r != null) {
                     r.run();
+                }
 
                 // park thread when spin too long
                 parkThread(tasks);

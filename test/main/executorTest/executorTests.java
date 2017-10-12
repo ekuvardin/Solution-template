@@ -1,10 +1,7 @@
 package main.executorTest;
 
 import main.executor.Executor;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.*;
 
 import java.util.Iterator;
 import java.util.concurrent.CountDownLatch;
@@ -55,7 +52,8 @@ public class executorTests {
         Assert.assertTrue(latch.getCount() > 0);
     }
 
-    @Test(timeout = 20000)
+
+    @Test(timeout = 40000)
     public void shutdownShouldExecuteAllTasks() throws InterruptedException {
         initExecutor(latch, 1);
 
@@ -65,7 +63,7 @@ public class executorTests {
         checkRemainingTasks(executor);
     }
 
-    @Test(timeout = 200000)
+    @Test(timeout = 20000)
     public void awaitTerminationShouldNotExecuteAllTasks() throws InterruptedException {
         latch = new CountDownLatch(10);
         initExecutor(latch, 1);

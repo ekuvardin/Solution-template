@@ -1,6 +1,5 @@
 package main.executor.states;
 
-import javafx.util.Pair;
 import main.executor.executionStrategy.IExecutionStrategy;
 
 import javax.annotation.Nonnull;
@@ -12,7 +11,7 @@ import javax.annotation.Nonnull;
 public class StateMachine {
 
     @Nonnull
-    private volatile Pair<State, IExecutionStrategy> currentWork = new Pair<>(State.RUNNING, State.RUNNING.getStrategy());
+    private volatile Link currentWork = new Link(State.RUNNING);
 
     /**
      * Try to change current state to newState
@@ -21,12 +20,12 @@ public class StateMachine {
      */
     public void changeState(State newState) {
         synchronized (this) {
-            if (currentWork.getKey().canBeChange(newState)) {
-                Pair<State, IExecutionStrategy> old = currentWork;
-                currentWork = new Pair<>(newState, newState.getStrategy());
-                old.getValue().stopExecution();
+            if (currentWork.getState().canBeChange(newState)) {
+                Link old = currentWork;
+                currentWork = new Link(newState);
+                old.getExecutionStrategy().stopExecution();
             } else {
-                throw new RuntimeException(String.format("Can't set new state:%s after:%s", newState, currentWork.getKey()));
+                throw new RuntimeException(String.format("Can't set new state:%s after:%s", newState, currentWork.getState()));
             }
         }
     }
@@ -37,6 +36,24 @@ public class StateMachine {
      * @return current strategy
      */
     public IExecutionStrategy getCurrentStrategy() {
-        return currentWork.getValue();
+        return currentWork.getExecutionStrategy();
+    }
+
+    private static class Link {
+        final State state;
+        final IExecutionStrategy executionStrategy;
+
+        Link(State state) {
+            this.state = state;
+            this.executionStrategy = state.getStrategy();
+        }
+
+        State getState() {
+            return state;
+        }
+
+        IExecutionStrategy getExecutionStrategy() {
+            return executionStrategy;
+        }
     }
 }
