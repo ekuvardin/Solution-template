@@ -26,3 +26,5 @@
          some examples of how to speed up matrix calculation in single thread.
   ### main.producerConsumer
          some strategies to solve well known problem
+  ### main.executor
+         example self-writing executor
