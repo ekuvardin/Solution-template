@@ -27,4 +27,4 @@
   ### main.producerConsumer
          some strategies to solve well known problem
   ### main.executor
-         example self-writing executor
+         example of self-writing executor
