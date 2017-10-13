@@ -24,7 +24,7 @@ public abstract class CommonTests {
     public abstract void preTest();
 
     @Test(timeout = 10000)
-    public void storeCorrectnessTest() {
+    public void storeCorrectnessTest() throws InterruptedException {
         List<Integer> tmp = new ArrayList<>(5);
 
         for (int i = 0; i < 5; i++) {
@@ -87,7 +87,12 @@ public abstract class CommonTests {
 
     private CompletableFuture<Integer> createFuture(StoreStrategy<Integer> strategy, IStore<Integer> store, int count) {
         return CompletableFuture.supplyAsync(() -> {
-            return strategy.getResults(store, count);
+            try {
+                return strategy.getResults(store, count);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                throw new RuntimeException(e);
+            }
         }, executor);
     }
 

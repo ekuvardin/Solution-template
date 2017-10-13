@@ -30,7 +30,7 @@ public class RandomStartStore<T> implements IStore<T> {
     }
 
     @Override
-    public T get() {
+    public T get() throws InterruptedException {
         int localIndex = lastUsed.get();
 
         T item;
@@ -45,7 +45,7 @@ public class RandomStartStore<T> implements IStore<T> {
     }
 
     @Override
-    public void put(T input) {
+    public void put(T input) throws InterruptedException {
         int localIndex = lastUsed.get();
         while (!array.compareAndSet(localIndex, null, input)) {
             localIndex = indexStrategy.getIndex(localIndex);

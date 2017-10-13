@@ -22,10 +22,11 @@ public class Store<T> implements IStore<T> {
     }
 
     @Override
-    public T get() {
+    public T get() throws InterruptedException {
         while (true) {
             //Simple TTAS
-            if (currentSize > 0 && lock.tryLock()) {
+            if (currentSize > 0) {
+                lock.lockInterruptibly();
                 try {
                     // Do check on more time because currentSize may change
                     if (currentSize > 0) {
@@ -42,10 +43,11 @@ public class Store<T> implements IStore<T> {
     }
 
     @Override
-    public void put(T item) {
+    public void put(T item) throws InterruptedException {
         while (true) {
             //Simple TTAS
-            if (currentSize < maxSize && lock.tryLock()) {
+            if (currentSize < maxSize) {
+                lock.lockInterruptibly();
                 try {
                     if (currentSize < maxSize) {
                         array[currentSize++] = item;

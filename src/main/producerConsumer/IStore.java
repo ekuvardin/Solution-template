@@ -12,14 +12,14 @@ public interface IStore<T> {
      *
      * @return item
      */
-    T get();
+    T get() throws InterruptedException;
 
     /**
      * Put item
      *
      * @param item putted item
      */
-    void put(T item);
+    void put(T item) throws InterruptedException;
 
     /**
      * Is empty

@@ -5,7 +5,7 @@ import main.producerConsumer.IStore;
 public class Consumer implements StoreStrategy<Integer> {
 
     @Override
-    public int getResults(IStore<Integer> store, int count) {
+    public int getResults(IStore<Integer> store, int count) throws InterruptedException {
         int tmp = count;
         do {
             store.get();

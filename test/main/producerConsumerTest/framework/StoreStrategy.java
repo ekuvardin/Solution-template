@@ -5,6 +5,6 @@ import main.producerConsumer.IStore;
 @FunctionalInterface
 public interface StoreStrategy<T> {
 
-    int getResults(IStore<T> store, int count);
+    int getResults(IStore<T> store, int count) throws InterruptedException;
 
 }
