@@ -9,7 +9,7 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
  *
  * @param <T> store elements
  */
-public class StoreOnArray<T> implements IStore<T> {
+public class RandomStartStore<T> implements IStore<T> {
 
     private final AtomicReferenceArray<T> array;
     private final IIndexStrategy indexStrategy;
@@ -17,7 +17,7 @@ public class StoreOnArray<T> implements IStore<T> {
 
     private ThreadLocal<Integer> lastUsed;
 
-    public StoreOnArray(int size) {
+    public RandomStartStore(int size) {
         array = new AtomicReferenceArray<>(size);
 
         if ((size & -size) == size) {

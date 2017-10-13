@@ -53,7 +53,7 @@ public class executorTests {
     }
 
 
-    @Test(timeout = 40000)
+    @Test(timeout = 20000)
     public void shutdownShouldExecuteAllTasks() throws InterruptedException {
         initExecutor(latch, 1);
 
