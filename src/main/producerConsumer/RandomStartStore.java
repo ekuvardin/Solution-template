@@ -1,6 +1,7 @@
 package main.producerConsumer;
 
 import java.util.Random;
+import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
 /**
@@ -16,6 +17,7 @@ public class RandomStartStore<T> implements IStore<T> {
     private final Random random = new Random();
 
     private ThreadLocal<Integer> lastUsed;
+    private ArrayBlockingQueue<Integer> bl;
 
     public RandomStartStore(int size) {
         array = new AtomicReferenceArray<>(size);
@@ -27,17 +29,21 @@ public class RandomStartStore<T> implements IStore<T> {
         }
 
         lastUsed = ThreadLocal.withInitial(() -> random.nextInt(array.length()));
+        bl = new ArrayBlockingQueue<>(size);
     }
 
     @Override
     public T get() throws InterruptedException {
-        int localIndex = lastUsed.get();
+        Integer localIndex;
+        T item = null;
+        for (localIndex = lastUsed.get(); item == null; localIndex = bl.take()) {
+            for (int i = 0; i < array.length() && item == null; i++, localIndex = indexStrategy.getIndex(localIndex)) {
+                if (array.get(localIndex) != null) {
+                    item = array.getAndSet(localIndex, null);
+                }
 
-        T item;
-        while (array.get(localIndex) == null || (item = array.getAndSet(localIndex, null)) == null) {
-            localIndex = indexStrategy.getIndex(localIndex);
-
-            Thread.yield();
+                Thread.yield();
+            }
         }
 
         lastUsed.set(localIndex);
@@ -59,7 +65,6 @@ public class RandomStartStore<T> implements IStore<T> {
     @FunctionalInterface
     protected interface IIndexStrategy {
         int getIndex(int p1);
-
     }
 
     @Override
