@@ -1,7 +1,6 @@
 package main.producerConsumer;
 
 import java.util.Random;
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
 /**
@@ -17,7 +16,6 @@ public class RandomStartStore<T> implements IStore<T> {
     private final Random random = new Random();
 
     private ThreadLocal<Integer> lastUsed;
-    private ArrayBlockingQueue<Integer> bl;
 
     public RandomStartStore(int size) {
         array = new AtomicReferenceArray<>(size);
@@ -29,21 +27,21 @@ public class RandomStartStore<T> implements IStore<T> {
         }
 
         lastUsed = ThreadLocal.withInitial(() -> random.nextInt(array.length()));
-        bl = new ArrayBlockingQueue<>(size);
     }
 
     @Override
     public T get() throws InterruptedException {
-        Integer localIndex;
-        T item = null;
-        for (localIndex = lastUsed.get(); item == null; localIndex = bl.take()) {
-            for (int i = 0; i < array.length() && item == null; i++, localIndex = indexStrategy.getIndex(localIndex)) {
-                if (array.get(localIndex) != null) {
-                    item = array.getAndSet(localIndex, null);
-                }
+        int localIndex = lastUsed.get();
 
-                Thread.yield();
-            }
+        T item = null;
+        while ((array.get(localIndex) == null || (item = array.getAndSet(localIndex, null)) == null) && !Thread.interrupted()) {
+            localIndex = indexStrategy.getIndex(localIndex);
+
+           // Thread.yield();
+        }
+
+        if (Thread.interrupted()) {
+            throw new InterruptedException();
         }
 
         lastUsed.set(localIndex);
@@ -53,13 +51,17 @@ public class RandomStartStore<T> implements IStore<T> {
     @Override
     public void put(T input) throws InterruptedException {
         int localIndex = lastUsed.get();
-        while (!array.compareAndSet(localIndex, null, input)) {
+        while (!array.compareAndSet(localIndex, null, input) && !Thread.interrupted()) {
             localIndex = indexStrategy.getIndex(localIndex);
 
-            Thread.yield();
+        //    Thread.yield();
         }
-        lastUsed.set(localIndex);
 
+        if (Thread.interrupted()) {
+            throw new InterruptedException();
+        }
+
+        lastUsed.set(localIndex);
     }
 
     @FunctionalInterface

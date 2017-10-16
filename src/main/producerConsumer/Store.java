@@ -25,7 +25,7 @@ public class Store<T> implements IStore<T> {
     public T get() throws InterruptedException {
         while (true) {
             //Simple TTAS
-            if (currentSize > 0) {
+            if (currentSize > 0 && !Thread.interrupted()) {
                 lock.lockInterruptibly();
                 try {
                     // Do check on more time because currentSize may change
@@ -39,6 +39,10 @@ public class Store<T> implements IStore<T> {
                 }
             }
             Thread.yield();
+
+            if (Thread.interrupted()) {
+                throw new InterruptedException();
+            }
         }
     }
 
@@ -46,7 +50,7 @@ public class Store<T> implements IStore<T> {
     public void put(T item) throws InterruptedException {
         while (true) {
             //Simple TTAS
-            if (currentSize < maxSize) {
+            if (currentSize < maxSize && !Thread.interrupted()) {
                 lock.lockInterruptibly();
                 try {
                     if (currentSize < maxSize) {
@@ -58,6 +62,10 @@ public class Store<T> implements IStore<T> {
                 }
             }
             Thread.yield();
+
+            if (Thread.interrupted()) {
+                throw new InterruptedException();
+            }
         }
     }
 
