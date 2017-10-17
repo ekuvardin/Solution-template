@@ -1,11 +1,11 @@
 package main.producerConsumerTest;
 
-import main.producerConsumer.RandomStartStore;
+import main.producerConsumer.CyclicLockOnEntryStore;
 
 public class RandomStartStoreTests extends CommonTests {
 
     @Override
     public void preTest() {
-        this.store = new RandomStartStore<>(50);
+        this.store = new CyclicLockOnEntryStore<>(50);
     }
 }

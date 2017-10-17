@@ -4,7 +4,7 @@ import java.util.Random;
 import java.util.concurrent.atomic.AtomicReferenceArray;
 
 /**
- * Array based on AtomicReferenceArray when several thread get's there's own
+ * Array based on AtomicReferenceArray when several threads get's there's own
  * random index and scan sequently.
  *
  * @param <T> store elements
@@ -34,14 +34,8 @@ public class RandomStartStore<T> implements IStore<T> {
         int localIndex = lastUsed.get();
 
         T item = null;
-        while ((array.get(localIndex) == null || (item = array.getAndSet(localIndex, null)) == null) && !Thread.interrupted()) {
+        while ((array.get(localIndex) == null || (item = array.getAndSet(localIndex, null)) == null)) {
             localIndex = indexStrategy.getIndex(localIndex);
-
-           // Thread.yield();
-        }
-
-        if (Thread.interrupted()) {
-            throw new InterruptedException();
         }
 
         lastUsed.set(localIndex);
@@ -51,14 +45,8 @@ public class RandomStartStore<T> implements IStore<T> {
     @Override
     public void put(T input) throws InterruptedException {
         int localIndex = lastUsed.get();
-        while (!array.compareAndSet(localIndex, null, input) && !Thread.interrupted()) {
+        while (!array.compareAndSet(localIndex, null, input)) {
             localIndex = indexStrategy.getIndex(localIndex);
-
-        //    Thread.yield();
-        }
-
-        if (Thread.interrupted()) {
-            throw new InterruptedException();
         }
 
         lastUsed.set(localIndex);
