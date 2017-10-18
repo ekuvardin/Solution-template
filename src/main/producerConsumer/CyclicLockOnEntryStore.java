@@ -41,15 +41,13 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
         for (int localIndex = indexStrategy.getIndex(head); result == null; localIndex = indexStrategy.getIndex(head)) {
             Entry entry = array[localIndex];
             synchronized (entry) {
-                if (getSize() == 0) {
-                    entry.wait();
-                }
-
-                if (localIndex == indexStrategy.getIndex(head)) {
+                if (localIndex == indexStrategy.getIndex(head) && getSize() > 0) {
                     result = entry.value;
                     entry.setValue(null);
                     head++;
                     entry.notifyAll();
+                } else if (getSize() == 0) {
+                    entry.wait();
                 }
             }
         }
@@ -66,15 +64,13 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
         for (int localIndex = indexStrategy.getIndex(tail); ; localIndex = indexStrategy.getIndex(tail)) {
             Entry entry = array[localIndex];
             synchronized (entry) {
-                if (getSize() == capacity) {
-                    entry.wait();
-                }
-
-                if (localIndex == indexStrategy.getIndex(tail)) {
+                if (localIndex == indexStrategy.getIndex(tail) && getSize() < capacity) {
                     entry.setValue(input);
                     tail++;
                     entry.notifyAll();
                     return;
+                } else if (getSize() == capacity) {
+                    entry.wait();
                 }
             }
         }

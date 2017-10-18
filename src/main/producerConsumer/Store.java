@@ -9,11 +9,11 @@ import java.util.concurrent.locks.ReentrantLock;
  * @param <T> stored item
  */
 public class Store<T> implements IStore<T> {
-    private final int maxSize;
-    private final T[] array;
-    private volatile int currentSize;
+    protected final int maxSize;
+    protected final T[] array;
+    protected volatile int currentSize;
 
-    private final ReentrantLock lock = new ReentrantLock();
+    protected final ReentrantLock lock = new ReentrantLock();
 
     public Store(int maxSize, Class<T> cls) {
         this.maxSize = maxSize;
