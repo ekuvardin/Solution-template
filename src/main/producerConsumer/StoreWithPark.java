@@ -31,27 +31,8 @@ public class StoreWithPark<T> extends Store<T> {
             Thread.yield();
         }
 
-        lock.lockInterruptibly();
-        try {
-            while (currentSize == 0)
-                notEmpty.await();
+        return getItemWithPark();
 
-            return getItem();
-        } finally {
-            lock.unlock();
-        }
-    }
-
-    private T getItem() {
-        T item = array[currentSize - 1];
-        array[--currentSize] = null;
-        notFull.signal();
-        return item;
-    }
-
-    private void putItem(T item) {
-        array[currentSize++] = item;
-        notEmpty.signal();
     }
 
     @Override
@@ -72,6 +53,22 @@ public class StoreWithPark<T> extends Store<T> {
             Thread.yield();
         }
 
+        putItemWithPark(item);
+    }
+
+    private T getItemWithPark() throws InterruptedException {
+        lock.lockInterruptibly();
+        try {
+            while (currentSize == 0)
+                notEmpty.await();
+
+            return getItem();
+        } finally {
+            lock.unlock();
+        }
+    }
+
+    private void putItemWithPark(T item) throws InterruptedException {
         lock.lockInterruptibly();
         try {
             while (currentSize == maxSize)
@@ -81,6 +78,18 @@ public class StoreWithPark<T> extends Store<T> {
         } finally {
             lock.unlock();
         }
+    }
+
+    private T getItem() {
+        T item = array[currentSize - 1];
+        array[--currentSize] = null;
+        notFull.signal();
+        return item;
+    }
+
+    private void putItem(T item) {
+        array[currentSize++] = item;
+        notEmpty.signal();
     }
 
 }

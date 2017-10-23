@@ -8,7 +8,9 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
     private final IIndexStrategy indexStrategy;
 
     private volatile int head = 0;
+
     private volatile int tail = 0;
+
     private final int capacity;
 
     public CyclicLockOnEntryStore(int size) {
