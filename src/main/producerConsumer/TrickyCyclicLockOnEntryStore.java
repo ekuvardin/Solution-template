@@ -17,7 +17,7 @@ public class TrickyCyclicLockOnEntryStore<T> implements IStore<T> {
     private final AtomicLongFieldUpdater<TrickyCyclicLockOnEntryStore> headUpdater = AtomicLongFieldUpdater.newUpdater(TrickyCyclicLockOnEntryStore.class, "head");
     private final AtomicLongFieldUpdater<TrickyCyclicLockOnEntryStore> tailUpdater = AtomicLongFieldUpdater.newUpdater(TrickyCyclicLockOnEntryStore.class, "tail");
 
-    public TrickyCyclicLockOnEntryStore(int size, Class<T> cls) {
+    public TrickyCyclicLockOnEntryStore(int size) {
         array = (TrickyCyclicLockOnEntryStore.Entry[]) Array.newInstance(TrickyCyclicLockOnEntryStore.Entry.class, size);
 
         for (int i = 0; i < size; i++)

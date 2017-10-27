@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>Solution-template</groupId>
     <artifactId>Solution-template</artifactId>
-    <version>1.5.1</version>
+    <version>1.5.2</version>
     <!-- https://mvnrepository.com/artifact/net.sf.jopt-simple/jopt-simple -->
     <dependencies>
         <dependency>

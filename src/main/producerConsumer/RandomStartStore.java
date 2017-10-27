@@ -34,9 +34,14 @@ public class RandomStartStore<T> implements IStore<T> {
         int localIndex = lastUsed.get();
 
         T item = null;
-        while ((array.get(localIndex) == null || (item = array.getAndSet(localIndex, null)) == null)) {
+        while (!Thread.interrupted() && (array.get(localIndex) == null || (item = array.getAndSet(localIndex, null)) == null)) {
             localIndex = indexStrategy.getIndex(localIndex);
         }
+
+        // On production enviroment you can remove this line
+        // This is workaround for jmh tests. Try remove and your test hangs.
+        if (Thread.interrupted())
+            throw new InterruptedException();
 
         lastUsed.set(localIndex);
         return item;
@@ -45,9 +50,14 @@ public class RandomStartStore<T> implements IStore<T> {
     @Override
     public void put(T input) throws InterruptedException {
         int localIndex = lastUsed.get();
-        while (!array.compareAndSet(localIndex, null, input)) {
+        while (!Thread.interrupted() && !array.compareAndSet(localIndex, null, input)) {
             localIndex = indexStrategy.getIndex(localIndex);
         }
+
+        // On production enviroment you can remove this line
+        // This is workaround for jmh tests. Try remove and your test hangs.
+        if (Thread.interrupted())
+            throw new InterruptedException();
 
         lastUsed.set(localIndex);
     }
