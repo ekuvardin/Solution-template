@@ -1,4 +1,6 @@
-package main.producerConsumer;
+package main.producerConsumer.FIRO;
+
+import main.producerConsumer.IStore;
 
 import java.util.Random;
 import java.util.concurrent.atomic.AtomicReferenceArray;

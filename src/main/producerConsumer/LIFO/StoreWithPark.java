@@ -1,4 +1,4 @@
-package main.producerConsumer;
+package main.producerConsumer.LIFO;
 
 import java.util.concurrent.locks.Condition;
 

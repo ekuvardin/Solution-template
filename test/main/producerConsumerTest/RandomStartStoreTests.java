@@ -1,7 +1,6 @@
 package main.producerConsumerTest;
 
-import main.producerConsumer.CyclicLockOnEntryStore;
-import main.producerConsumer.StoreWithPark;
+import main.producerConsumer.LIFO.StoreWithPark;
 
 public class RandomStartStoreTests extends CommonTests {
 

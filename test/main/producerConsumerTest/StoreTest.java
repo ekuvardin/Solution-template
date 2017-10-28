@@ -1,6 +1,6 @@
 package main.producerConsumerTest;
 
-import main.producerConsumer.Store;
+import main.producerConsumer.LIFO.Store;
 import org.junit.Before;
 
 public class StoreTest extends CommonTests {

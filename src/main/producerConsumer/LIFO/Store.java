@@ -1,4 +1,6 @@
-package main.producerConsumer;
+package main.producerConsumer.LIFO;
+
+import main.producerConsumer.IStore;
 
 import java.lang.reflect.Array;
 import java.util.concurrent.locks.ReentrantLock;

@@ -1,35 +1,41 @@
-package main.producerConsumer;
+package main.producerConsumer.FIFO;
+
+import main.producerConsumer.IStore;
 
 import java.lang.reflect.Array;
+import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 
-public class CyclicLockOnEntryStore<T> implements IStore<T> {
+public class TrickyCyclicLockOnEntryStore<T> implements IStore<T> {
 
     private final Entry[] array;
     private final IIndexStrategy indexStrategy;
 
-    private volatile int head = 0;
+    private volatile long head = 0;
 
-    private volatile int tail = 0;
+    private volatile long tail = 0;
 
     private final int capacity;
 
-    public CyclicLockOnEntryStore(int size) {
-        array = (Entry[]) Array.newInstance(Entry.class, size);
+    private final AtomicLongFieldUpdater<TrickyCyclicLockOnEntryStore> headUpdater = AtomicLongFieldUpdater.newUpdater(TrickyCyclicLockOnEntryStore.class, "head");
+    private final AtomicLongFieldUpdater<TrickyCyclicLockOnEntryStore> tailUpdater = AtomicLongFieldUpdater.newUpdater(TrickyCyclicLockOnEntryStore.class, "tail");
+
+    public TrickyCyclicLockOnEntryStore(int size) {
+        array = (TrickyCyclicLockOnEntryStore.Entry[]) Array.newInstance(TrickyCyclicLockOnEntryStore.Entry.class, size);
+
         for (int i = 0; i < size; i++)
             array[i] = new Entry();
 
         if ((size & -size) == size) {
-            indexStrategy = ((p1) -> p1 & (size - 1));
+            indexStrategy = ((p1) -> (int) p1 & (size - 1));
         } else {
-            indexStrategy = ((p1) -> p1 % size);
+            indexStrategy = ((p1) -> (int) p1 % size);
         }
 
         capacity = size;
     }
 
     class Entry {
-
-        private T value = null;
+        T value = null;
 
         public void setValue(T value) {
             this.value = value;
@@ -46,7 +52,7 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
                 if (localIndex == indexStrategy.getIndex(head) && getSize() > 0) {
                     result = entry.value;
                     entry.setValue(null);
-                    head++;
+                    headUpdater.lazySet(this, head + 1);
                     entry.notifyAll();
                 } else if (getSize() == 0) {
                     entry.wait();
@@ -58,7 +64,7 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
     }
 
     public int getSize() {
-        return tail - head;
+        return (int) (tail - head);
     }
 
     @Override
@@ -68,7 +74,7 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
             synchronized (entry) {
                 if (localIndex == indexStrategy.getIndex(tail) && getSize() < capacity) {
                     entry.setValue(input);
-                    tail++;
+                    tailUpdater.lazySet(this, tail + 1);
                     entry.notifyAll();
                     return;
                 } else if (getSize() == capacity) {
@@ -80,7 +86,7 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
 
     @FunctionalInterface
     protected interface IIndexStrategy {
-        int getIndex(int p1);
+        int getIndex(long p1);
     }
 
     @Override
