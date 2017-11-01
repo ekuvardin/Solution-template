@@ -48,6 +48,8 @@ public class TrickyStore<T> implements IStore<T> {
             } while (!Thread.interrupted());
         }
 
+        // On production environment you can remove this line
+        // This is workaround for jmh tests. Removing during running benchmarks tends to hanging tests.
         throw new InterruptedException();
     }
 
@@ -70,6 +72,8 @@ public class TrickyStore<T> implements IStore<T> {
             Thread.yield();
         } while (!Thread.interrupted());
 
+        // On production environment you can remove this line
+        // This is workaround for jmh tests. Removing during running benchmarks tends to hanging tests.
         throw new InterruptedException();
     }
 

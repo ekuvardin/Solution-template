@@ -7,7 +7,7 @@ import java.util.concurrent.atomic.AtomicReferenceArray;
 
 /**
  * Array based on AtomicReferenceArray when several threads get's there's own
- * random index and scan sequently.
+ * random index and scan consistently.
  *
  * @param <T> store elements
  */
@@ -36,7 +36,9 @@ public class RandomStartStore<T> implements IStore<T> {
         int localIndex = lastUsed.get();
 
         T item = null;
-        while (!Thread.interrupted() && (array.get(localIndex) == null || (item = array.getAndSet(localIndex, null)) == null)) {
+        // On production environment you can remove !Thread.currentThread().isInterrupted()
+        // This is workaround for jmh tests. Removing during running benchmarks tends to hanging tests.
+        while (!Thread.currentThread().isInterrupted() && (array.get(localIndex) == null || (item = array.getAndSet(localIndex, null)) == null)) {
             localIndex = indexStrategy.getIndex(localIndex);
             if(lastUsed.get().equals(localIndex)){
                 Thread.yield();
@@ -44,7 +46,7 @@ public class RandomStartStore<T> implements IStore<T> {
         }
 
         // On production environment you can remove this line
-        // This is workaround for jmh tests. Try remove and your test hangs.
+        // This is workaround for jmh tests. Removing during running benchmarks tends to hanging tests.
         if (Thread.interrupted())
             throw new InterruptedException();
 

@@ -5,6 +5,24 @@ import main.producerConsumer.IStore;
 import java.lang.reflect.Array;
 import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 
+/**
+ * Tricky implementation because we use CyclicLockOnEntryStore + lazySet
+ *
+ * lazySet means that  The semantics are that the write is guaranteed not to be re-ordered with any previous write,
+ * but may be reordered with subsequent operations
+ * lazySet provides a store-store barrier before write means(all writes must be commited before lazyset)
+ * but no store-load barrier after lazyset as ordinary volatile write does
+ *
+ * On x86 processors store-load barrier is
+ * lock add %esp, 0x00
+ * which is quite expensive
+ *
+ * For more info see
+ * See http://dev.cheremin.info/2011/10/atomicxxxlazyset.html
+ *
+ *
+ * @param <T> type of stored items
+ */
 public class TrickyCyclicLockOnEntryStore<T> implements IStore<T> {
 
     private final Entry[] array;

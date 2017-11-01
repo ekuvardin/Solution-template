@@ -42,8 +42,8 @@ public class Store<T> implements IStore<T> {
             }
             Thread.yield();
 
-            // On production enviroment you can remove this line
-            // This is workaround for jmh tests. Try remove and your test hangs.
+            // On production environment you can remove this line
+            // This is workaround for jmh tests. Removing during running benchmarks tends to hanging tests.
             if (Thread.interrupted())
                 throw new InterruptedException();
         }
@@ -66,8 +66,8 @@ public class Store<T> implements IStore<T> {
             }
             Thread.yield();
 
-            // On production enviroment you can remove this line
-            // This is workaround for jmh tests. Try remove and your test hangs.
+            // On production environment you can remove this line
+            // This is workaround for jmh tests. Removing during running benchmarks tends to hanging tests.
             if (Thread.interrupted())
                 throw new InterruptedException();
         }
