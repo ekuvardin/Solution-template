@@ -21,7 +21,7 @@
               pm   - use parallel merge. Available values true/false
               
   ### main.ProducerConsumer
-         simple solution of Producer-Consumer problem. Run Worker to see results
+         simple solution of Producer-Consumer problem.
   ### main.matrixCalc
          some examples of how to speed up matrix calculation in single thread.
   ### main.producerConsumer
