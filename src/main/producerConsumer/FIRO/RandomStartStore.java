@@ -36,8 +36,7 @@ public class RandomStartStore<T> implements IStore<T> {
         int localIndex = lastUsed.get();
 
         T item = null;
-        // On production environment you can remove !Thread.currentThread().isInterrupted()
-        // This is workaround for jmh tests. Removing during running benchmarks tends to hanging tests.
+        // !Thread.currentThread().isInterrupted() is used in jmh test for gracefully interrupt tests
         while (!Thread.currentThread().isInterrupted() && (array.get(localIndex) == null || (item = array.getAndSet(localIndex, null)) == null)) {
             localIndex = indexStrategy.getIndex(localIndex);
             if(lastUsed.get().equals(localIndex)){
@@ -45,8 +44,6 @@ public class RandomStartStore<T> implements IStore<T> {
             }
         }
 
-        // On production environment you can remove this line
-        // This is workaround for jmh tests. Removing during running benchmarks tends to hanging tests.
         if (Thread.interrupted())
             throw new InterruptedException();
 
@@ -57,15 +54,14 @@ public class RandomStartStore<T> implements IStore<T> {
     @Override
     public void put(T input) throws InterruptedException {
         int localIndex = lastUsed.get();
-        while (!Thread.interrupted() && !array.compareAndSet(localIndex, null, input)) {
+        // !Thread.currentThread().isInterrupted() is used in jmh test for gracefully interrupt tests
+        while (!Thread.currentThread().isInterrupted() && !array.compareAndSet(localIndex, null, input)) {
             localIndex = indexStrategy.getIndex(localIndex);
             if(lastUsed.get().equals(localIndex)){
                 Thread.yield();
             }
         }
 
-        // On production environment you can remove this line
-        // This is workaround for jmh tests. Try remove and your test hangs.
         if (Thread.interrupted())
             throw new InterruptedException();
 
