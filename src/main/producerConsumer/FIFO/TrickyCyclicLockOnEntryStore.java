@@ -2,8 +2,11 @@ package main.producerConsumer.FIFO;
 
 import main.producerConsumer.IStore;
 
+import java.lang.invoke.MethodHandles;
+import java.lang.invoke.VarHandle;
 import java.lang.reflect.Array;
 import java.util.concurrent.atomic.AtomicLongFieldUpdater;
+import java.util.concurrent.atomic.AtomicReference;
 
 /**
  * Tricky implementation because we use CyclicLockOnEntryStore + lazySet
@@ -34,8 +37,20 @@ public class TrickyCyclicLockOnEntryStore<T> implements IStore<T> {
 
     private final int capacity;
 
-    private final AtomicLongFieldUpdater<TrickyCyclicLockOnEntryStore> headUpdater = AtomicLongFieldUpdater.newUpdater(TrickyCyclicLockOnEntryStore.class, "head");
-    private final AtomicLongFieldUpdater<TrickyCyclicLockOnEntryStore> tailUpdater = AtomicLongFieldUpdater.newUpdater(TrickyCyclicLockOnEntryStore.class, "tail");
+ //   private final AtomicLongFieldUpdater<TrickyCyclicLockOnEntryStore> headUpdater = AtomicLongFieldUpdater.newUpdater(TrickyCyclicLockOnEntryStore.class, "head");
+  //  private final AtomicLongFieldUpdater<TrickyCyclicLockOnEntryStore> tailUpdater = AtomicLongFieldUpdater.newUpdater(TrickyCyclicLockOnEntryStore.class, "tail");
+
+    private static final VarHandle headUpdater;
+    private static final VarHandle tailUpdater;
+    static {
+        try {
+            MethodHandles.Lookup lookUp = MethodHandles.lookup();
+            headUpdater = lookUp.findVarHandle(TrickyCyclicLockOnEntryStore.class, "head", long.class);
+            tailUpdater = lookUp.findVarHandle(TrickyCyclicLockOnEntryStore.class, "tail", long.class);
+        } catch (ReflectiveOperationException e) {
+            throw new Error(e);
+        }
+    }
 
     public TrickyCyclicLockOnEntryStore(int size) {
         array = (TrickyCyclicLockOnEntryStore.Entry[]) Array.newInstance(TrickyCyclicLockOnEntryStore.Entry.class, size);
@@ -70,6 +85,7 @@ public class TrickyCyclicLockOnEntryStore<T> implements IStore<T> {
                 if (localIndex == indexStrategy.getIndex(head) && getSize() > 0) {
                     result = entry.value;
                     entry.setValue(null);
+                    headUpdater.setRelease();
                     headUpdater.lazySet(this, head + 1);
                     entry.notifyAll();
                 } else if (getSize() == 0) {
