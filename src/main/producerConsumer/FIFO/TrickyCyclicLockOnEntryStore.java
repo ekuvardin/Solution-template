@@ -1,12 +1,14 @@
 package main.producerConsumer.FIFO;
 
 import main.producerConsumer.IStore;
+import sun.jvm.hotspot.runtime.Threads;
 
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.VarHandle;
 import java.lang.reflect.Array;
 import java.util.concurrent.atomic.AtomicLongFieldUpdater;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.atomic.LongAdder;
 
 /**
  * Tricky implementation because we use CyclicLockOnEntryStore + lazySet
@@ -31,16 +33,19 @@ public class TrickyCyclicLockOnEntryStore<T> implements IStore<T> {
     private final Entry[] array;
     private final IIndexStrategy indexStrategy;
 
-    private volatile long head = 0;
+  /*  private final LongAdder head = new LongAdder();
 
-    private volatile long tail = 0;
+    private final LongAdder tail = new LongAdder();*/
+   private volatile int head = 0;
+
+    private volatile int tail = 0;
 
     private final int capacity;
 
- //   private final AtomicLongFieldUpdater<TrickyCyclicLockOnEntryStore> headUpdater = AtomicLongFieldUpdater.newUpdater(TrickyCyclicLockOnEntryStore.class, "head");
-  //  private final AtomicLongFieldUpdater<TrickyCyclicLockOnEntryStore> tailUpdater = AtomicLongFieldUpdater.newUpdater(TrickyCyclicLockOnEntryStore.class, "tail");
+    private final AtomicLongFieldUpdater<TrickyCyclicLockOnEntryStore> headUpdater = AtomicLongFieldUpdater.newUpdater(TrickyCyclicLockOnEntryStore.class, "head");
+    private final AtomicLongFieldUpdater<TrickyCyclicLockOnEntryStore> tailUpdater = AtomicLongFieldUpdater.newUpdater(TrickyCyclicLockOnEntryStore.class, "tail");
 
-    private static final VarHandle headUpdater;
+ /*   private static final VarHandle headUpdater;
     private static final VarHandle tailUpdater;
     static {
         try {
@@ -50,7 +55,7 @@ public class TrickyCyclicLockOnEntryStore<T> implements IStore<T> {
         } catch (ReflectiveOperationException e) {
             throw new Error(e);
         }
-    }
+    }*/
 
     public TrickyCyclicLockOnEntryStore(int size) {
         array = (TrickyCyclicLockOnEntryStore.Entry[]) Array.newInstance(TrickyCyclicLockOnEntryStore.Entry.class, size);
@@ -59,16 +64,16 @@ public class TrickyCyclicLockOnEntryStore<T> implements IStore<T> {
             array[i] = new Entry();
 
         if ((size & -size) == size) {
-            indexStrategy = ((p1) -> (int) p1 & (size - 1));
+            indexStrategy = ((p1) -> p1 & (size - 1));
         } else {
-            indexStrategy = ((p1) -> (int) p1 % size);
+            indexStrategy = ((p1) -> p1 % size);
         }
 
         capacity = size;
     }
 
     class Entry {
-        T value = null;
+        private T value = null;
 
         public void setValue(T value) {
             this.value = value;
@@ -85,7 +90,8 @@ public class TrickyCyclicLockOnEntryStore<T> implements IStore<T> {
                 if (localIndex == indexStrategy.getIndex(head) && getSize() > 0) {
                     result = entry.value;
                     entry.setValue(null);
-                    headUpdater.setRelease();
+                  //  head++;
+                  //  headUpdater.setRelease(this, head + 1);
                     headUpdater.lazySet(this, head + 1);
                     entry.notifyAll();
                 } else if (getSize() == 0) {
@@ -98,7 +104,7 @@ public class TrickyCyclicLockOnEntryStore<T> implements IStore<T> {
     }
 
     public int getSize() {
-        return (int) (tail - head);
+        return tail - head;
     }
 
     @Override
@@ -108,6 +114,8 @@ public class TrickyCyclicLockOnEntryStore<T> implements IStore<T> {
             synchronized (entry) {
                 if (localIndex == indexStrategy.getIndex(tail) && getSize() < capacity) {
                     entry.setValue(input);
+                    //tail++;
+                   // tailUpdater.setRelease(this, tail + 1);
                     tailUpdater.lazySet(this, tail + 1);
                     entry.notifyAll();
                     return;
@@ -120,7 +128,7 @@ public class TrickyCyclicLockOnEntryStore<T> implements IStore<T> {
 
     @FunctionalInterface
     protected interface IIndexStrategy {
-        int getIndex(long p1);
+        int getIndex(int p1);
     }
 
     @Override
