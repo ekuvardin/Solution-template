@@ -53,7 +53,7 @@ public class TwoLocksStore<T> implements IStore<T> {
         return result;
     }
 
-    public int getSize() {
+    public synchronized int getSize() {
         return tail - head;
     }
 
@@ -73,9 +73,6 @@ public class TwoLocksStore<T> implements IStore<T> {
             }
             Thread.yield();
         }
-
-        if (Thread.interrupted())
-            throw new InterruptedException();
     }
 
     @FunctionalInterface
