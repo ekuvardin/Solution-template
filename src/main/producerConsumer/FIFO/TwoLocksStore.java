@@ -35,7 +35,7 @@ public class TwoLocksStore<T> implements IStore<T> {
     @Override
     public T get() throws InterruptedException {
         T result = null;
-        for(;!Thread.currentThread().isInterrupted() && result==null;  Thread.yield()) {
+        for(;!Thread.interrupted();  Thread.yield()) {
             if (headLock.tryLock()) {
                 try {
                     int localIndex = indexStrategy.getIndex(head);
@@ -43,6 +43,7 @@ public class TwoLocksStore<T> implements IStore<T> {
                     if (result != null) {
                         array.set(localIndex, null);
                         head++;
+                        return result;
                     }
                 } finally {
                     headLock.unlock();
@@ -50,7 +51,7 @@ public class TwoLocksStore<T> implements IStore<T> {
             }
         }
 
-        return result;
+        throw new InterruptedException();
     }
 
     public synchronized int getSize() {
@@ -59,7 +60,7 @@ public class TwoLocksStore<T> implements IStore<T> {
 
     @Override
     public void put(T input) throws InterruptedException {
-        while (!Thread.currentThread().isInterrupted()) {
+        while (!Thread.interrupted()) {
             if (tailLock.tryLock()) {
                 try {
                     int localIndex = indexStrategy.getIndex(tail);
@@ -73,6 +74,8 @@ public class TwoLocksStore<T> implements IStore<T> {
             }
             Thread.yield();
         }
+
+        throw new InterruptedException();
     }
 
     @FunctionalInterface

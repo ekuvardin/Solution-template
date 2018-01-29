@@ -38,7 +38,7 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
     public T get() throws InterruptedException {
         T result = null;
 
-        for (int localIndex = indexStrategy.getIndex(head); result == null; localIndex = indexStrategy.getIndex(head)) {
+        for (int localIndex = indexStrategy.getIndex(head); !Thread.interrupted() && result==null; localIndex = indexStrategy.getIndex(head)) {
             Entry<T> entry = array[localIndex];
             synchronized (entry) {
                 if (localIndex == indexStrategy.getIndex(head) && getSize() > 0) {
@@ -57,8 +57,8 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
                 }
             }
         }
-
         return result;
+  //      throw new InterruptedException();
     }
 
     public int getSize() {
@@ -67,7 +67,7 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
 
     @Override
     public void put(T input) throws InterruptedException {
-        for (int localIndex = indexStrategy.getIndex(tail); ; localIndex = indexStrategy.getIndex(tail)) {
+        for (int localIndex = indexStrategy.getIndex(tail);!Thread.interrupted(); localIndex = indexStrategy.getIndex(tail)) {
             Entry<T> entry = array[localIndex];
             synchronized (entry) {
                 if (localIndex == indexStrategy.getIndex(tail) && getSize() < capacity) {
@@ -86,6 +86,8 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
                 }
             }
         }
+
+    //    throw new InterruptedException();
     }
 
     @FunctionalInterface
