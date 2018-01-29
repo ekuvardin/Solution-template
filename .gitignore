@@ -6,3 +6,5 @@ jcstress.*
 /target/
 /.idea/
 /results/
+/Out.txt
+/AvgNumbers.txt

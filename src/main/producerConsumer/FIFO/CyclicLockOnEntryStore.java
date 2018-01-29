@@ -11,7 +11,7 @@ import java.lang.reflect.Array;
  */
 public class CyclicLockOnEntryStore<T> implements IStore<T> {
 
-    private final Entry[] array;
+    private final Entry<T>[] array;
     private final IIndexStrategy indexStrategy;
 
     private volatile int head = 0;
@@ -23,7 +23,7 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
     public CyclicLockOnEntryStore(int size) {
         array = (Entry[]) Array.newInstance(Entry.class, size);
         for (int i = 0; i < size; i++)
-            array[i] = new Entry();
+            array[i] = new Entry<T>();
 
         if ((size & -size) == size) {
             indexStrategy = ((p1) -> p1 & (size - 1));
@@ -34,21 +34,12 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
         capacity = size;
     }
 
-    class Entry {
-
-        private T value = null;
-
-        public void setValue(T value) {
-            this.value = value;
-        }
-    }
-
     @Override
     public T get() throws InterruptedException {
         T result = null;
 
-        for (int localIndex = indexStrategy.getIndex(head); result == null; localIndex = indexStrategy.getIndex(head)) {
-            Entry entry = array[localIndex];
+        for (int localIndex = indexStrategy.getIndex(head); !Thread.interrupted() && result==null; localIndex = indexStrategy.getIndex(head)) {
+            Entry<T> entry = array[localIndex];
             synchronized (entry) {
                 if (localIndex == indexStrategy.getIndex(head) && getSize() > 0) {
                     result = entry.value;
@@ -66,8 +57,8 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
                 }
             }
         }
-
         return result;
+  //      throw new InterruptedException();
     }
 
     public int getSize() {
@@ -76,8 +67,8 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
 
     @Override
     public void put(T input) throws InterruptedException {
-        for (int localIndex = indexStrategy.getIndex(tail); ; localIndex = indexStrategy.getIndex(tail)) {
-            Entry entry = array[localIndex];
+        for (int localIndex = indexStrategy.getIndex(tail);!Thread.interrupted(); localIndex = indexStrategy.getIndex(tail)) {
+            Entry<T> entry = array[localIndex];
             synchronized (entry) {
                 if (localIndex == indexStrategy.getIndex(tail) && getSize() < capacity) {
                     entry.setValue(input);
@@ -95,6 +86,8 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
                 }
             }
         }
+
+    //    throw new InterruptedException();
     }
 
     @FunctionalInterface
