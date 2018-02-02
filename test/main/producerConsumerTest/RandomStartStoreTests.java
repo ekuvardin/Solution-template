@@ -1,11 +1,12 @@
 package main.producerConsumerTest;
 
-import main.producerConsumer.LIFO.StoreWithPark;
+import main.producerConsumer.FIRO.RandomStartStore;
+import main.producerConsumer.ThreadInterruptedStrategy;
 
 public class RandomStartStoreTests extends CommonTests {
 
     @Override
     public void preTest() {
-        this.store = new StoreWithPark<>(50, Integer.class, 100);
+        this.store = new RandomStartStore<>(50, new ThreadInterruptedStrategy() );
     }
 }

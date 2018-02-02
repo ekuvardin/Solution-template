@@ -7,7 +7,7 @@ import java.util.NoSuchElementException;
 
 /**
  * Class for holding collection of cyclic arrays. It is container for holding cyclic arrays.
- * Threads may concurrently get buffers and after work have to return it to CyclicBufferHolder
+ * Threads may concurrently get buffers and after continueWork have to return it to CyclicBufferHolder
  *
  * @param <T> type of sorting elements
  */
@@ -145,7 +145,7 @@ public class CyclicBufferHolder<T> {
         @Override
         public T pull() {
             T value = getFirst();
-            array[indexStrategy.getIndex(head) + startPointer] = null;//Let's GC do it's work
+            array[indexStrategy.getIndex(head) + startPointer] = null;//Let's GC do it's continueWork
             head++;
 
             return value;
