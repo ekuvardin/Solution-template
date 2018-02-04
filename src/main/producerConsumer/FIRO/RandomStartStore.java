@@ -19,7 +19,9 @@ public class RandomStartStore<T> implements IStore<T> {
     private final Random random = new Random();
     private final IWaitStrategy waitStrategy;
 
-    private ThreadLocal<Integer> lastUsed;
+    private final ThreadLocal<Integer> lastPut;
+    private final ThreadLocal<Integer> lastGet;
+    private final int capacity;
 
     public RandomStartStore(int size, IWaitStrategy waitStrategy) {
         this.array = new AtomicReferenceArray<>(size);
@@ -30,39 +32,41 @@ public class RandomStartStore<T> implements IStore<T> {
             this.indexStrategy = ((p1) -> (p1 + 1) % this.array.length());
         }
 
-        this.lastUsed = ThreadLocal.withInitial(() -> this.random.nextInt(this.array.length()));
+        this.capacity = size;
+
+        this.lastGet = ThreadLocal.withInitial(() -> this.random.nextInt(this.capacity));
+        this.lastPut = ThreadLocal.withInitial(() -> this.random.nextInt(this.capacity));
         this.waitStrategy = waitStrategy;
     }
 
     @Override
     public T get() throws InterruptedException {
-        int localIndex = lastUsed.get();
+        int localIndex = lastGet.get();
 
         T item = null;
-        // !Thread.currentThread().isInterrupted() is used in jmh test for gracefully interrupt tests
-        while (waitStrategy.continueWork(localIndex) && (array.get(localIndex) == null || (item = array.getAndSet(localIndex, null)) == null)) {
+        while (waitStrategy.tryRun() && (array.get(localIndex) == null || (item = array.getAndSet(localIndex, null)) == null)) {
             localIndex = indexStrategy.getIndex(localIndex);
-            if (lastUsed.get().equals(localIndex)) {
-                Thread.yield();
+            if (lastGet.get().equals(localIndex)) {
+                waitStrategy.trySpinWait();
             }
         }
 
-        lastUsed.set(localIndex);
+        lastGet.set(localIndex);
         return item;
     }
 
     @Override
     public void put(T input) throws InterruptedException {
-        int localIndex = lastUsed.get();
-        // !Thread.currentThread().isInterrupted() is used in jmh test for gracefully interrupt tests
-        while (waitStrategy.continueWork(localIndex) && !array.compareAndSet(localIndex, null, input)) {
+        int localIndex = lastPut.get();
+
+        while (waitStrategy.tryRun() && !array.compareAndSet(localIndex, null, input)) {
             localIndex = indexStrategy.getIndex(localIndex);
-            if (lastUsed.get().equals(localIndex)) {
-                Thread.yield();
+            if (lastPut.get().equals(localIndex)) {
+                waitStrategy.trySpinWait();
             }
         }
 
-        lastUsed.set(localIndex);
+        lastPut.set(localIndex);
     }
 
     @FunctionalInterface

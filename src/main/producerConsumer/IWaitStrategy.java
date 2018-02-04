@@ -2,6 +2,7 @@ package main.producerConsumer;
 
 public interface IWaitStrategy {
 
-    boolean continueWork(int idleCounter) throws InterruptedException;
+    boolean tryRun() throws InterruptedException;
 
+    void trySpinWait() throws InterruptedException;
 }

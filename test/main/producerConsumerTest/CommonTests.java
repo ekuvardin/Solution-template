@@ -23,7 +23,7 @@ public abstract class CommonTests {
     @Before
     public abstract void preTest();
 
-    @Test(timeout = 10000)
+    @Test(timeout = 1000000)
     public void storeCorrectnessTest() throws InterruptedException {
         List<Integer> tmp = new ArrayList<>(5);
 
