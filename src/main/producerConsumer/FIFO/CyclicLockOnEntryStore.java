@@ -1,6 +1,8 @@
 package main.producerConsumer.FIFO;
 
+import main.producerConsumer.IIndexStrategy;
 import main.producerConsumer.IStore;
+import main.producerConsumer.IWaitStrategy;
 
 import java.lang.reflect.Array;
 
@@ -13,6 +15,7 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
 
     private final Entry<T>[] array;
     private final IIndexStrategy indexStrategy;
+    private final IWaitStrategy waitStrategy;
 
     private volatile int head = 0;
 
@@ -20,7 +23,7 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
 
     private final int capacity;
 
-    public CyclicLockOnEntryStore(int size) {
+    public CyclicLockOnEntryStore(int size, IWaitStrategy waitStrategy) {
         array = (Entry[]) Array.newInstance(Entry.class, size);
         for (int i = 0; i < size; i++)
             array[i] = new Entry<T>();
@@ -32,13 +35,14 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
         }
 
         capacity = size;
+        this.waitStrategy = waitStrategy;
     }
 
     @Override
     public T get() throws InterruptedException {
         T result = null;
 
-        for (int localIndex = indexStrategy.getIndex(head); !Thread.interrupted() && result==null; localIndex = indexStrategy.getIndex(head)) {
+        for (int localIndex = indexStrategy.getIndex(head); waitStrategy.canRun() && result == null; localIndex = indexStrategy.getIndex(head)) {
             Entry<T> entry = array[localIndex];
             synchronized (entry) {
                 if (localIndex == indexStrategy.getIndex(head) && getSize() > 0) {
@@ -58,7 +62,6 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
             }
         }
         return result;
-  //      throw new InterruptedException();
     }
 
     public int getSize() {
@@ -67,7 +70,7 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
 
     @Override
     public void put(T input) throws InterruptedException {
-        for (int localIndex = indexStrategy.getIndex(tail);!Thread.interrupted(); localIndex = indexStrategy.getIndex(tail)) {
+        for (int localIndex = indexStrategy.getIndex(tail); waitStrategy.canRun(); localIndex = indexStrategy.getIndex(tail)) {
             Entry<T> entry = array[localIndex];
             synchronized (entry) {
                 if (localIndex == indexStrategy.getIndex(tail) && getSize() < capacity) {
@@ -86,17 +89,20 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
                 }
             }
         }
-
-    //    throw new InterruptedException();
-    }
-
-    @FunctionalInterface
-    protected interface IIndexStrategy {
-        int getIndex(int p1);
     }
 
     @Override
     public boolean IsEmpty() {
         return getSize() == 0;
+    }
+
+    @Override
+    public void clear() {
+        for (int localIndex = 0; localIndex < capacity; localIndex++) {
+            Entry<T> entry = array[localIndex];
+            synchronized (entry) {
+                entry.setValue(null);
+            }
+        }
     }
 }

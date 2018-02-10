@@ -1,5 +1,6 @@
 package main.producerConsumer.FIRO;
 
+import main.producerConsumer.IIndexStrategy;
 import main.producerConsumer.IStore;
 import main.producerConsumer.IWaitStrategy;
 
@@ -44,7 +45,7 @@ public class RandomStartStore<T> implements IStore<T> {
         int localIndex = lastGet.get();
 
         T item = null;
-        while (waitStrategy.tryRun() && (array.get(localIndex) == null || (item = array.getAndSet(localIndex, null)) == null)) {
+        while (waitStrategy.canRun() && (array.get(localIndex) == null || (item = array.getAndSet(localIndex, null)) == null)) {
             localIndex = indexStrategy.getIndex(localIndex);
             if (lastGet.get().equals(localIndex)) {
                 waitStrategy.trySpinWait();
@@ -59,7 +60,7 @@ public class RandomStartStore<T> implements IStore<T> {
     public void put(T input) throws InterruptedException {
         int localIndex = lastPut.get();
 
-        while (waitStrategy.tryRun() && !array.compareAndSet(localIndex, null, input)) {
+        while (waitStrategy.canRun() && !array.compareAndSet(localIndex, null, input)) {
             localIndex = indexStrategy.getIndex(localIndex);
             if (lastPut.get().equals(localIndex)) {
                 waitStrategy.trySpinWait();
@@ -69,15 +70,9 @@ public class RandomStartStore<T> implements IStore<T> {
         lastPut.set(localIndex);
     }
 
-    @FunctionalInterface
-    protected interface IIndexStrategy {
-        int getIndex(int p1);
-    }
-
     @Override
     public boolean IsEmpty() {
-        // Yes, I know there is no thread safe when some threads are continue executing
-        // This methods need me for test(Also know it's bad practise)
+        // If method return true there is no garantee that queue was empty at some moment of time
         for (int i = 0; i < array.length(); i++) {
             if (array.get(i) != null) {
                 return false;
@@ -85,5 +80,12 @@ public class RandomStartStore<T> implements IStore<T> {
         }
 
         return true;
+    }
+
+    @Override
+    public void clear() {
+        for (int localIndex = 0; localIndex < array.length(); localIndex++) {
+            array.set(localIndex, null);
+        }
     }
 }
