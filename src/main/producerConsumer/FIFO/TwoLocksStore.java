@@ -53,8 +53,7 @@ public class TwoLocksStore<T> implements IStore<T> {
                 }
             }
         }
-
-        throw new InterruptedException();
+        return null;
     }
 
     public synchronized int getSize() {
@@ -90,7 +89,7 @@ public class TwoLocksStore<T> implements IStore<T> {
             if (headLock.tryLock()) {
                 try {
                     int localIndex = indexStrategy.getIndex(head);
-                    while (array.get(localIndex) == null) {
+                    while (array.get(localIndex) != null) {
                         array.set(localIndex, null);
                         head++;
                         localIndex = indexStrategy.getIndex(head);

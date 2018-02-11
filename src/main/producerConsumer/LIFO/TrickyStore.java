@@ -27,7 +27,6 @@ public class TrickyStore<T> implements IStore<T> {
         this.array = ((T[]) Array.newInstance(cls, maxSize));
         this.waitStrategy = waitStrategy;
     }
-    }
 
     public T get() throws InterruptedException {
         {
@@ -51,9 +50,7 @@ public class TrickyStore<T> implements IStore<T> {
             } while (waitStrategy.canRun());
         }
 
-        // On production environment you can remove this line
-        // This is workaround for jmh tests. Removing during running benchmarks tends to hanging tests.
-        throw new InterruptedException();
+        return null;
     }
 
     public void put(T item) throws InterruptedException {
@@ -74,10 +71,6 @@ public class TrickyStore<T> implements IStore<T> {
 
             waitStrategy.trySpinWait();
         } while (waitStrategy.canRun());
-
-        // On production environment you can remove this line
-        // This is workaround for jmh tests. Removing during running benchmarks tends to hanging tests.
-        throw new InterruptedException();
     }
 
     public boolean IsEmpty() {
@@ -86,19 +79,14 @@ public class TrickyStore<T> implements IStore<T> {
 
     @Override
     public void clear() throws InterruptedException {
-        while (waitStrategy.canRun()) {
-            //Simple TTAS
-            if (currentSize > 0) {
-                lock.lockInterruptibly();
-                try {
-                    for (int i = 0; i < currentSize; i++)
-                        array[currentSize--] = null;
-                    return;
-                } finally {
-                    lock.unlock();
-                }
+        if (currentSize > 0) {
+            lock.lockInterruptibly();
+            try {
+                for (int i = 0; i < currentSize; i++)
+                    array[--currentSize] = null;
+            } finally {
+                lock.unlock();
             }
-            waitStrategy.trySpinWait();
         }
     }
 }

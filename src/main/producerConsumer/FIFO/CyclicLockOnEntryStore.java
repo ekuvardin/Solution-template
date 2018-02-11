@@ -97,11 +97,23 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
     }
 
     @Override
-    public void clear() {
-        for (int localIndex = 0; localIndex < capacity; localIndex++) {
+    public void clear() throws InterruptedException {
+        for (int localIndex = indexStrategy.getIndex(head); waitStrategy.canRun() && getSize() > 0; localIndex = indexStrategy.getIndex(head)) {
             Entry<T> entry = array[localIndex];
             synchronized (entry) {
-                entry.setValue(null);
+                if (localIndex == indexStrategy.getIndex(head) && getSize() > 0) {
+                    entry.setValue(null);
+                    head++;
+                    entry.notifyAll();
+                    // Note: If head==tail => getSize==0 means that queue is empty
+                    // and we blocks on node with head==tail
+                    // As we use cyclic(ring) buffer then in our situation indexStrategy(head) = indexStrategy(tail)
+                    // and we block on the same node which is pointed by tail then next put will wake up us
+                } else if (getSize() == 0) {
+                    // I don't use loop(as we know that thread may spurious wakeup)
+                    // because as I think under contention it's unnecessary.(May be wrong need benchmarks)
+                    entry.wait();
+                }
             }
         }
     }

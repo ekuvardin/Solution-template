@@ -34,7 +34,6 @@ public class StoreWithPark<T> extends Store<T> {
         }
 
         return getItemWithPark();
-
     }
 
     @Override

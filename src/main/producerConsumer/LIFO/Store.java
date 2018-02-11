@@ -45,8 +45,7 @@ public class Store<T> implements IStore<T> {
             }
             waitStrategy.trySpinWait();
         }
-
-        throw new InterruptedException();
+        return null;
     }
 
     @Override
@@ -75,19 +74,14 @@ public class Store<T> implements IStore<T> {
 
     @Override
     public void clear() throws InterruptedException {
-        while (true) {
-            //Simple TTAS
-            if (currentSize > 0) {
-                lock.lockInterruptibly();
-                try {
-                    for (int i = 0; i < currentSize; i++)
-                        array[currentSize--] = null;
-                    return;
-                } finally {
-                    lock.unlock();
-                }
+        if (currentSize > 0) {
+            lock.lockInterruptibly();
+            try {
+                for (int i = 0; i < currentSize; i++)
+                    array[--currentSize] = null;
+            } finally {
+                lock.unlock();
             }
-            waitStrategy.trySpinWait();
         }
     }
 }
