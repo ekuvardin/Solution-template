@@ -23,7 +23,13 @@ public interface IStore<T> {
 
     /**
      * Is empty
+     *
      * @return is store empty
      */
     boolean IsEmpty();
+
+    /**
+     * Clear store
+     */
+    void clear() throws InterruptedException;
 }

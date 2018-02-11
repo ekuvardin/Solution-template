@@ -1,6 +1,8 @@
 package main.producerConsumer.FIFO;
 
+import main.producerConsumer.IIndexStrategy;
 import main.producerConsumer.IStore;
+import main.producerConsumer.IWaitStrategy;
 
 import java.util.concurrent.atomic.AtomicReferenceArray;
 import java.util.concurrent.locks.ReentrantLock;
@@ -14,6 +16,7 @@ public class TwoLocksStore<T> implements IStore<T> {
 
     private final AtomicReferenceArray<T> array;
     private final IIndexStrategy indexStrategy;
+    private final IWaitStrategy waitStrategy;
 
     private final ReentrantLock headLock = new ReentrantLock();
     private final ReentrantLock tailLock = new ReentrantLock();
@@ -22,20 +25,20 @@ public class TwoLocksStore<T> implements IStore<T> {
 
     private int tail = 0;
 
-    public TwoLocksStore(int size) {
-        array = new AtomicReferenceArray<>(size);
+    public TwoLocksStore(int size, IWaitStrategy waitStrategy) {
+        this.array = new AtomicReferenceArray<>(size);
 
         if ((size & -size) == size) {
-            indexStrategy = ((p1) -> p1 & (size - 1));
+            this.indexStrategy = ((p1) -> p1 & (size - 1));
         } else {
-            indexStrategy = ((p1) -> p1 % size);
+            this.indexStrategy = ((p1) -> p1 % size);
         }
+        this.waitStrategy = waitStrategy;
     }
 
     @Override
     public T get() throws InterruptedException {
-        T result = null;
-        for(;!Thread.interrupted();  Thread.yield()) {
+        for (T result = null; waitStrategy.canRun(); waitStrategy.trySpinWait()) {
             if (headLock.tryLock()) {
                 try {
                     int localIndex = indexStrategy.getIndex(head);
@@ -50,8 +53,7 @@ public class TwoLocksStore<T> implements IStore<T> {
                 }
             }
         }
-
-        throw new InterruptedException();
+        return null;
     }
 
     public synchronized int getSize() {
@@ -60,7 +62,7 @@ public class TwoLocksStore<T> implements IStore<T> {
 
     @Override
     public void put(T input) throws InterruptedException {
-        while (!Thread.interrupted()) {
+        while (waitStrategy.canRun()) {
             if (tailLock.tryLock()) {
                 try {
                     int localIndex = indexStrategy.getIndex(tail);
@@ -72,19 +74,31 @@ public class TwoLocksStore<T> implements IStore<T> {
                     tailLock.unlock();
                 }
             }
-            Thread.yield();
+            waitStrategy.trySpinWait();
         }
-
-        throw new InterruptedException();
-    }
-
-    @FunctionalInterface
-    protected interface IIndexStrategy {
-        int getIndex(int p1);
     }
 
     @Override
     public boolean IsEmpty() {
         return getSize() == 0;
+    }
+
+    @Override
+    public void clear() throws InterruptedException {
+        for (; waitStrategy.canRun(); waitStrategy.trySpinWait()) {
+            if (headLock.tryLock()) {
+                try {
+                    int localIndex = indexStrategy.getIndex(head);
+                    while (array.get(localIndex) != null) {
+                        array.set(localIndex, null);
+                        head++;
+                        localIndex = indexStrategy.getIndex(head);
+                    }
+                    return;
+                } finally {
+                    headLock.unlock();
+                }
+            }
+        }
     }
 }

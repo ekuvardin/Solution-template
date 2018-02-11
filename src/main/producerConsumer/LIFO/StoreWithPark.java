@@ -1,5 +1,7 @@
 package main.producerConsumer.LIFO;
 
+import main.producerConsumer.IWaitStrategy;
+
 import java.util.concurrent.locks.Condition;
 
 public class StoreWithPark<T> extends Store<T> {
@@ -8,8 +10,8 @@ public class StoreWithPark<T> extends Store<T> {
     protected final Condition notEmpty = lock.newCondition();
     protected final Condition notFull = lock.newCondition();
 
-    public StoreWithPark(int maxSize, Class cls, int spinCount) {
-        super(maxSize, cls);
+    public StoreWithPark(int maxSize, Class cls, int spinCount, IWaitStrategy waitStrategy) {
+        super(maxSize, cls, waitStrategy);
         this.spinCount = spinCount;
     }
 
@@ -28,11 +30,10 @@ public class StoreWithPark<T> extends Store<T> {
                     lock.unlock();
                 }
             }
-            Thread.yield();
+            waitStrategy.trySpinWait();
         }
 
         return getItemWithPark();
-
     }
 
     @Override
@@ -50,7 +51,7 @@ public class StoreWithPark<T> extends Store<T> {
                     lock.unlock();
                 }
             }
-            Thread.yield();
+            waitStrategy.trySpinWait();
         }
 
         putItemWithPark(item);
@@ -61,7 +62,6 @@ public class StoreWithPark<T> extends Store<T> {
         try {
             while (currentSize == 0)
                 notEmpty.await();
-
             return getItem();
         } finally {
             lock.unlock();
@@ -73,7 +73,6 @@ public class StoreWithPark<T> extends Store<T> {
         try {
             while (currentSize == maxSize)
                 notFull.await();
-
             putItem(item);
         } finally {
             lock.unlock();

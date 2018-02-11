@@ -1,6 +1,7 @@
 package main.producerConsumer.LIFO;
 
 import main.producerConsumer.IStore;
+import main.producerConsumer.IWaitStrategy;
 
 import java.lang.reflect.Array;
 import java.util.concurrent.locks.ReentrantLock;
@@ -14,18 +15,20 @@ public class Store<T> implements IStore<T> {
     protected final int maxSize;
     protected final T[] array;
     protected volatile int currentSize;
+    protected final IWaitStrategy waitStrategy;
 
     protected final ReentrantLock lock = new ReentrantLock();
 
-    public Store(int maxSize, Class<T> cls) {
+    public Store(int maxSize, Class<T> cls, IWaitStrategy waitStrategy) {
         this.maxSize = maxSize;
         this.currentSize = 0;
-        array = (T[]) Array.newInstance(cls, maxSize);
+        this.array = (T[]) Array.newInstance(cls, this.maxSize);
+        this.waitStrategy = waitStrategy;
     }
 
     @Override
     public T get() throws InterruptedException {
-        while (true) {
+        while (waitStrategy.canRun()) {
             //Simple TTAS
             if (currentSize > 0) {
                 lock.lockInterruptibly();
@@ -40,18 +43,14 @@ public class Store<T> implements IStore<T> {
                     lock.unlock();
                 }
             }
-            Thread.yield();
-
-            // On production environment you can remove this line
-            // This is workaround for jmh tests. Removing during running benchmarks tends to hanging tests.
-            if (Thread.interrupted())
-                throw new InterruptedException();
+            waitStrategy.trySpinWait();
         }
+        return null;
     }
 
     @Override
     public void put(T item) throws InterruptedException {
-        while (true) {
+        while (waitStrategy.canRun()) {
             //Simple TTAS
             if (currentSize < maxSize) {
                 lock.lockInterruptibly();
@@ -64,17 +63,25 @@ public class Store<T> implements IStore<T> {
                     lock.unlock();
                 }
             }
-            Thread.yield();
-
-            // On production environment you can remove this line
-            // This is workaround for jmh tests. Removing during running benchmarks tends to hanging tests.
-            if (Thread.interrupted())
-                throw new InterruptedException();
+            waitStrategy.trySpinWait();
         }
     }
 
     @Override
     public boolean IsEmpty() {
         return currentSize == 0;
+    }
+
+    @Override
+    public void clear() throws InterruptedException {
+        if (currentSize > 0) {
+            lock.lockInterruptibly();
+            try {
+                for (int i = 0; i < currentSize; i++)
+                    array[--currentSize] = null;
+            } finally {
+                lock.unlock();
+            }
+        }
     }
 }

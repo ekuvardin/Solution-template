@@ -6,8 +6,8 @@ package main.producerConsumer.FIFO;
  * @param <T> type of stored items
  */
 class Entry<T> {
-    T value = null;
 
+    T value = null;
 
     /**
      * Set value

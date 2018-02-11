@@ -6,6 +6,7 @@
 package main.producerConsumer.LIFO;
 
 import main.producerConsumer.IStore;
+import main.producerConsumer.IWaitStrategy;
 
 import java.lang.reflect.Array;
 import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
@@ -16,13 +17,15 @@ public class TrickyStore<T> implements IStore<T> {
     protected final T[] array;
     protected volatile int currentSize;
     protected final ReentrantLock lock = new ReentrantLock();
+    protected final IWaitStrategy waitStrategy;
 
     protected AtomicIntegerFieldUpdater<TrickyStore> currentSizeUpdater = AtomicIntegerFieldUpdater.newUpdater(TrickyStore.class, "currentSize");
 
-    public TrickyStore(int maxSize, Class<T> cls) {
+    public TrickyStore(int maxSize, Class<T> cls, IWaitStrategy waitStrategy) {
         this.maxSize = maxSize;
         this.currentSize = 0;
         this.array = ((T[]) Array.newInstance(cls, maxSize));
+        this.waitStrategy = waitStrategy;
     }
 
     public T get() throws InterruptedException {
@@ -30,7 +33,6 @@ public class TrickyStore<T> implements IStore<T> {
             do {
                 if (this.currentSize > 0) {
                     this.lock.lockInterruptibly();
-
                     try {
                         if (this.currentSize > 0) {
                             currentSizeUpdater.lazySet(this, this.currentSize - 1);
@@ -44,13 +46,11 @@ public class TrickyStore<T> implements IStore<T> {
                     }
                 }
 
-                Thread.yield();
-            } while (!Thread.interrupted());
+                waitStrategy.trySpinWait();
+            } while (waitStrategy.canRun());
         }
 
-        // On production environment you can remove this line
-        // This is workaround for jmh tests. Removing during running benchmarks tends to hanging tests.
-        throw new InterruptedException();
+        return null;
     }
 
     public void put(T item) throws InterruptedException {
@@ -69,15 +69,24 @@ public class TrickyStore<T> implements IStore<T> {
                 }
             }
 
-            Thread.yield();
-        } while (!Thread.interrupted());
-
-        // On production environment you can remove this line
-        // This is workaround for jmh tests. Removing during running benchmarks tends to hanging tests.
-        throw new InterruptedException();
+            waitStrategy.trySpinWait();
+        } while (waitStrategy.canRun());
     }
 
     public boolean IsEmpty() {
         return this.currentSize == 0;
+    }
+
+    @Override
+    public void clear() throws InterruptedException {
+        if (currentSize > 0) {
+            lock.lockInterruptibly();
+            try {
+                for (int i = 0; i < currentSize; i++)
+                    array[--currentSize] = null;
+            } finally {
+                lock.unlock();
+            }
+        }
     }
 }
