@@ -8,3 +8,6 @@ jcstress.*
 /results/
 /Out.txt
 /AvgNumbers.txt
+/Solutions/Out.txt
+/Solutions/AvgNumbers.txt
+/Solutions/Solutions.iml

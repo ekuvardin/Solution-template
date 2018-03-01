@@ -4,7 +4,7 @@
   ### main.SortBigFile
           example of K-way merge big file
    
-          In order to launch program call main.sortBigFile.SortInteger
+          In order to launch program call SortInteger
           
           with parameters
           
@@ -14,7 +14,7 @@
               
               pl   - max size of threads taking part in sorting
               
-              inpf - name of input file. So you can use main.Generator to get big file
+              inpf - name of input file. So you can use main.generator.Generator to get big file
               
               resf - name of final result file
               
