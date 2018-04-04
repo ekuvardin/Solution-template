@@ -5,7 +5,7 @@ import org.openjdk.jmh.infra.Control;
 
 public class JmhWaitStrategy implements IWaitStrategy {
 
-    private Control control;
+    private volatile Control control;
 
     public void setControl(Control control) {
         this.control = control;

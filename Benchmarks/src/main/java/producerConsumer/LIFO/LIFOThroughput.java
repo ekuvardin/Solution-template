@@ -1,9 +1,11 @@
 package producerConsumer.LIFO;
 
 import main.producerConsumer.IStore;
+import main.producerConsumer.IWaitStrategy;
 import main.producerConsumer.LIFO.Store;
 import main.producerConsumer.LIFO.StoreWithPark;
 import main.producerConsumer.LIFO.TrickyStore;
+import main.producerConsumer.ThreadInterruptedStrategy;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Control;
 import org.openjdk.jmh.runner.Runner;
@@ -134,8 +136,8 @@ public class LIFOThroughput {
 
     private static final int size = 128;
     private static final int insert_value = 10000;
-    private static final int putThreads = 2;
-    private static final int getThreads = 2;
+    private static final int putThreads = 8;
+    private static final int getThreads = 8;
     private static final int threadsCount = getThreads + putThreads;
 
 
@@ -187,17 +189,17 @@ public class LIFOThroughput {
     public static class StoreBenchmarkManyPutGet {
 
         private IStore<Integer> simple;
-        private JmhWaitStrategy strategy;
+        private IWaitStrategy strategy;
 
         @Setup
         public void setup() throws InterruptedException {
-            strategy = new JmhWaitStrategy();
+            strategy = new ThreadInterruptedStrategy();
             simple = new Store<>(size, Integer.class, strategy);
         }
 
         @Setup(Level.Iteration)
         public void preSetup(Control control) throws InterruptedException {
-            strategy.setControl(control);
+          //  strategy.setControl(control);
             simple.clear();
         }
 
@@ -227,17 +229,17 @@ public class LIFOThroughput {
     public static class TrickyStoreBenchmarkManyPutGet {
 
         private IStore<Integer> simple;
-        private JmhWaitStrategy strategy;
+        private IWaitStrategy strategy;
 
         @Setup
         public void setup() throws InterruptedException {
-            strategy = new JmhWaitStrategy();
+            strategy = new ThreadInterruptedStrategy();
             simple = new TrickyStore<>(size, Integer.class, strategy);
         }
 
         @Setup(Level.Iteration)
         public void preSetup(Control control) throws InterruptedException {
-            strategy.setControl(control);
+         //   strategy.setControl(control);
             simple.clear();
         }
 
@@ -267,17 +269,17 @@ public class LIFOThroughput {
     public static class StoreWithParkBenchmarkManyPutGet {
 
         private IStore<Integer> simple;
-        private JmhWaitStrategy strategy;
+        private IWaitStrategy strategy;
 
         @Setup
         public void setup() throws InterruptedException {
-            strategy = new JmhWaitStrategy();
+            strategy = new ThreadInterruptedStrategy();
             simple = new StoreWithPark<>(size, Integer.class, 100, strategy);
         }
 
         @Setup(Level.Iteration)
         public void preSetup(Control control) throws InterruptedException {
-            strategy.setControl(control);
+        //    strategy.setControl(control);
             simple.clear();
         }
 
@@ -307,7 +309,7 @@ public class LIFOThroughput {
                 .threads(threadsCount)
                 .timeout(TimeValue.seconds(5))
                 .syncIterations(true)
-                .jvmArgs("-ea")
+                .jvmArgs("-XX:+UseParallelGC")
                 .build();
         try {
             new Runner(opt).run();
