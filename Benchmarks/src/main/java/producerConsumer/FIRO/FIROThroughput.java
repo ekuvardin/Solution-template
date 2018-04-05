@@ -1,9 +1,5 @@
 package producerConsumer.FIRO;
 
-import main.producerConsumer.FIRO.RandomStartStore;
-import main.producerConsumer.IStore;
-import main.producerConsumer.IWaitStrategy;
-import main.producerConsumer.ThreadInterruptedStrategy;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 import org.openjdk.jmh.infra.Control;
@@ -12,25 +8,19 @@ import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jmh.runner.options.TimeValue;
+import producerConsumer.IStore;
+import producerConsumer.IWaitStrategy;
 import producerConsumer.JmhWaitStrategy;
+import producerConsumer.ThreadInterruptedStrategy;
 
 import java.util.concurrent.TimeUnit;
 
 /*
     Tests analyze throughput of simple queue using FIRO strategy
 
-    !!!!!!!!!!!!!!!!!WARNING!!!!!!!!!!!!!!!!!!!!!!!!
+    !!!WARNING!!!
     When running many threads using single producer multiple consumer strategy and count of threads much more bigger than
-    available cores the you can see that the benchmarks hangs.
-
-    Workaround:
-        try thread dump main benchmark java process
-    Issue:
-        I think it's because RandomStartStore use Thread.yield and never acquire lock so doesn't sleep
-        Thats why main benchmarks process couldn't get process time to execute further.
-
-    TODO:
-       Use another strategy. For example CardMark
+    available cores the you can see Infinity ops. Try decreased count of threads or increase queue size.
 
     Benchmarks was running using Intel Core i502310 CPU 2.90GHZ 3.20 GHZ 4 cores
 
@@ -42,9 +32,9 @@ import java.util.concurrent.TimeUnit;
     thread count = 4
 
     Benchmark                                                                                       Mode  Cnt    Score    Error   Units
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt    5  183,447 ± 10,380  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt    5   91,722 ±  5,187  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt    5   91,725 ±  5,193  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt    5  184,131 ± 32,658  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt    5   92,117 ± 16,758  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt    5   92,013 ± 15,902  ops/ns
 
 
     Test 2
@@ -54,12 +44,10 @@ import java.util.concurrent.TimeUnit;
     private static final int getThreads = 4;
     thread count = 8
 
-    Benchmark                                                                                       Mode  Cnt    Score    Error   Units
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt    5  191,021 ± 17,724  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt    5   95,516 ±  8,866  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt    5   95,505 ±  8,859  ops/ns
-
-
+    Benchmark                                                                                       Mode  Cnt    Score   Error   Units
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt    5  178,585 ± 9,877  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt    5   89,213 ± 6,680  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt    5   89,372 ± 3,611  ops/ns
 
     Test 3
     private static final int size = 128;
@@ -69,9 +57,9 @@ import java.util.concurrent.TimeUnit;
     thread count = 16
 
     Benchmark                                                                                       Mode  Cnt    Score    Error   Units
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt    5  187,750 ± 28,113  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt    5   93,773 ± 14,109  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt    5   93,976 ± 14,019  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt    5  175,569 ± 15,176  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt    5   87,631 ±  9,729  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt    5   87,938 ±  5,589  ops/ns
 
     Test 4
 
@@ -95,7 +83,7 @@ import java.util.concurrent.TimeUnit;
 
 public class FIROThroughput {
 
-    private static final int size = 128;
+    private static final int size = 512;
     private static final int insert_value = 10000;
     private static final int putThreads = 1;
     private static final int getThreads = 15;
@@ -116,13 +104,14 @@ public class FIROThroughput {
 
         @Setup(Level.Trial)
         public void setup() throws InterruptedException {
-            strategy = new ThreadInterruptedStrategy();
+            strategy = new JmhWaitStrategy();
             simple = new RandomStartStore<>(size, strategy);
         }
 
         @Setup(Level.Iteration)
-        public void preSetup() throws InterruptedException {
+        public void preSetup(Control cnt) throws InterruptedException {
             simple.clear();
+            ((JmhWaitStrategy)strategy).setControl(cnt);
         }
 
         @TearDown
@@ -153,6 +142,7 @@ public class FIROThroughput {
                 .timeout(TimeValue.seconds(3))
                 .syncIterations(true)
                 .jvmArgs("-XX:+UseParallelGC")
+                .shouldDoGC(true)
                 .build();
         try {
             new Runner(opt).run();

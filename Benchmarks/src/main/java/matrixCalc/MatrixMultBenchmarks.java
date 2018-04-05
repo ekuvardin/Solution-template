@@ -1,11 +1,10 @@
 package matrixCalc;
 
-import main.Generator;
-import main.matrixCalc.MatrixCalc;
-import main.matrixCalc.impl.CacheLineBound;
-import main.matrixCalc.impl.Simple;
-import main.matrixCalc.impl.Transpose;
-import main.matrixCalc.impl.TransposeCacheLine;
+import generator.Generator;
+import matrixCalc.impl.CacheLineBound;
+import matrixCalc.impl.Simple;
+import matrixCalc.impl.Transpose;
+import matrixCalc.impl.TransposeCacheLine;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;

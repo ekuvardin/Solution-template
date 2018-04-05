@@ -9,6 +9,6 @@ public class ThreadInterruptedStrategy implements IWaitStrategy {
 
     @Override
     public void trySpinWait() throws InterruptedException {
-        Thread.yield();
+        Thread.onSpinWait();
     }
 }

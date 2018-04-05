@@ -1,6 +1,5 @@
 package producerConsumer;
 
-import main.producerConsumer.IWaitStrategy;
 import org.openjdk.jmh.infra.Control;
 
 public class JmhWaitStrategy implements IWaitStrategy {

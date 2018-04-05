@@ -1,10 +1,5 @@
 package producerConsumer.FIFO;
 
-import main.producerConsumer.FIFO.CyclicLockOnEntryStore;
-import main.producerConsumer.FIFO.TwoLocksStore;
-import main.producerConsumer.IStore;
-import main.producerConsumer.IWaitStrategy;
-import main.producerConsumer.ThreadInterruptedStrategy;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Control;
 import org.openjdk.jmh.runner.Runner;
@@ -12,6 +7,9 @@ import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jmh.runner.options.TimeValue;
+import producerConsumer.IStore;
+import producerConsumer.IWaitStrategy;
+import producerConsumer.ThreadInterruptedStrategy;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;

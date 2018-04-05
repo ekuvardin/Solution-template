@@ -1,11 +1,6 @@
 package producerConsumer.LIFO;
 
-import main.producerConsumer.IStore;
-import main.producerConsumer.IWaitStrategy;
-import main.producerConsumer.LIFO.Store;
-import main.producerConsumer.LIFO.StoreWithPark;
-import main.producerConsumer.LIFO.TrickyStore;
-import main.producerConsumer.ThreadInterruptedStrategy;
+
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Control;
 import org.openjdk.jmh.runner.Runner;
@@ -13,7 +8,10 @@ import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jmh.runner.options.TimeValue;
+import producerConsumer.IStore;
+import producerConsumer.IWaitStrategy;
 import producerConsumer.JmhWaitStrategy;
+import producerConsumer.ThreadInterruptedStrategy;
 
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.TimeUnit;
@@ -26,7 +24,10 @@ import java.util.concurrent.TimeUnit;
         main.producerConsumer.LIFO.StoreWithPark;
         main.producerConsumer.LIFO.TrickyStore;
 
-    Benchmarks was running using Intel Core i502310 CPU 2.90GHZ 3.20 GHZ 4 cores
+    Note
+    1. Benchmarks was running using Intel Core i502310 CPU 2.90GHZ 3.20 GHZ 4 cores
+    2. Dramatically decreasing error helps calling GB before iteration.
+    3. ParallelGC gives the best performance on Java9 then G1(default in Java9)
 
     Test 1
     private static final int size = 128;
@@ -36,22 +37,21 @@ import java.util.concurrent.TimeUnit;
     thread count = 4
 
     Benchmark                                                                                             Mode  Cnt    Score    Error   Units
-    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque      thrpt    5  181,047 ± 11,350  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:get  thrpt    5   90,524 ±  5,674  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:put  thrpt    5   90,522 ±  5,676  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque      thrpt    5  177,472 ± 28,194  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:get  thrpt    5   88,732 ± 14,089  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:put  thrpt    5   88,741 ± 14,105  ops/ns
 
-    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store                                  thrpt    5  151,207 ±  5,337  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:get                              thrpt    5   75,604 ±  2,668  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:put                              thrpt    5   75,603 ±  2,670  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store                                  thrpt    5  141,968 ±  2,973  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:get                              thrpt    5   70,984 ±  1,486  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:put                              thrpt    5   70,983 ±  1,487  ops/ns
 
-    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark                  thrpt    5  138,823 ± 15,538  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:get              thrpt    5   69,410 ±  7,769  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:put              thrpt    5   69,413 ±  7,769  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark                  thrpt    5  137,572 ± 17,214  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:get              thrpt    5   68,786 ±  8,607  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:put              thrpt    5   68,786 ±  8,607  ops/ns
 
-    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore                      thrpt    5  203,216 ±  8,970  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:get                  thrpt    5  101,608 ±  4,484  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:put                  thrpt    5  101,607 ±  4,485  ops/ns
-
+    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore                      thrpt    5  159,021 ± 27,988  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:get                  thrpt    5   79,511 ± 13,997  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:put                  thrpt    5   79,510 ± 13,991  ops/ns
 
     Test 2
     private static final int size = 128;
@@ -61,22 +61,21 @@ import java.util.concurrent.TimeUnit;
     thread count = 8
 
     Benchmark                                                                                             Mode  Cnt    Score    Error   Units
-    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque      thrpt    5  103,966 ±  4,140  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:get  thrpt    5   51,988 ±  1,564  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:put  thrpt    5   51,979 ±  2,603  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque      thrpt    5  108,776 ±  3,982  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:get  thrpt    5   54,731 ±  3,805  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:put  thrpt    5   54,046 ±  0,341  ops/ns
 
-    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store                                  thrpt    5  110,097 ±  6,203  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:get                              thrpt    5   55,049 ±  3,102  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:put                              thrpt    5   55,048 ±  3,101  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store                                  thrpt    5  100,654 ± 35,035  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:get                              thrpt    5   50,329 ± 17,520  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:put                              thrpt    5   50,325 ± 17,515  ops/ns
 
-    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark                  thrpt    4  106,814 ± 10,921  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:get              thrpt    4   53,407 ±  5,455  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:put              thrpt    4   53,407 ±  5,465  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark                  thrpt    5  105,355 ±  2,071  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:get              thrpt    5   52,680 ±  1,035  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:put              thrpt    5   52,676 ±  1,036  ops/ns
 
-    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore                      thrpt    5  141,807 ± 35,877  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:get                  thrpt    5   70,904 ± 17,939  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:put                  thrpt    5   70,903 ± 17,938  ops/ns
-
+    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore                      thrpt    5  122,004 ± 28,371  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:get                  thrpt    5   61,002 ± 14,185  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:put                  thrpt    5   61,002 ± 14,186  ops/ns
 
 
     Test 3
@@ -87,49 +86,50 @@ import java.util.concurrent.TimeUnit;
     thread count = 16
 
     Benchmark                                                                                             Mode  Cnt    Score    Error   Units
-    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque      thrpt    5   61,107 ± 56,380  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:get  thrpt    5   27,551 ±  5,749  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:put  thrpt    5   33,556 ± 54,943  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque      thrpt    5   64,959 ± 44,498  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:get  thrpt    5   32,600 ± 23,117  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:put  thrpt    5   32,359 ± 21,388  ops/ns
 
-    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store                                  thrpt    5  109,811 ± 21,485  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:get                              thrpt    5   54,908 ± 10,744  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:put                              thrpt    5   54,903 ± 10,740  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store                                  thrpt    5  105,811 ± 19,349  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:get                              thrpt    5   52,898 ±  9,650  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:put                              thrpt    5   52,912 ±  9,698  ops/ns
 
-    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark                  thrpt    5   54,553 ± 10,216  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:get              thrpt    5   27,276 ±  5,101  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:put              thrpt    5   27,278 ±  5,115  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark                  thrpt    5   54,837 ±  2,045  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:get              thrpt    5   27,418 ±  1,020  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:put              thrpt    5   27,418 ±  1,025  ops/ns
 
-    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore                      thrpt    5  139,450 ±  7,994  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:get                  thrpt    5   69,725 ±  3,997  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:put                  thrpt    5   69,725 ±  3,997  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore                      thrpt    5  134,720 ± 20,192  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:get                  thrpt    5   67,391 ± 10,184  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:put                  thrpt    5   67,330 ± 10,011  ops/ns
 
-    Test 4(Now we try single producer multiple reader strategy)
+    Test 4(Now we try single producer multiple consumer strategy)
     private static final int size = 128;
     private static final int insert_value = 10000;
     private static final int putThreads = 1;
     private static final int getThreads = 15;
     thread count = 16
 
-    Benchmark                                                                                             Mode  Cnt   Score   Error   Units
-    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque      thrpt    5  36,409 ± 1,876  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:get  thrpt    5  18,209 ± 0,933  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:put  thrpt    5  18,201 ± 0,943  ops/ns
+    Benchmark                                                                                             Mode  Cnt   Score    Error   Units
+    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque      thrpt    5  47,866 ±  4,438  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:get  thrpt    5  23,942 ±  2,206  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:put  thrpt    5  23,924 ±  2,232  ops/ns
 
-    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store                                  thrpt    5  38,650 ± 5,511  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:get                              thrpt    5  19,325 ± 2,757  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:put                              thrpt    5  19,325 ± 2,754  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store                                  thrpt    5  28,589 ± 17,582  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:get                              thrpt    5  14,300 ±  8,781  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:put                              thrpt    5  14,289 ±  8,801  ops/ns
 
-    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark                  thrpt    5  46,357 ± 3,959  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:get              thrpt    5  23,172 ± 1,993  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:put              thrpt    5  23,184 ± 1,967  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark                  thrpt    5  42,814 ±  0,960  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:get              thrpt    5  21,424 ±  0,515  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:put              thrpt    5  21,390 ±  0,449  ops/ns
 
-    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore                      thrpt    5  47,733 ± 2,015  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:get                  thrpt    5  23,866 ± 1,010  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:put                  thrpt    5  23,867 ± 1,005  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore                      thrpt    5  43,149 ± 10,396  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:get                  thrpt    5  21,574 ±  5,190  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:put                  thrpt    5  21,575 ±  5,206  ops/ns
 
     Results:
-    TrickyStore gives the best throughput in all tests. When use strategy Single Producer Multiple Consumer then throughput
-    decreasing dramatically and advantage TrickyStore on LinkedBlockingDeque is no more than 33%
+    TrickyStore, Store give the best performance when equal getters or setters.
+    LinkedBlockingDeque gives the best performance when total count of threads interconnecting to
+    actions is quite small(less then count of cores) and in ingle producer multiple consumer strategy
  */
 
 public class LIFOThroughput {
@@ -310,6 +310,7 @@ public class LIFOThroughput {
                 .timeout(TimeValue.seconds(5))
                 .syncIterations(true)
                 .jvmArgs("-XX:+UseParallelGC")
+                .shouldDoGC(true)
                 .build();
         try {
             new Runner(opt).run();
