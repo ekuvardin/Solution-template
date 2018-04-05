@@ -136,8 +136,8 @@ public class LIFOThroughput {
 
     private static final int size = 128;
     private static final int insert_value = 10000;
-    private static final int putThreads = 8;
-    private static final int getThreads = 8;
+    private static final int putThreads = 1;
+    private static final int getThreads = 15;
     private static final int threadsCount = getThreads + putThreads;
 
 
@@ -193,13 +193,13 @@ public class LIFOThroughput {
 
         @Setup
         public void setup() throws InterruptedException {
-            strategy = new ThreadInterruptedStrategy();
+            strategy = new JmhWaitStrategy();
             simple = new Store<>(size, Integer.class, strategy);
         }
 
         @Setup(Level.Iteration)
         public void preSetup(Control control) throws InterruptedException {
-          //  strategy.setControl(control);
+            ((JmhWaitStrategy)strategy).setControl(control);
             simple.clear();
         }
 
@@ -233,13 +233,13 @@ public class LIFOThroughput {
 
         @Setup
         public void setup() throws InterruptedException {
-            strategy = new ThreadInterruptedStrategy();
+            strategy = new JmhWaitStrategy();
             simple = new TrickyStore<>(size, Integer.class, strategy);
         }
 
         @Setup(Level.Iteration)
         public void preSetup(Control control) throws InterruptedException {
-         //   strategy.setControl(control);
+            ((JmhWaitStrategy)strategy).setControl(control);
             simple.clear();
         }
 
@@ -273,13 +273,13 @@ public class LIFOThroughput {
 
         @Setup
         public void setup() throws InterruptedException {
-            strategy = new ThreadInterruptedStrategy();
+            strategy = new JmhWaitStrategy();
             simple = new StoreWithPark<>(size, Integer.class, 100, strategy);
         }
 
         @Setup(Level.Iteration)
         public void preSetup(Control control) throws InterruptedException {
-        //    strategy.setControl(control);
+            ((JmhWaitStrategy)strategy).setControl(control);
             simple.clear();
         }
 

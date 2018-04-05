@@ -5,13 +5,14 @@ import producerConsumer.IStore;
 import producerConsumer.IWaitStrategy;
 
 import java.lang.reflect.Array;
+import java.util.concurrent.atomic.AtomicIntegerFieldUpdater;
 
 /**
- * FIFO queue based on Ring(Cyclic) buffer
+ * FIFO queue based on Ring(Cyclic) buffer with lazySet
  *
  * @param <T> type of stored items
  */
-public class CyclicLockOnEntryStore<T> implements IStore<T> {
+public class TrickyCyclicLockOnEntryStore<T> implements IStore<T> {
 
     private final Entry<T>[] array;
     private final IIndexStrategy indexStrategy;
@@ -23,7 +24,10 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
 
     private final int capacity;
 
-    public CyclicLockOnEntryStore(int size, IWaitStrategy waitStrategy) {
+    protected AtomicIntegerFieldUpdater<TrickyCyclicLockOnEntryStore> headUpdater = AtomicIntegerFieldUpdater.newUpdater(TrickyCyclicLockOnEntryStore.class, "head");
+    protected AtomicIntegerFieldUpdater<TrickyCyclicLockOnEntryStore> tailUpdater = AtomicIntegerFieldUpdater.newUpdater(TrickyCyclicLockOnEntryStore.class, "tail");
+
+    public TrickyCyclicLockOnEntryStore(int size, IWaitStrategy waitStrategy) {
         array = (Entry[]) Array.newInstance(Entry.class, size);
         for (int i = 0; i < size; i++)
             array[i] = new Entry<>();
@@ -48,7 +52,7 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
                 if (localIndex == indexStrategy.getIndex(head) && getSize() > 0) {
                     result = entry.value;
                     entry.setValue(null);
-                    head++;
+                    headUpdater.lazySet(this, this.head + 1);
                     entry.notifyAll();
                     // Note: If head==tail => getSize==0 means that queue is empty
                     // and we blocks on node with head==tail
@@ -75,7 +79,7 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
             synchronized (entry) {
                 if (localIndex == indexStrategy.getIndex(tail) && getSize() < capacity) {
                     entry.setValue(input);
-                    tail++;
+                    tailUpdater.lazySet(this, this.tail + 1);
                     entry.notifyAll();
                     return;
                     // Note: If head==(tail - capacity) means that queue is full
@@ -103,7 +107,7 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
             synchronized (entry) {
                 if (localIndex == indexStrategy.getIndex(head) && getSize() > 0) {
                     entry.setValue(null);
-                    head++;
+                    headUpdater.lazySet(this, this.head + 1);
                     entry.notifyAll();
                     // Note: If head==tail => getSize==0 means that queue is empty
                     // and we blocks on node with head==tail

@@ -9,6 +9,7 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jmh.runner.options.TimeValue;
 import producerConsumer.IStore;
 import producerConsumer.IWaitStrategy;
+import producerConsumer.JmhWaitStrategy;
 import producerConsumer.ThreadInterruptedStrategy;
 
 import java.util.concurrent.ArrayBlockingQueue;
@@ -123,10 +124,10 @@ public class FIFOThroughput {
 
     private static final int size = 128;
     private static final int insert_value = 10000;
-    private static final int putThreads = 1;
-    private static final int getThreads = 15;
+    private static final int putThreads = 8;
+    private static final int getThreads = 8;
     private static final int threadsCount = getThreads + putThreads;
-
+/*
     @State(Scope.Group)
     @BenchmarkMode(Mode.Throughput)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
@@ -164,7 +165,7 @@ public class FIFOThroughput {
             return arrayBlockingQueue.take();
         }
     }
-
+*/
     @State(Scope.Group)
     @BenchmarkMode(Mode.Throughput)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
@@ -181,12 +182,13 @@ public class FIFOThroughput {
 
         @Setup
         public void setup() throws InterruptedException {
-            strategy = new ThreadInterruptedStrategy();
+            strategy = new JmhWaitStrategy();
             simple = new CyclicLockOnEntryStore<>(size, strategy);
         }
 
         @Setup(Level.Iteration)
-        public void preSetup() throws InterruptedException {
+        public void preSetup(Control cnt) throws InterruptedException {
+            ((JmhWaitStrategy)strategy).setControl(cnt);
             simple.clear();
         }
 
@@ -214,6 +216,47 @@ public class FIFOThroughput {
     @Fork(1)
     @Threads(threadsCount)
     @OperationsPerInvocation(insert_value)
+    public static class TrickyCyclicLockOnEntryStoreBenchmarkManyPutGet {
+
+        private IStore<Integer> simple;
+        private IWaitStrategy strategy;
+
+        @Setup
+        public void setup() throws InterruptedException {
+            strategy = new JmhWaitStrategy();
+            simple = new TrickyCyclicLockOnEntryStore<>(size, strategy);
+        }
+
+        @Setup(Level.Iteration)
+        public void preSetup(Control cnt) throws InterruptedException {
+            ((JmhWaitStrategy)strategy).setControl(cnt);
+            simple.clear();
+        }
+
+        @Benchmark
+        @Group("TrickyCyclicLockOnEntryStore")
+        @GroupThreads(putThreads)
+        public void put() throws InterruptedException {
+            simple.put(1);
+        }
+
+        @Benchmark
+        @Group("TrickyCyclicLockOnEntryStore")
+        @GroupThreads(getThreads)
+        public Integer get() throws InterruptedException {
+            return simple.get();
+        }
+    }
+
+    @State(Scope.Group)
+    @BenchmarkMode(Mode.Throughput)
+    @OutputTimeUnit(TimeUnit.NANOSECONDS)
+    @Warmup(iterations = 4)
+    @Measurement(iterations = 5)
+    @Timeout(time = 3)
+    @Fork(1)
+    @Threads(threadsCount)
+    @OperationsPerInvocation(insert_value)
     public static class TwoLocksStoreBenchmarkManyPutGet {
 
         private IStore<Integer> simple;
@@ -221,12 +264,13 @@ public class FIFOThroughput {
 
         @Setup
         public void setup() throws InterruptedException {
-            strategy = new ThreadInterruptedStrategy();
+            strategy = new JmhWaitStrategy();
             simple = new TwoLocksStore<>(size, strategy);
         }
 
         @Setup(Level.Iteration)
-        public void preSetup() throws InterruptedException {
+        public void preSetup(Control cnt) throws InterruptedException {
+            ((JmhWaitStrategy)strategy).setControl(cnt);
             simple.clear();
         }
 
@@ -256,7 +300,7 @@ public class FIFOThroughput {
                 .threads(threadsCount)
                 .timeout(TimeValue.seconds(3))
                 .syncIterations(true)
-                .jvmArgs("-ea")
+                .jvmArgs("-XX:+UseParallelGC")
                 .build();
         try {
             new Runner(opt).run();
