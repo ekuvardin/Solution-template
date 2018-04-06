@@ -11,6 +11,7 @@
     <modules>
         <module>Solutions</module>
         <module>Benchmarks</module>
+        <module>JStressTests</module>
     </modules>
 
 </project>

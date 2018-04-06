@@ -124,10 +124,10 @@ public class FIFOThroughput {
 
     private static final int size = 128;
     private static final int insert_value = 10000;
-    private static final int putThreads = 8;
-    private static final int getThreads = 8;
+    private static final int putThreads = 2;
+    private static final int getThreads = 2;
     private static final int threadsCount = getThreads + putThreads;
-/*
+
     @State(Scope.Group)
     @BenchmarkMode(Mode.Throughput)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
@@ -165,7 +165,7 @@ public class FIFOThroughput {
             return arrayBlockingQueue.take();
         }
     }
-*/
+
     @State(Scope.Group)
     @BenchmarkMode(Mode.Throughput)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
@@ -182,13 +182,12 @@ public class FIFOThroughput {
 
         @Setup
         public void setup() throws InterruptedException {
-            strategy = new JmhWaitStrategy();
+            strategy = new ThreadInterruptedStrategy();
             simple = new CyclicLockOnEntryStore<>(size, strategy);
         }
 
         @Setup(Level.Iteration)
         public void preSetup(Control cnt) throws InterruptedException {
-            ((JmhWaitStrategy)strategy).setControl(cnt);
             simple.clear();
         }
 
@@ -223,13 +222,12 @@ public class FIFOThroughput {
 
         @Setup
         public void setup() throws InterruptedException {
-            strategy = new JmhWaitStrategy();
+            strategy = new ThreadInterruptedStrategy();
             simple = new TrickyCyclicLockOnEntryStore<>(size, strategy);
         }
 
         @Setup(Level.Iteration)
         public void preSetup(Control cnt) throws InterruptedException {
-            ((JmhWaitStrategy)strategy).setControl(cnt);
             simple.clear();
         }
 
@@ -264,13 +262,12 @@ public class FIFOThroughput {
 
         @Setup
         public void setup() throws InterruptedException {
-            strategy = new JmhWaitStrategy();
+            strategy = new ThreadInterruptedStrategy();
             simple = new TwoLocksStore<>(size, strategy);
         }
 
         @Setup(Level.Iteration)
         public void preSetup(Control cnt) throws InterruptedException {
-            ((JmhWaitStrategy)strategy).setControl(cnt);
             simple.clear();
         }
 
@@ -301,6 +298,7 @@ public class FIFOThroughput {
                 .timeout(TimeValue.seconds(3))
                 .syncIterations(true)
                 .jvmArgs("-XX:+UseParallelGC")
+                .shouldDoGC(true)
                 .build();
         try {
             new Runner(opt).run();

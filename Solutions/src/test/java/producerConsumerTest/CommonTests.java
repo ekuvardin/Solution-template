@@ -23,7 +23,7 @@ public abstract class CommonTests {
     @Before
     public abstract void preTest();
 
-    @Test(timeout = 1000000)
+    @Test(timeout = 10000)
     public void storeCorrectnessTest() throws InterruptedException {
         List<Integer> tmp = new ArrayList<>(5);
 
@@ -69,13 +69,29 @@ public abstract class CommonTests {
         Assert.assertEquals(new Integer(0), getResults(consumer1, producer1, consumer2, consumer3));
     }
 
-    @Test(timeout = 100000)
+    @Test(timeout = 10000)
     public void MultipleProducerMultipleConsumer() throws InterruptedException, ExecutionException {
         executor = Executors.newFixedThreadPool(4);
         CompletableFuture<Integer> consumer1 = createFuture(consumer, store, 15);
         CompletableFuture<Integer> consumer2 = createFuture(consumer, store, 5);
         CompletableFuture<Integer> producer1 = createFuture(producer, store, 10);
         CompletableFuture<Integer> producer2 = createFuture(producer, store, 10);
+
+        executor.shutdown();
+        Assert.assertTrue(executor.awaitTermination(1, TimeUnit.MINUTES));
+
+        Assert.assertTrue(store.IsEmpty());
+
+        Assert.assertEquals(new Integer(0), getResults(consumer1, producer1, consumer2, producer2));
+    }
+
+    @Test(timeout = 10000)
+    public void HeavyLoadMultipleProducerMultipleConsumer() throws InterruptedException, ExecutionException {
+        executor = Executors.newFixedThreadPool(4);
+        CompletableFuture<Integer> consumer1 = createFuture(consumer, store, 10000);
+        CompletableFuture<Integer> consumer2 = createFuture(consumer, store, 10000);
+        CompletableFuture<Integer> producer1 = createFuture(producer, store, 10000);
+        CompletableFuture<Integer> producer2 = createFuture(producer, store, 10000);
 
         executor.shutdown();
         Assert.assertTrue(executor.awaitTermination(1, TimeUnit.MINUTES));
