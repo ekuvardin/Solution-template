@@ -1,14 +1,14 @@
 package sorting;
 
-import main.Generator;
-import main.sortBigFile.readers.integerReader.IntegerCompareStrategy;
-import main.sortBigFile.sort.SortBigFile;
-import main.sortBigFile.writers.integerWriters.IntegerScanner;
+import generator.Generator;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
+import sortBigFile.readers.integerReader.IntegerCompareStrategy;
+import sortBigFile.sort.SortBigFile;
+import sortBigFile.writers.integerWriters.IntegerScanner;
 
 import java.io.FileNotFoundException;
 import java.io.UnsupportedEncodingException;

@@ -9,7 +9,7 @@ import java.util.concurrent.TimeUnit;
 @OutputTimeUnit(TimeUnit.NANOSECONDS)
 @Warmup(iterations = 2)
 @Measurement(iterations = 5)
-@Fork(2)
+@Fork(1)
 public class ExecutorBenchmarks {
 
 

@@ -5,6 +5,7 @@ import producerConsumer.IStore;
 import producerConsumer.IWaitStrategy;
 
 import java.lang.reflect.Array;
+import java.util.concurrent.locks.LockSupport;
 
 /**
  * FIFO queue based on Ring(Cyclic) buffer
@@ -26,7 +27,7 @@ public class CyclicLockOnEntryStore<T> implements IStore<T> {
     public CyclicLockOnEntryStore(int size, IWaitStrategy waitStrategy) {
         array = (Entry[]) Array.newInstance(Entry.class, size);
         for (int i = 0; i < size; i++)
-            array[i] = new Entry<T>();
+            array[i] = new Entry<>();
 
         if ((size & -size) == size) {
             indexStrategy = ((p1) -> p1 & (size - 1));

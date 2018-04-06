@@ -1,10 +1,5 @@
 package producerConsumer.FIFO;
 
-import main.producerConsumer.FIFO.CyclicLockOnEntryStore;
-import main.producerConsumer.FIFO.TwoLocksStore;
-import main.producerConsumer.IStore;
-import main.producerConsumer.IWaitStrategy;
-import main.producerConsumer.ThreadInterruptedStrategy;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Control;
 import org.openjdk.jmh.runner.Runner;
@@ -12,6 +7,9 @@ import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jmh.runner.options.TimeValue;
+import producerConsumer.IStore;
+import producerConsumer.IWaitStrategy;
+import producerConsumer.ThreadInterruptedStrategy;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.TimeUnit;
@@ -107,15 +105,17 @@ import java.util.concurrent.TimeUnit;
     thread count = 16
 
     Benchmark                                                                                                   Mode  Cnt    Score   Error   Units
-    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue              thrpt    5   41,793 ? 3,600  ops/ns
-    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:get          thrpt    5   20,908 ? 1,819  ops/ns
-    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:put          thrpt    5   20,886 ? 1,780  ops/ns
-    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore      thrpt    5  131,026 ? 5,499  ops/ns
-    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:get  thrpt    5   65,664 ? 3,270  ops/ns
-    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:put  thrpt    5   65,362 ? 2,782  ops/ns
-    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore                        thrpt    5  137,547 ? 1,852  ops/ns
-    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:get                    thrpt    5   68,911 ? 2,216  ops/ns
-    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:put                    thrpt    5   68,636 ? 0,909  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue              thrpt    5   41,793 ± 3,600  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:get          thrpt    5   20,908 ± 1,819  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:put          thrpt    5   20,886 ± 1,780  ops/ns
+
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore      thrpt    5  131,026 ± 5,499  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:get  thrpt    5   65,664 ± 3,270  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:put  thrpt    5   65,362 ± 2,782  ops/ns
+
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore                        thrpt    5  137,547 ± 1,852  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:get                    thrpt    5   68,911 ± 2,216  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:put                    thrpt    5   68,636 ± 0,909  ops/ns
 
  */
 
@@ -123,8 +123,8 @@ public class FIFOThroughput {
 
     private static final int size = 128;
     private static final int insert_value = 10000;
-    private static final int putThreads = 1;
-    private static final int getThreads = 15;
+    private static final int putThreads = 4;
+    private static final int getThreads = 4;
     private static final int threadsCount = getThreads + putThreads;
 
     @State(Scope.Group)
@@ -186,7 +186,7 @@ public class FIFOThroughput {
         }
 
         @Setup(Level.Iteration)
-        public void preSetup() throws InterruptedException {
+        public void preSetup(Control cnt) throws InterruptedException {
             simple.clear();
         }
 
@@ -226,7 +226,7 @@ public class FIFOThroughput {
         }
 
         @Setup(Level.Iteration)
-        public void preSetup() throws InterruptedException {
+        public void preSetup(Control cnt) throws InterruptedException {
             simple.clear();
         }
 
@@ -256,7 +256,8 @@ public class FIFOThroughput {
                 .threads(threadsCount)
                 .timeout(TimeValue.seconds(3))
                 .syncIterations(true)
-                .jvmArgs("-ea")
+                .jvmArgs("-XX:+UseParallelGC")
+                .shouldDoGC(true)
                 .build();
         try {
             new Runner(opt).run();
