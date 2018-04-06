@@ -9,7 +9,6 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 import org.openjdk.jmh.runner.options.TimeValue;
 import producerConsumer.IStore;
 import producerConsumer.IWaitStrategy;
-import producerConsumer.JmhWaitStrategy;
 import producerConsumer.ThreadInterruptedStrategy;
 
 import java.util.concurrent.ArrayBlockingQueue;
@@ -124,8 +123,8 @@ public class FIFOThroughput {
 
     private static final int size = 128;
     private static final int insert_value = 10000;
-    private static final int putThreads = 2;
-    private static final int getThreads = 2;
+    private static final int putThreads = 4;
+    private static final int getThreads = 4;
     private static final int threadsCount = getThreads + putThreads;
 
     @State(Scope.Group)
@@ -200,46 +199,6 @@ public class FIFOThroughput {
 
         @Benchmark
         @Group("CyclicLockOnEntryStore")
-        @GroupThreads(getThreads)
-        public Integer get() throws InterruptedException {
-            return simple.get();
-        }
-    }
-
-    @State(Scope.Group)
-    @BenchmarkMode(Mode.Throughput)
-    @OutputTimeUnit(TimeUnit.NANOSECONDS)
-    @Warmup(iterations = 4)
-    @Measurement(iterations = 5)
-    @Timeout(time = 3)
-    @Fork(1)
-    @Threads(threadsCount)
-    @OperationsPerInvocation(insert_value)
-    public static class TrickyCyclicLockOnEntryStoreBenchmarkManyPutGet {
-
-        private IStore<Integer> simple;
-        private IWaitStrategy strategy;
-
-        @Setup
-        public void setup() throws InterruptedException {
-            strategy = new ThreadInterruptedStrategy();
-            simple = new TrickyCyclicLockOnEntryStore<>(size, strategy);
-        }
-
-        @Setup(Level.Iteration)
-        public void preSetup(Control cnt) throws InterruptedException {
-            simple.clear();
-        }
-
-        @Benchmark
-        @Group("TrickyCyclicLockOnEntryStore")
-        @GroupThreads(putThreads)
-        public void put() throws InterruptedException {
-            simple.put(1);
-        }
-
-        @Benchmark
-        @Group("TrickyCyclicLockOnEntryStore")
         @GroupThreads(getThreads)
         public Integer get() throws InterruptedException {
             return simple.get();
