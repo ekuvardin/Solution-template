@@ -6,6 +6,7 @@ import matrixCalc.impl.Simple;
 import matrixCalc.impl.Transpose;
 import matrixCalc.impl.TransposeCacheLine;
 import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.infra.Blackhole;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
@@ -49,57 +50,57 @@ import java.util.concurrent.TimeUnit;
     We see as increasing cache we get result closer to transpose.
 
     Oracle jdk 10.0
-    Benchmark                                               Mode  Cnt      Score    Error  Units
-    matrixCalc.MatrixMultBenchmarks.cacheLineBound1024      avgt    5   1826.487 ± 55.554  ms/op
-    matrixCalc.MatrixMultBenchmarks.cacheLineBound128       avgt    5   1898.004 ± 31.179  ms/op
-    matrixCalc.MatrixMultBenchmarks.cacheLineBound256       avgt    5   1908.504 ± 16.251  ms/op
-    matrixCalc.MatrixMultBenchmarks.cacheLineBound512       avgt    5   2044.415 ± 15.045  ms/op
-    matrixCalc.MatrixMultBenchmarks.cacheLineBound64        avgt    5   2482.501 ± 18.270  ms/op
+    Benchmark                                               Mode  Cnt      Score     Error  Units
+    matrixCalc.MatrixMultBenchmarks.cacheLineBound1024      avgt    5    909.245 ±   8.681  ms/op
+    matrixCalc.MatrixMultBenchmarks.cacheLineBound512       avgt    5   1034.488 ±   4.065  ms/op
+    matrixCalc.MatrixMultBenchmarks.cacheLineBound256       avgt    5    935.842 ±  10.153  ms/op
+    matrixCalc.MatrixMultBenchmarks.cacheLineBound128       avgt    5    924.581 ±   8.953  ms/op
+    matrixCalc.MatrixMultBenchmarks.cacheLineBound64        avgt    5   1203.797 ±  15.822  ms/op
 
-    matrixCalc.MatrixMultBenchmarks.simple                  avgt    5  15984.091 ± 37.772  ms/op
+    matrixCalc.MatrixMultBenchmarks.simple                  avgt    5  14781.306 ±  37.917  ms/op
 
-    matrixCalc.MatrixMultBenchmarks.transpose               avgt    5    978.870 ± 25.068  ms/op
-    matrixCalc.MatrixMultBenchmarks.transposeCacheLine128   avgt    5   1133.818 ± 17.162  ms/op
-    matrixCalc.MatrixMultBenchmarks.transposeCacheLine1280  avgt    5    908.534 ± 17.958  ms/op
-    matrixCalc.MatrixMultBenchmarks.transposeCacheLine256   avgt    5   1043.841 ± 14.231  ms/op
-    matrixCalc.MatrixMultBenchmarks.transposeCacheLine512   avgt    5   1053.568 ± 22.450  ms/op
-    matrixCalc.MatrixMultBenchmarks.transposeCacheLine64    avgt    5   1318.300 ± 22.128  ms/op
+    matrixCalc.MatrixMultBenchmarks.transpose               avgt    5    851.304 ±  26.713  ms/op
+    matrixCalc.MatrixMultBenchmarks.transposeCacheLine1024  avgt    5    947.147 ±   6.110  ms/op
+    matrixCalc.MatrixMultBenchmarks.transposeCacheLine512   avgt    5   1085.929 ±  11.475  ms/op
+    matrixCalc.MatrixMultBenchmarks.transposeCacheLine256   avgt    5    941.664 ±  22.719  ms/op
+    matrixCalc.MatrixMultBenchmarks.transposeCacheLine128   avgt    5   1044.785 ±  13.920  ms/op
+    matrixCalc.MatrixMultBenchmarks.transposeCacheLine64    avgt    5   1245.828 ± 173.741  ms/op
 
-    Zing Falcon JIT
-
-    Benchmark                                               Mode  Cnt     Score    Error  Units
-    matrixCalc.MatrixMultBenchmarks.cacheLineBound1024      avgt    5  2055.222 ±  6.253  ms/op
-    matrixCalc.MatrixMultBenchmarks.cacheLineBound128       avgt    5  2442.114 ± 87.660  ms/op
-    matrixCalc.MatrixMultBenchmarks.cacheLineBound256       avgt    5  2306.102 ±  8.209  ms/op
-    matrixCalc.MatrixMultBenchmarks.cacheLineBound512       avgt    5  2213.158 ±  4.102  ms/op
-    matrixCalc.MatrixMultBenchmarks.cacheLineBound64        avgt    5  2836.654 ±  3.120  ms/op
-
-    matrixCalc.MatrixMultBenchmarks.simple                  avgt    5  7298.752 ± 93.274  ms/op
-
-    matrixCalc.MatrixMultBenchmarks.transpose               avgt    5  1626.396 ± 11.066  ms/op
-    matrixCalc.MatrixMultBenchmarks.transposeCacheLine128   avgt    5  2220.941 ±  7.191  ms/op
-    matrixCalc.MatrixMultBenchmarks.transposeCacheLine1280  avgt    5  2039.196 ± 21.224  ms/op
-    matrixCalc.MatrixMultBenchmarks.transposeCacheLine256   avgt    5  2336.079 ± 12.301  ms/op
-    matrixCalc.MatrixMultBenchmarks.transposeCacheLine512   avgt    5  2168.803 ± 80.669  ms/op
-    matrixCalc.MatrixMultBenchmarks.transposeCacheLine64    avgt    5  2462.167 ± 10.506  ms/op
-
-    Zing C2 JIT
+    Zing -XX:+UseFalcon
 
     Benchmark                                               Mode  Cnt     Score    Error  Units
-    matrixCalc.MatrixMultBenchmarks.cacheLineBound1024      avgt    5  1862.110 ± 24.058  ms/op
-    matrixCalc.MatrixMultBenchmarks.cacheLineBound128       avgt    5  1879.257 ± 16.557  ms/op
-    matrixCalc.MatrixMultBenchmarks.cacheLineBound256       avgt    5  1707.919 ± 15.722  ms/op
-    matrixCalc.MatrixMultBenchmarks.cacheLineBound512       avgt    5  1648.103 ±  9.675  ms/op
-    matrixCalc.MatrixMultBenchmarks.cacheLineBound64        avgt    5  2615.763 ± 10.417  ms/op
+    matrixCalc.MatrixMultBenchmarks.cacheLineBound1024      avgt    5  1215.127 ± 59.797  ms/op
+    matrixCalc.MatrixMultBenchmarks.cacheLineBound512       avgt    5  1340.103 ± 16.530  ms/op
+    matrixCalc.MatrixMultBenchmarks.cacheLineBound256       avgt    5  1479.840 ±  5.721  ms/op
+    matrixCalc.MatrixMultBenchmarks.cacheLineBound128       avgt    5  1823.015 ± 20.820  ms/op
+    matrixCalc.MatrixMultBenchmarks.cacheLineBound64        avgt    5  1640.370 ±  4.591  ms/op
 
-    matrixCalc.MatrixMultBenchmarks.simple                  avgt    5  4229.462 ± 95.308  ms/op
+    matrixCalc.MatrixMultBenchmarks.simple                  avgt    5  4601.778 ±  22.004  ms/op
 
-    matrixCalc.MatrixMultBenchmarks.transpose               avgt    5   949.843 ± 23.242  ms/op
-    matrixCalc.MatrixMultBenchmarks.transposeCacheLine128   avgt    5  1410.886 ±  3.688  ms/op
-    matrixCalc.MatrixMultBenchmarks.transposeCacheLine1280  avgt    5   866.658 ± 15.250  ms/op
-    matrixCalc.MatrixMultBenchmarks.transposeCacheLine256   avgt    5  1102.054 ±  7.427  ms/op
-    matrixCalc.MatrixMultBenchmarks.transposeCacheLine512   avgt    5   978.760 ± 23.288  ms/op
-    matrixCalc.MatrixMultBenchmarks.transposeCacheLine64    avgt    5  1928.003 ± 18.054  ms/op
+    matrixCalc.MatrixMultBenchmarks.transpose               avgt    5   776.250 ±   8.961  ms/op
+    matrixCalc.MatrixMultBenchmarks.transposeCacheLine1024  avgt    5  1214.823 ±  11.461  ms/op
+    matrixCalc.MatrixMultBenchmarks.transposeCacheLine512   avgt    5  1337.816 ±  10.505  ms/op
+    matrixCalc.MatrixMultBenchmarks.transposeCacheLine256   avgt    5  1474.943 ±   5.211  ms/op
+    matrixCalc.MatrixMultBenchmarks.transposeCacheLine128   avgt    5  1844.958 ±  27.301  ms/op
+    matrixCalc.MatrixMultBenchmarks.transposeCacheLine64    avgt    5  2469.070 ±  12.742  ms/op
+
+    Zing -XX:+UseC2
+
+    Benchmark                                               Mode  Cnt     Score     Error  Units
+    matrixCalc.MatrixMultBenchmarks.cacheLineBound1024      avgt    5   732.345 ±   8.921  ms/op
+    matrixCalc.MatrixMultBenchmarks.cacheLineBound512       avgt    5   886.812 ±   6.705  ms/op
+    matrixCalc.MatrixMultBenchmarks.cacheLineBound256       avgt    5  1072.489 ±  29.699  ms/op
+    matrixCalc.MatrixMultBenchmarks.cacheLineBound128       avgt    5  1410.441 ±  43.067  ms/op
+    matrixCalc.MatrixMultBenchmarks.cacheLineBound64        avgt    5  2049.377 ±   5.894  ms/op
+
+    matrixCalc.MatrixMultBenchmarks.simple                  avgt    5  4728.626 ± 138.376  ms/op
+
+    matrixCalc.MatrixMultBenchmarks.transpose               avgt    5   811.420 ±  10.334  ms/op
+    matrixCalc.MatrixMultBenchmarks.transposeCacheLine1024  avgt    5   753.779 ±  19.075  ms/op
+    matrixCalc.MatrixMultBenchmarks.transposeCacheLine512   avgt    5   881.844 ±  26.300  ms/op
+    matrixCalc.MatrixMultBenchmarks.transposeCacheLine256   avgt    5  1051.126 ±  32.413  ms/op
+    matrixCalc.MatrixMultBenchmarks.transposeCacheLine128   avgt    5  1368.654 ±   8.337  ms/op
+    matrixCalc.MatrixMultBenchmarks.transposeCacheLine64    avgt    5  1949.641 ±  13.534  ms/op
  */
 @State(Scope.Thread)
 @BenchmarkMode(Mode.AverageTime)
@@ -109,13 +110,12 @@ import java.util.concurrent.TimeUnit;
 @Fork(1)
 public class MatrixMultBenchmarks {
 
-    long[][] p1, p2, p3;
+    long[][] p1, p2,tmp;
 
     @Setup
     public void setup() {
         p1 = new long[1024][1024];
         p2 = new long[1024][1024];
-        p3 = new long[1024][1024];
 
         try {
             Generator.main("-res Out.txt".split(" "));
@@ -134,88 +134,100 @@ public class MatrixMultBenchmarks {
             e.printStackTrace();
             throw new RuntimeException("Error while open scanner");
         }
+
+    /*    tmp = new long[p2[0].length][p2.length];
+
+        for (int i = 0; i < tmp.length; i++)
+            for (int j = 0; j < tmp[0].length; j++)
+                tmp[i][j] = p2[j][i];*/
     }
 
     @Benchmark
-    public void simple() {
+    public long[][] simple() {
         MatrixCalc matrixCalc = new Simple();
-        matrixCalc.multiply(p1, p2, p3);
+        return matrixCalc.multiply(p1, p2);
     }
 
     @Benchmark
-    public void transpose() {
-        MatrixCalc matrixCalc = new Transpose();
-        matrixCalc.multiply(p1, p2, p3);
+    public long[][] transpose() {
+
+        Transpose matrixCalc = new Transpose();
+        return matrixCalc.calcResult(p1, p2);
     }
 
     @Benchmark
-    public void transposeCacheLine64() {
+    public long[][] transposeCacheLine64() {
         MatrixCalc matrixCalc = new TransposeCacheLine(64);
-        matrixCalc.multiply(p1, p2, p3);
+        return matrixCalc.multiply(p1, p2);
     }
 
     @Benchmark
-    public void transposeCacheLine128() {
+    public long[][] transposeCacheLine128() {
         MatrixCalc matrixCalc = new TransposeCacheLine(128);
-        matrixCalc.multiply(p1, p2, p3);
+        return matrixCalc.multiply(p1, p2);
     }
 
     @Benchmark
-    public void transposeCacheLine256() {
+    public long[][] transposeCacheLine256() {
         MatrixCalc matrixCalc = new TransposeCacheLine(256);
-        matrixCalc.multiply(p1, p2, p3);
+        return matrixCalc.multiply(p1, p2);
     }
 
     @Benchmark
-    public void transposeCacheLine512() {
+    public long[][] transposeCacheLine512() {
         MatrixCalc matrixCalc = new TransposeCacheLine(512);
-        matrixCalc.multiply(p1, p2, p3);
+        return matrixCalc.multiply(p1, p2);
     }
 
     @Benchmark
-    public void transposeCacheLine1280() {
+    public long[][] transposeCacheLine1024() {
         MatrixCalc matrixCalc = new TransposeCacheLine(1024);
-        matrixCalc.multiply(p1, p2, p3);
+        return matrixCalc.multiply(p1, p2);
     }
 
     @Benchmark
-    public void cacheLineBound64() {
+    public long[][] cacheLineBound64() {
         MatrixCalc matrixCalc = new CacheLineBound(64);
-        matrixCalc.multiply(p1, p2, p3);
+        return matrixCalc.multiply(p1, p2);
     }
 
     @Benchmark
-    public void cacheLineBound128() {
+    public long[][] cacheLineBound128() {
         MatrixCalc matrixCalc = new CacheLineBound(128);
-        matrixCalc.multiply(p1, p2, p3);
+        return matrixCalc.multiply(p1, p2);
     }
 
     @Benchmark
-    public void cacheLineBound256() {
+    public long[][] cacheLineBound256() {
         MatrixCalc matrixCalc = new CacheLineBound(256);
-        matrixCalc.multiply(p1, p2, p3);
+        return matrixCalc.multiply(p1, p2);
     }
 
     @Benchmark
-    public void cacheLineBound512() {
+    public long[][] cacheLineBound512() {
         MatrixCalc matrixCalc = new CacheLineBound(512);
-        matrixCalc.multiply(p1, p2, p3);
+        return matrixCalc.multiply(p1, p2);
     }
 
     @Benchmark
-    public void cacheLineBound1024() {
+    public long[][] cacheLineBound1024() {
         MatrixCalc matrixCalc = new CacheLineBound(1024);
-        matrixCalc.multiply(p1, p2, p3);
+        return matrixCalc.multiply(p1, p2);
     }
 
     public static void main(String[] args) {
 
         Options opt = new OptionsBuilder()
+
                 .include(MatrixMultBenchmarks.class.getSimpleName())
-                .warmupIterations(4)
+                .warmupIterations(5)
                 .measurementIterations(5)
                 .forks(1)
-                .jvmArgs("-XX:+UseC2")
+                //.shouldDoGC(true)
+             //   .jvmArgs("-XX:+UseC2", "-XX:+UnlockDiagnosticVMOptions", "-XX:CompileCommand=print, matrixCalc.impl.Transpose::*")
+             //  .jvmArgs("-XX:+UseC2")
+            //    .jvmArgs("-XX:+UseFalcon","-XX:+UnlockDiagnosticVMOptions", "-XX:+LogVMOutput", "-XX:LogFile=/home/ek/zing-jvm_UseFalcon.log","-XX:+PrintCompilation","-XX:+TraceDeoptimization")
+               //     .jvmArgs("-XX:+UseFalcon")
                 .build();
         try {
             new Runner(opt).run();

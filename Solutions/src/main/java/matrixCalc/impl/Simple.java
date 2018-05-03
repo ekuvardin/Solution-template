@@ -9,11 +9,13 @@ public class Simple extends MatrixCalc {
 
     @Override
     public void calcResult(long[][] p1, long[][] p2, long[][] res) {
-        for (int i = 0; i < p1.length; i++) {
-            long colSize = p1[0].length;
-            for (int j = 0; j < colSize; j++)
+        for (int i = 0, colSize = p1[0].length; i < p1.length; i++) {
+            for (int j = 0; j < colSize; j++) {
+                long acc = 0;
                 for (int k = 0; k < colSize; k++)
-                    res[i][j] += p1[i][k] * p2[k][j];
+                    acc += p1[i][k] * p2[k][j];
+                res[i][j] = acc;
+            }
         }
     }
 

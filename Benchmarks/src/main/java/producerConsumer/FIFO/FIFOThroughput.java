@@ -25,7 +25,7 @@ import java.util.concurrent.TimeUnit;
     When we have count of threads equals to cores in processors then DL ArrayBlockingQueue gives the best throughput. But when count of threads is increasing
     then ArrayBlockingQueue gives worse results. Take a look of benchmarks below
 
-    Benchmarks was running using Intel Core i502310 CPU 2.90GHZ 3.20 GHZ 4 cores
+    Benchmarks was running using Intel Core i502310 CPU 2.90GHZ 3.20 GHZ 4 cores Windows7
 
     Test 1
     private static final int size = 128;
@@ -123,10 +123,10 @@ public class FIFOThroughput {
 
     private static final int size = 128;
     private static final int insert_value = 10000;
-    private static final int putThreads = 4;
-    private static final int getThreads = 4;
+    private static final int putThreads = 8;
+    private static final int getThreads = 8;
     private static final int threadsCount = getThreads + putThreads;
-
+/*
     @State(Scope.Group)
     @BenchmarkMode(Mode.Throughput)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
@@ -204,7 +204,7 @@ public class FIFOThroughput {
             return simple.get();
         }
     }
-
+*/
     @State(Scope.Group)
     @BenchmarkMode(Mode.Throughput)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
@@ -249,15 +249,17 @@ public class FIFOThroughput {
 
         Options opt = new OptionsBuilder()
                 .include(FIFOThroughput.class.getSimpleName())
-                .warmupIterations(4)
+                .warmupIterations(6)
                 .measurementIterations(5)
                 .operationsPerInvocation(insert_value)
-                .forks(1)
+                .forks(3)
                 .threads(threadsCount)
                 .timeout(TimeValue.seconds(3))
                 .syncIterations(true)
-                .jvmArgs("-XX:+UseParallelGC")
-                .shouldDoGC(true)
+                //  .jvmArgs("-XX:+UseC2")
+              //     .jvmArgs("-XX:+UseFalcon")
+          //      .jvmArgs("-XX:+UseParallelGC")
+          //      .shouldDoGC(true)
                 .build();
         try {
             new Runner(opt).run();
@@ -266,3 +268,17 @@ public class FIFOThroughput {
         }
     }
 }
+/*
+
+
+Benchmark                                                                                                   Mode  Cnt    Score    Error   Units
+producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue              thrpt    5  105.715 ± 17.997  ops/ns
+producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:get          thrpt    5   52.848 ±  9.675  ops/ns
+producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:put          thrpt    5   52.866 ±  8.543  ops/ns
+producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore      thrpt    5  115.115 ±  6.764  ops/ns
+producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:get  thrpt    5   57.513 ±  3.259  ops/ns
+producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:put  thrpt    5   57.602 ±  3.539  ops/ns
+producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore                        thrpt    5  121.821 ± 57.850  ops/ns
+producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:get                    thrpt    5   60.928 ± 28.921  ops/ns
+producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:put                    thrpt    5   60.893 ± 28.929  ops/ns
+ */
