@@ -6,7 +6,6 @@ import matrixCalc.impl.Simple;
 import matrixCalc.impl.Transpose;
 import matrixCalc.impl.TransposeCacheLine;
 import org.openjdk.jmh.annotations.*;
-import org.openjdk.jmh.infra.Blackhole;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
@@ -110,7 +109,7 @@ import java.util.concurrent.TimeUnit;
 @Fork(1)
 public class MatrixMultBenchmarks {
 
-    long[][] p1, p2,tmp;
+    private long[][] p1, p2;
 
     @Setup
     public void setup() {
@@ -134,12 +133,6 @@ public class MatrixMultBenchmarks {
             e.printStackTrace();
             throw new RuntimeException("Error while open scanner");
         }
-
-    /*    tmp = new long[p2[0].length][p2.length];
-
-        for (int i = 0; i < tmp.length; i++)
-            for (int j = 0; j < tmp[0].length; j++)
-                tmp[i][j] = p2[j][i];*/
     }
 
     @Benchmark
@@ -224,10 +217,8 @@ public class MatrixMultBenchmarks {
                 .measurementIterations(5)
                 .forks(1)
                 //.shouldDoGC(true)
-             //   .jvmArgs("-XX:+UseC2", "-XX:+UnlockDiagnosticVMOptions", "-XX:CompileCommand=print, matrixCalc.impl.Transpose::*")
-             //  .jvmArgs("-XX:+UseC2")
-            //    .jvmArgs("-XX:+UseFalcon","-XX:+UnlockDiagnosticVMOptions", "-XX:+LogVMOutput", "-XX:LogFile=/home/ek/zing-jvm_UseFalcon.log","-XX:+PrintCompilation","-XX:+TraceDeoptimization")
-               //     .jvmArgs("-XX:+UseFalcon")
+                //.jvmArgs("-XX:+UseC2")
+                //.jvmArgs("-XX:+UseFalcon")
                 .build();
         try {
             new Runner(opt).run();
