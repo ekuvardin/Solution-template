@@ -68,6 +68,7 @@ import java.util.concurrent.TimeUnit;
     producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore                        thrpt   15   58.362 ± 3.455  ops/ns
     producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:get                    thrpt   15   29.176 ± 1.722  ops/ns
     producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:put                    thrpt   15   29.186 ± 1.733  ops/ns
+
     Test 2
     private static final int size = 128;
     private static final int insert_value = 10000;
@@ -201,10 +202,10 @@ public class FIFOThroughput {
 
     private static final int size = 128;
     private static final int insert_value = 10000;
-    private static final int putThreads = 2;
-    private static final int getThreads = 2;
+    private static final int putThreads = 1;
+    private static final int getThreads = 8;
     private static final int threadsCount = getThreads + putThreads;
-
+/*
     @State(Scope.Group)
     @BenchmarkMode(Mode.Throughput)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
@@ -282,7 +283,7 @@ public class FIFOThroughput {
             return simple.get();
         }
     }
-
+*/
     @State(Scope.Group)
     @BenchmarkMode(Mode.Throughput)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
@@ -324,17 +325,18 @@ public class FIFOThroughput {
     }
 
     public static void main(String[] args) {
-
         Options opt = new OptionsBuilder()
                 .include(FIFOThroughput.class.getSimpleName())
                 .warmupIterations(6)
                 .measurementIterations(5)
                 .operationsPerInvocation(insert_value)
-                .forks(3)
+                .forks(1)
                 .threads(threadsCount)
                 .timeout(TimeValue.seconds(3))
-                 // .jvmArgs("-XX:+UseC2")
-                 // .jvmArgs("-XX:+UseFalcon")
+               //  .jvmArgs("-XX:+UseFalcon","-XX:+LogVMOutput","-XX:+PrintCompilation","-XX:+TraceDeoptimization","-XX:LogFile=/home/ek/zing-jvm2.log")
+                //.jvmArgs("-XX:+UseFalcon", "-XX:+UnlockDiagnosticVMOptions", "-XX:CompileCommand=print, producerConsumer.FIFO.TwoLocksStore::*")
+
+                  .jvmArgs("-XX:+UseFalcon")
                  // .jvmArgs("-XX:+UseParallelGC")
                 .build();
         try {

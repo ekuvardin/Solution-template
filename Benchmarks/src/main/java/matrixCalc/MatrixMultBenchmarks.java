@@ -100,6 +100,7 @@ import java.util.concurrent.TimeUnit;
     matrixCalc.MatrixMultBenchmarks.transposeCacheLine256   avgt    5  1051.126 ±  32.413  ms/op
     matrixCalc.MatrixMultBenchmarks.transposeCacheLine128   avgt    5  1368.654 ±   8.337  ms/op
     matrixCalc.MatrixMultBenchmarks.transposeCacheLine64    avgt    5  1949.641 ±  13.534  ms/op
+
  */
 @State(Scope.Thread)
 @BenchmarkMode(Mode.AverageTime)
@@ -143,7 +144,6 @@ public class MatrixMultBenchmarks {
 
     @Benchmark
     public long[][] transpose() {
-
         Transpose matrixCalc = new Transpose();
         return matrixCalc.calcResult(p1, p2);
     }
