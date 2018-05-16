@@ -118,7 +118,7 @@ import java.util.concurrent.TimeUnit;
     Test 4
 
     Now we try single producer multiple reader strategy
-    TODO. Try to investigate why Zink gives worse time than Oracle Java
+    TODO. Try to investigate why Zing gives worse time than Oracle Java
 
     private static final int size = 512;
     private static final int insert_value = 10000;
