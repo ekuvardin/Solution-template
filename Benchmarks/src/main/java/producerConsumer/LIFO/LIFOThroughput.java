@@ -25,9 +25,17 @@ import java.util.concurrent.TimeUnit;
         main.producerConsumer.LIFO.TrickyStore;
 
     Note
-    1. Benchmarks was running using Intel Core i502310 CPU 2.90GHZ 3.20 GHZ 4 cores
-    2. Dramatically decreasing error helps calling GB before iteration.
-    3. ParallelGC gives the best performance on Java9 then G1(default in Java9)
+    1. Dramatically decreasing error helps calling GB before iteration.
+    2. ParallelGC gives the best performance on Java9 then G1(default in Java9)
+
+    Benchmarks was running using Intel Core i502310 CPU 2.90GHZ 3.20 GHZ 4 cores
+    OS:
+        Windows7
+        Ubuntu 17.0
+    Compilers:
+        Oracle Java 9(WS7)
+        Oracle Java 10(Ubuntu)
+        Zing(Ubuntu)
 
     Test 1
     private static final int size = 128;
@@ -36,7 +44,7 @@ import java.util.concurrent.TimeUnit;
     private static final int getThreads = 2;
     thread count = 4
 
-    Oracle java 8 Windows 7
+    Oracle java 9 Windows 7
     Benchmark                                                                                             Mode  Cnt    Score    Error   Units
     producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque      thrpt    5  177,472 ± 28,194  ops/ns
     producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:get  thrpt    5   88,732 ± 14,089  ops/ns
@@ -106,7 +114,7 @@ import java.util.concurrent.TimeUnit;
     private static final int getThreads = 4;
     thread count = 8
 
-    Oracle java 8 Windows 7
+    Oracle java 9 Windows 7
     Benchmark                                                                                             Mode  Cnt    Score    Error   Units
     producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque      thrpt    5  108,776 ±  3,982  ops/ns
     producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:get  thrpt    5   54,731 ±  3,805  ops/ns
@@ -174,7 +182,7 @@ import java.util.concurrent.TimeUnit;
     private static final int getThreads = 8;
     thread count = 16
 
-    Oracle java 8 Windows 7
+    Oracle java 9 Windows 7
     Benchmark                                                                                             Mode  Cnt    Score    Error   Units
     producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque      thrpt    5   64,959 ± 44,498  ops/ns
     producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:get  thrpt    5   32,600 ± 23,117  ops/ns
@@ -241,7 +249,7 @@ import java.util.concurrent.TimeUnit;
     private static final int getThreads = 15;
     thread count = 16
 
-    Oracle java 8 Windows 7
+    Oracle java 9 Windows 7
     Benchmark                                                                                             Mode  Cnt   Score    Error   Units
     producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque      thrpt    5  47,866 ±  4,438  ops/ns
     producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:get  thrpt    5  23,942 ±  2,206  ops/ns

@@ -21,6 +21,13 @@ import java.util.concurrent.TimeUnit;
     available cores the you can see Infinity ops. Try decreased count of threads or increase queue size.
 
     Benchmarks was running using Intel Core i502310 CPU 2.90GHZ 3.20 GHZ 4 cores
+    OS:
+        Windows7
+        Ubuntu 17.0
+    Compilers:
+        Oracle Java 9(WS7)
+        Oracle Java 10(Ubuntu)
+        Zing(Ubuntu)
 
     Test 1
     private static final int size = 128;
@@ -29,7 +36,7 @@ import java.util.concurrent.TimeUnit;
     private static final int getThreads = 2;
     thread count = 4
 
-    Windows 7 Oracle java 8
+    Windows 7 Oracle java 9
     Benchmark                                                                                       Mode  Cnt    Score    Error   Units
     producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt    5  184,131 ± 32,658  ops/ns
     producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt    5   92,117 ± 16,758  ops/ns
@@ -60,7 +67,7 @@ import java.util.concurrent.TimeUnit;
     private static final int getThreads = 4;
     thread count = 8
 
-    Windows 7 Oracle java 8
+    Windows 7 Oracle java 9
     Benchmark                                                                                       Mode  Cnt    Score   Error   Units
     producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt    5  178,585 ± 9,877  ops/ns
     producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt    5   89,213 ± 6,680  ops/ns
@@ -91,7 +98,7 @@ import java.util.concurrent.TimeUnit;
     private static final int getThreads = 8;
     thread count = 16
 
-    Windows 7 Oracle java 8
+    Windows 7 Oracle java 9
     Benchmark                                                                                       Mode  Cnt    Score    Error   Units
     producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt    5  216.577 ± 79.261  ops/ns
     producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt    5  108.305 ± 39.677  ops/ns
@@ -123,7 +130,7 @@ import java.util.concurrent.TimeUnit;
     private static final int size = 512;
     private static final int insert_value = 10000;
     private static final int putThreads = 1;
-    private static final int getThreads = 8;
+    private static final int getThreads = 15;
     thread count = 16
 
     Benchmark                                                                                       Mode  Cnt    Score    Error   Units
@@ -131,7 +138,7 @@ import java.util.concurrent.TimeUnit;
     producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt    5  113,451 ± 12,467  ops/ns
     producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt    5  111,513 ±  6,173  ops/ns
 
-    Benchmark Oracle 10 Linux                                                                                       Mode  Cnt    Score    Error   Units
+    Benchmark Oracle 10 Linux                                                                      Mode  Cnt    Score    Error   Units
     producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt   15  114.572 ± 28.406  ops/ns
     producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt   15   57.829 ± 14.170  ops/ns
     producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt   15   56.743 ± 14.280  ops/ns
@@ -208,7 +215,7 @@ public class FIROThroughput {
                 .operationsPerInvocation(insert_value)
                 .forks(1)
                 .threads(threadsCount)
-                .timeout(TimeValue.seconds(3))
+                .timeout(TimeValue.seconds(6))
                 .syncIterations(true)
            //  .jvmArgs("-XX:+UseC2")
             .jvmArgs("-XX:+UseParallelGC")

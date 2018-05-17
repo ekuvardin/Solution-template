@@ -29,7 +29,7 @@ import java.util.concurrent.TimeUnit;
         Windows7
         Ubuntu 17.0
     Compilers:
-        Oracle Java 8(WS7)
+        Oracle Java 9(WS7)
         Oracle Java 10(Ubuntu)
         Zing(Ubuntu)
 
@@ -41,6 +41,17 @@ import java.util.concurrent.TimeUnit;
     thread count = 4
 
     As we see that ArrayBlockingQueue is the winner no matter what compiler is.
+
+    Benchmark Oracle 9 Windows                                                                                  Mode  Cnt    Score    Error   Units
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue              thrpt    5  199,597 ±  3,696  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:get          thrpt    5   99,797 ±  1,837  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:put          thrpt    5   99,800 ±  1,863  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore      thrpt    5  110,877 ±  0,606  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:get  thrpt    5   55,447 ±  0,244  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:put  thrpt    5   55,430 ±  0,368  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore                        thrpt    5   75,079 ± 24,611  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:get                    thrpt    5   37,540 ± 12,305  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:put                    thrpt    5   37,540 ± 12,306  ops/ns
 
     Benchmark Oracle 10                                                                                         Mode  Cnt    Score    Error   Units
     producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue              thrpt   15  107.442 ±  7.148  ops/ns
@@ -86,6 +97,17 @@ import java.util.concurrent.TimeUnit;
     ArrayBlockingQueue and CyclicLockOnEntryStore have near the same throughput,
     Take a look that Zing C2 is old JIT compiler and not updated. Azul recomends use Falcon instead.
 
+    Benchmark Oracle 9 Windows                                                                                  Mode  Cnt    Score    Error   Units
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue              thrpt    5  106,075 ±  6,182  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:get          thrpt    5   52,671 ±  2,568  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:put          thrpt    5   53,404 ±  3,947  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore      thrpt    5  112,511 ±  2,337  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:get  thrpt    5   56,342 ±  1,472  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:put  thrpt    5   56,169 ±  0,939  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore                        thrpt    5   95,681 ± 12,696  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:get                    thrpt    5   47,834 ±  6,413  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:put                    thrpt    5   47,847 ±  6,284  ops/ns
+
     Benchmark Oracle 10                                                                                         Mode  Cnt    Score    Error   Units
     producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue              thrpt   15   58.401 ±  1.754  ops/ns
     producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:get          thrpt   15   28.955 ±  0.715  ops/ns
@@ -127,6 +149,17 @@ import java.util.concurrent.TimeUnit;
     thread count = 16
 
     Now ArrayBlockingQueue gives the worst performance
+
+    Benchmark Oracle 9 Windows                                                                                                      Mode  Cnt    Score    Error   Units
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue              thrpt    5   54,929 ± 19,616  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:get          thrpt    5   27,307 ± 12,961  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:put          thrpt    5   27,621 ± 14,321  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore      thrpt    5  108,046 ±  2,329  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:get  thrpt    5   54,023 ±  1,079  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:put  thrpt    5   54,023 ±  1,324  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore                        thrpt    5   95,156 ± 26,601  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:get                    thrpt    5   47,581 ± 13,307  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:put                    thrpt    5   47,576 ± 13,294  ops/ns
 
     Benchmark Oracle 10                                                                                         Mode  Cnt    Score    Error   Units
     producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue              thrpt   15   38.116 ± 12.470  ops/ns
@@ -170,6 +203,17 @@ import java.util.concurrent.TimeUnit;
     private static final int getThreads = 15;
     thread count = 16
 
+    Benchmark Oracle 9 Windows                                                                                  Mode  Cnt   Score    Error   Units
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue              thrpt    5   47,578 ±  3,669  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:get          thrpt    5   23,797 ±  1,825  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:put          thrpt    5   23,780 ±  1,844  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore      thrpt    5   92,511 ± 14,435  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:get  thrpt    5   45,954 ±  7,806  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:put  thrpt    5   46,556 ±  6,648  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore                        thrpt    5  101,095 ± 37,601  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:get                    thrpt    5   50,548 ± 18,801  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:put                    thrpt    5   50,547 ± 18,800  ops/ns
+
     Benchmark Oracle 10                                                                                         Mode  Cnt    Score    Error   Units
     producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue              thrpt    5   22.615 ±  4.910  ops/ns
     producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:get          thrpt    5   11.315 ±  2.472  ops/ns
@@ -209,8 +253,8 @@ public class FIFOThroughput {
 
     private static final int size = 128;
     private static final int insert_value = 10000;
-    private static final int putThreads = 1;
-    private static final int getThreads = 15;
+    private static final int putThreads = 2;
+    private static final int getThreads = 2;
     private static final int threadsCount = getThreads + putThreads;
 
     @State(Scope.Group)
@@ -339,7 +383,7 @@ public class FIFOThroughput {
                 .operationsPerInvocation(insert_value)
                 .forks(1)
                 .threads(threadsCount)
-                .timeout(TimeValue.seconds(3))
+                .timeout(TimeValue.seconds(6))
                 .shouldDoGC(true)
                 .syncIterations(true)
                //  .jvmArgs("-XX:+UseFalcon","-XX:+LogVMOutput","-XX:+PrintCompilation","-XX:+TraceDeoptimization","-XX:LogFile=/home/ek/zing-jvm2.log")
