@@ -24,7 +24,14 @@ import java.util.concurrent.TimeUnit;
     When we have count of threads equals to cores in processors then DL ArrayBlockingQueue gives the best throughput. But when count of threads is increasing
     then ArrayBlockingQueue gives worse results. Take a look of benchmarks below
 
-    Benchmarks was running using Intel Core i502310 CPU 2.90GHZ 3.20 GHZ 4 cores Windows7
+    Benchmarks was running using Intel Core i502310 CPU 2.90GHZ 3.20 GHZ 4 cores
+    OS:
+        Windows7
+        Ubuntu 17.0
+    Compilers:
+        Oracle Java 8(WS7)
+        Oracle Java 10(Ubuntu)
+        Zing(Ubuntu)
 
     Test 1
     private static final int size = 128;
@@ -33,7 +40,7 @@ import java.util.concurrent.TimeUnit;
     private static final int getThreads = 2;
     thread count = 4
 
-    As we see that ArrayBlockingQueue is the winner.
+    As we see that ArrayBlockingQueue is the winner no matter what compiler is.
 
     Benchmark Oracle 10                                                                                         Mode  Cnt    Score    Error   Units
     producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue              thrpt   15  107.442 ±  7.148  ops/ns
@@ -77,7 +84,7 @@ import java.util.concurrent.TimeUnit;
     thread count = 8
 
     ArrayBlockingQueue and CyclicLockOnEntryStore have near the same throughput,
-    but as TwoLocksStore uses 2 locks then CPU is not grab all available potential.
+    Take a look that Zing C2 is old JIT compiler and not updated. Azul recomends use Falcon instead.
 
     Benchmark Oracle 10                                                                                         Mode  Cnt    Score    Error   Units
     producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue              thrpt   15   58.401 ±  1.754  ops/ns
@@ -119,7 +126,7 @@ import java.util.concurrent.TimeUnit;
     private static final int getThreads = 8;
     thread count = 16
 
-    Now ArrayBlockingQueue gives the worst performance and others give the same throughput
+    Now ArrayBlockingQueue gives the worst performance
 
     Benchmark Oracle 10                                                                                         Mode  Cnt    Score    Error   Units
     producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue              thrpt   15   38.116 ± 12.470  ops/ns
@@ -164,9 +171,9 @@ import java.util.concurrent.TimeUnit;
     thread count = 16
 
     Benchmark Oracle 10                                                                                         Mode  Cnt    Score    Error   Units
-    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue              thrpt   15   14.907 ±  2.490  ops/ns
-    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:get          thrpt   15    7.462 ±  1.247  ops/ns
-    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:put          thrpt   15    7.445 ±  1.244  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue              thrpt    5   22.615 ±  4.910  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:get          thrpt    5   11.315 ±  2.472  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:put          thrpt    5   11.300 ±  2.439  ops/ns
     producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore      thrpt   15  113.975 ±  8.635  ops/ns
     producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:get  thrpt   15   57.155 ±  4.280  ops/ns
     producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:put  thrpt   15   56.820 ±  4.363  ops/ns
@@ -203,9 +210,9 @@ public class FIFOThroughput {
     private static final int size = 128;
     private static final int insert_value = 10000;
     private static final int putThreads = 1;
-    private static final int getThreads = 8;
+    private static final int getThreads = 15;
     private static final int threadsCount = getThreads + putThreads;
-/*
+
     @State(Scope.Group)
     @BenchmarkMode(Mode.Throughput)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
@@ -283,7 +290,7 @@ public class FIFOThroughput {
             return simple.get();
         }
     }
-*/
+
     @State(Scope.Group)
     @BenchmarkMode(Mode.Throughput)
     @OutputTimeUnit(TimeUnit.NANOSECONDS)
@@ -327,17 +334,18 @@ public class FIFOThroughput {
     public static void main(String[] args) {
         Options opt = new OptionsBuilder()
                 .include(FIFOThroughput.class.getSimpleName())
-                .warmupIterations(6)
+                .warmupIterations(30)
                 .measurementIterations(5)
                 .operationsPerInvocation(insert_value)
                 .forks(1)
                 .threads(threadsCount)
                 .timeout(TimeValue.seconds(3))
+                .shouldDoGC(true)
+                .syncIterations(true)
                //  .jvmArgs("-XX:+UseFalcon","-XX:+LogVMOutput","-XX:+PrintCompilation","-XX:+TraceDeoptimization","-XX:LogFile=/home/ek/zing-jvm2.log")
                 //.jvmArgs("-XX:+UseFalcon", "-XX:+UnlockDiagnosticVMOptions", "-XX:CompileCommand=print, producerConsumer.FIFO.TwoLocksStore::*")
-
-                  .jvmArgs("-XX:+UseFalcon")
-                 // .jvmArgs("-XX:+UseParallelGC")
+              //    .jvmArgs("-XX:+UseFalcon")
+                  .jvmArgs("-XX:+UseParallelGC")
                 .build();
         try {
             new Runner(opt).run();
