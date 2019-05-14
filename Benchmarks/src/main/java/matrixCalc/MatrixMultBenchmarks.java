@@ -6,6 +6,7 @@ import matrixCalc.impl.Simple;
 import matrixCalc.impl.Transpose;
 import matrixCalc.impl.TransposeCacheLine;
 import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.profile.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
@@ -48,6 +49,7 @@ import java.util.concurrent.TimeUnit;
     In <transposeCacheLineXXX> I try to compose transpose + CacheLine method XXX - means XXX/8 values in one step
     We see as increasing cache we get result closer to transpose.
 
+    Take a look at simple benchmarks Oracle gives worse results -> try to use Huge Pages and everything will be fine
     Oracle jdk 10.0
     Benchmark                                               Mode  Cnt      Score     Error  Units
     matrixCalc.MatrixMultBenchmarks.cacheLineBound1024      avgt    5    909.245 ±   8.681  ms/op
@@ -65,8 +67,25 @@ import java.util.concurrent.TimeUnit;
     matrixCalc.MatrixMultBenchmarks.transposeCacheLine128   avgt    5   1044.785 ±  13.920  ms/op
     matrixCalc.MatrixMultBenchmarks.transposeCacheLine64    avgt    5   1245.828 ± 173.741  ms/op
 
-    Zing -XX:+UseFalcon
+    Oracle jdk 11.0.2
+    Benchmark                                               Mode  Cnt      Score      Error  Units
+    matrixCalc.MatrixMultBenchmarks.cacheLineBound1024      avgt    5    734.666 ±    2.799  ms/op
+    matrixCalc.MatrixMultBenchmarks.cacheLineBound128       avgt    5    943.191 ±    7.793  ms/op
+    matrixCalc.MatrixMultBenchmarks.cacheLineBound256       avgt    5    874.280 ±    5.627  ms/op
+    matrixCalc.MatrixMultBenchmarks.cacheLineBound512       avgt    5    767.301 ±    5.498  ms/op
+    matrixCalc.MatrixMultBenchmarks.cacheLineBound64        avgt    5   1198.884 ±   23.958  ms/op
 
+    matrixCalc.MatrixMultBenchmarks.simple                  avgt    5  14544.289 ±   68.702  ms/op
+
+    matrixCalc.MatrixMultBenchmarks.transpose               avgt    5    896.045 ±   34.913  ms/op
+    matrixCalc.MatrixMultBenchmarks.transposeCacheLine1024  avgt    5    772.488 ±   14.501  ms/op
+    matrixCalc.MatrixMultBenchmarks.transposeCacheLine128   avgt    5   1040.977 ±   64.729  ms/op
+    matrixCalc.MatrixMultBenchmarks.transposeCacheLine256   avgt    5    893.756 ±   48.316  ms/op
+    matrixCalc.MatrixMultBenchmarks.transposeCacheLine512   avgt    5    867.887 ±   63.031  ms/op
+    matrixCalc.MatrixMultBenchmarks.transposeCacheLine64    avgt    5   1302.165 ±   99.241  ms/op
+
+
+    Zing 1.8.0_18 -XX:+UseFalcon
     Benchmark                                               Mode  Cnt     Score    Error  Units
     matrixCalc.MatrixMultBenchmarks.cacheLineBound1024      avgt    5  1215.127 ± 59.797  ms/op
     matrixCalc.MatrixMultBenchmarks.cacheLineBound512       avgt    5  1340.103 ± 16.530  ms/op
@@ -83,8 +102,8 @@ import java.util.concurrent.TimeUnit;
     matrixCalc.MatrixMultBenchmarks.transposeCacheLine128   avgt    5  1844.958 ±  27.301  ms/op
     matrixCalc.MatrixMultBenchmarks.transposeCacheLine64    avgt    5  2469.070 ±  12.742  ms/op
 
-    Zing -XX:+UseC2
 
+    Zing 1.8.0_18 -XX:+UseC2
     Benchmark                                               Mode  Cnt     Score     Error  Units
     matrixCalc.MatrixMultBenchmarks.cacheLineBound1024      avgt    5   732.345 ±   8.921  ms/op
     matrixCalc.MatrixMultBenchmarks.cacheLineBound512       avgt    5   886.812 ±   6.705  ms/op
@@ -101,6 +120,24 @@ import java.util.concurrent.TimeUnit;
     matrixCalc.MatrixMultBenchmarks.transposeCacheLine128   avgt    5  1368.654 ±   8.337  ms/op
     matrixCalc.MatrixMultBenchmarks.transposeCacheLine64    avgt    5  1949.641 ±  13.534  ms/op
 
+
+    Zing 1.8.0_19 -XX:+UseFalcon
+    Benchmark                                               Mode  Cnt     Score     Error  Units
+    matrixCalc.MatrixMultBenchmarks.cacheLineBound1024      avgt    5   726.947 ±  20.870  ms/op
+    matrixCalc.MatrixMultBenchmarks.cacheLineBound128       avgt    5  1347.149 ±  12.750  ms/op
+    matrixCalc.MatrixMultBenchmarks.cacheLineBound256       avgt    5   982.668 ±   9.901  ms/op
+    matrixCalc.MatrixMultBenchmarks.cacheLineBound512       avgt    5   825.070 ±   8.029  ms/op
+    matrixCalc.MatrixMultBenchmarks.cacheLineBound64        avgt    5  1636.361 ±   2.731  ms/op
+
+    matrixCalc.MatrixMultBenchmarks.simple                  avgt    5  4979.156 ±  44.151  ms/op
+
+    matrixCalc.MatrixMultBenchmarks.transpose               avgt    5   995.953 ± 102.865  ms/op
+    matrixCalc.MatrixMultBenchmarks.transposeCacheLine1024  avgt    5   751.021 ±   5.100  ms/op
+    matrixCalc.MatrixMultBenchmarks.transposeCacheLine128   avgt    5  1349.545 ±  20.655  ms/op
+    matrixCalc.MatrixMultBenchmarks.transposeCacheLine256   avgt    5   983.551 ±   7.424  ms/op
+    matrixCalc.MatrixMultBenchmarks.transposeCacheLine512   avgt    5   836.477 ±  13.619  ms/op
+    matrixCalc.MatrixMultBenchmarks.transposeCacheLine64    avgt    5  1957.269 ±  13.199  ms/op
+
  */
 @State(Scope.Thread)
 @BenchmarkMode(Mode.AverageTime)
@@ -112,6 +149,7 @@ public class MatrixMultBenchmarks {
 
     private long[][] p1, p2;
 
+    private static  long[][] p3 = new long[2048][2048];
     @Setup
     public void setup() {
         p1 = new long[1024][1024];
@@ -213,11 +251,14 @@ public class MatrixMultBenchmarks {
         Options opt = new OptionsBuilder()
 
                 .include(MatrixMultBenchmarks.class.getSimpleName())
-                .warmupIterations(5)
+                .warmupIterations(3)
                 .measurementIterations(5)
                 .forks(1)
-                //.shouldDoGC(true)
-                //.jvmArgs("-XX:+UseC2")
+               // .jvmArgs("-XX:+UnlockDiagnosticVMOptions", "-XX:CompileCommand=print, matrixCalc.impl.Simple::*","-XX:PrintAssemblyOptions=intel","-XX:LoopUnrollLimit=4")
+               // .shouldDoGC(true)
+             //   .jvmArgs("-server","-Xms1024m", "-Xmx1024m","-XX:+UseLargePages", "-XX:LargePageSizeInBytes=2m")
+              //  .addProfiler(LinuxPerfAsmProfiler.class)
+
                 //.jvmArgs("-XX:+UseFalcon")
                 .build();
         try {

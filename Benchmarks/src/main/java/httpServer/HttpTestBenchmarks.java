@@ -1,4 +1,4 @@
-package temp;
+package httpServer;
 
 
 import jdk.internal.vm.annotation.Contended;
@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
 
 @State(Scope.Group)
 @BenchmarkMode(Mode.Throughput)
@@ -37,7 +36,7 @@ public class HttpTestBenchmarks {
     private static AtomicInteger gets = new AtomicInteger(getCount);
     private static Wrapper[] array;
 
-    //@Contended not work, strange
+    //@Contended not work, surprising
     @Contended
     public static class Wrapper {
         volatile long long1, long2, long3, long4, long5, long6, long7, long8;
@@ -128,19 +127,8 @@ public class HttpTestBenchmarks {
         private final Wrapper wrapper;
 
         public PostThreadScope() {
-            map.put("sapNumber", "2");
-            map.put("title", "3");
-            map.put("firstName", "4");
-            map.put("lastName", "5");
-            map.put("functionCode", "9");
-            map.put("function", "8");
-            map.put("department", "9");
-            map.put("email", "test@test.ru");
-            map.put("emailMarketing", "true");
-            map.put("authorizedStatus", "true");
-            map.put("birthDate", "2000-01-27T00:00:00");
-            map.put("lastExport", "2000-01-27T00:00:00");
-            map.put("creationDate", "2000-01-27T00:00:00");
+            // Insert your fields
+            map.put("smth", "smth");
 
             threadNum = puts.decrementAndGet();
             wrapper = array[threadNum];
@@ -158,12 +146,11 @@ public class HttpTestBenchmarks {
     }
 
 
-
     public static void main(String[] args) {
         Options opt = new OptionsBuilder()
                 .include(HttpTestBenchmarks.class.getSimpleName())
                 .warmupIterations(20)
-                .measurementIterations(120)
+                .measurementIterations(90)
                 //.operationsPerInvocation(100000)
                 .forks(1)
                 .threads(threadCount)

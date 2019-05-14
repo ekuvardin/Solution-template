@@ -107,6 +107,34 @@ import java.util.concurrent.TimeUnit;
     producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:get                  thrpt    5   67.459 ± 24.410  ops/ns
     producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:put                  thrpt    5   67.459 ± 24.409  ops/ns
 
+    Benchmark   jdk 11.0.2                                                                                Mode  Cnt    Score   Error   Units
+    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque      thrpt   40  108.853 ± 1.457  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:get  thrpt   40   54.425 ± 0.728  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:put  thrpt   40   54.427 ± 0.729  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store                                  thrpt   40  126.850 ± 4.279  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:get                              thrpt   40   63.411 ± 2.146  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:put                              thrpt   40   63.440 ± 2.134  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark                  thrpt   40  127.917 ± 3.265  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:get              thrpt   40   63.958 ± 1.633  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:put              thrpt   40   63.959 ± 1.632  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore                      thrpt   40  149.668 ± 3.565  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:get                  thrpt   40   74.835 ± 1.783  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:put                  thrpt   40   74.833 ± 1.782  ops/ns
+
+    Benchmark   Zing 19.0.2                                                                               Mode  Cnt    Score   Error   Units
+    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque      thrpt   40  123.628 ± 1.659  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:get  thrpt   40   61.814 ± 0.829  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:put  thrpt   40   61.814 ± 0.830  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store                                  thrpt   40  124.703 ± 1.656  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:get                              thrpt   40   62.334 ± 0.824  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:put                              thrpt   40   62.369 ± 0.832  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark                  thrpt   40  133.870 ± 6.343  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:get              thrpt   40   66.935 ± 3.172  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:put              thrpt   40   66.935 ± 3.172  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore                      thrpt   40  155.473 ± 4.212  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:get                  thrpt   40   77.736 ± 2.106  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:put                  thrpt   40   77.736 ± 2.106  ops/ns
+
     Test 2
     private static final int size = 128;
     private static final int insert_value = 10000;
@@ -242,6 +270,34 @@ import java.util.concurrent.TimeUnit;
     producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:get                  thrpt    5   50.846 ± 13.803  ops/ns
     producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:put                  thrpt    5   50.861 ± 13.745  ops/ns
 
+    Benchmark     jkd 11.0.2                                                                                        Mode  Cnt    Score   Error   Units
+    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque      thrpt   40   28.610 ± 1.783  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:get  thrpt   40   14.249 ± 0.877  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:put  thrpt   40   14.362 ± 0.972  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store                                  thrpt   40   98.071 ± 3.428  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:get                              thrpt   40   49.096 ± 1.713  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:put                              thrpt   40   48.975 ± 1.726  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark                  thrpt   40  102.923 ± 3.180  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:get              thrpt   40   51.459 ± 1.590  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:put              thrpt   40   51.464 ± 1.590  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore                      thrpt   40  116.360 ± 7.327  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:get                  thrpt   40   58.179 ± 3.660  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:put                  thrpt   40   58.180 ± 3.666  ops/ns
+
+    Benchmark     zing 19.0.2                                                                             Mode  Cnt    Score   Error   Units
+    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque      thrpt   40   34.975 ± 3.493  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:get  thrpt   40   17.440 ± 1.894  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:put  thrpt   40   17.535 ± 1.713  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store                                  thrpt   40   99.834 ± 2.373  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:get                              thrpt   40   49.827 ± 1.197  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:put                              thrpt   40   50.007 ± 1.214  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark                  thrpt   40  102.905 ± 4.088  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:get              thrpt   40   51.452 ± 2.044  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:put              thrpt   40   51.453 ± 2.044  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore                      thrpt   40  114.530 ± 3.112  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:get                  thrpt   40   57.265 ± 1.557  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:put                  thrpt   40   57.265 ± 1.555  ops/ns
+
     Test 4(Now we try single producer multiple consumer strategy)
     private static final int size = 128;
     private static final int insert_value = 10000;
@@ -265,19 +321,19 @@ import java.util.concurrent.TimeUnit;
     producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:put                  thrpt    5  21,575 ±  5,206  ops/ns
 
     Oracle java 10 Ubuntu 17.0
-    Benchmark                                                                                             Mode  Cnt   Score    Error   Units
-    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque      thrpt    5  17.523 ±  9.577  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:get  thrpt    5   8.761 ±  4.823  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:put  thrpt    5   8.763 ±  4.754  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store                                  thrpt    5  28.565 ± 53.745  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:get                              thrpt    5  14.312 ± 25.678  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:put                              thrpt    5  14.254 ± 28.068  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark                  thrpt    5  39.423 ±  2.843  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:get              thrpt    5  19.709 ±  1.406  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:put              thrpt    5  19.714 ±  1.437  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore                      thrpt    5  42.737 ± 38.075  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:get                  thrpt    5  21.394 ± 19.032  ops/ns
-    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:put                  thrpt    5  21.342 ± 19.043  ops/ns
+    Benchmark                                                                                             Mode  Cnt    Score   Error   Units
+    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque      thrpt   40   27.800 ± 1.849  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:get  thrpt   40   13.869 ± 0.950  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.LinkedBlockingDequeBenchmarkManyPutGet.LinkedBlockingDeque:put  thrpt   40   13.931 ± 0.996  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store                                  thrpt   40   96.118 ± 2.881  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:get                              thrpt   40   48.032 ± 1.469  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreBenchmarkManyPutGet.Store:put                              thrpt   40   48.086 ± 1.433  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark                  thrpt   40   99.443 ± 1.999  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:get              thrpt   40   49.721 ± 0.999  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.StoreWithParkBenchmarkManyPutGet.StoreWithPark:put              thrpt   40   49.721 ± 1.000  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore                      thrpt   40  100.966 ± 2.737  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:get                  thrpt   40   50.483 ± 1.368  ops/ns
+    producerConsumer.LIFO.LIFOThroughput.TrickyStoreBenchmarkManyPutGet.TrickyStore:put                  thrpt   40   50.483 ± 1.369  ops/ns
 
     Zing Falcon Ubuntu 17.0
     Benchmark                                                                                             Mode  Cnt   Score    Error   Units
@@ -319,9 +375,14 @@ public class LIFOThroughput {
 
     private static final int size = 128;
     private static final int insert_value = 10000;
-    private static final int putThreads = 1;
-    private static final int getThreads = 15;
+    private static final int putThreads = 8;
+    private static final int getThreads = 8;
     private static final int threadsCount = getThreads + putThreads;
+
+    @State(Scope.Thread)
+    public static class Tested {
+        public byte data[] = new byte[1000];
+    }
 
     @State(Scope.Group)
     @BenchmarkMode(Mode.Throughput)
@@ -333,7 +394,7 @@ public class LIFOThroughput {
     @Threads(threadsCount)
     public static class LinkedBlockingDequeBenchmarkManyPutGet {
 
-        private LinkedBlockingDeque<Integer> simple;
+        private LinkedBlockingDeque<Tested> simple;
 
         @Setup
         public void setup() throws InterruptedException {
@@ -349,13 +410,13 @@ public class LIFOThroughput {
         @Group("LinkedBlockingDeque")
         @GroupThreads(putThreads)
         public void put() throws InterruptedException {
-            simple.put(1);
+            simple.put(new Tested());
         }
 
         @Benchmark
         @Group("LinkedBlockingDeque")
         @GroupThreads(getThreads)
-        public Integer get() throws InterruptedException {
+        public Tested get() throws InterruptedException {
             return simple.takeLast();
         }
     }
@@ -370,13 +431,13 @@ public class LIFOThroughput {
     @Threads(threadsCount)
     public static class StoreBenchmarkManyPutGet {
 
-        private IStore<Integer> simple;
+        private IStore<Tested> simple;
         private IWaitStrategy strategy;
 
         @Setup
         public void setup() throws InterruptedException {
             strategy = new JmhWaitStrategy();
-            simple = new Store<>(size, Integer.class, strategy);
+            simple = new Store<>(size, Tested.class, strategy);
         }
 
         @Setup(Level.Iteration)
@@ -389,13 +450,13 @@ public class LIFOThroughput {
         @Group("Store")
         @GroupThreads(putThreads)
         public void put() throws InterruptedException {
-            simple.put(1);
+            simple.put(new Tested());
         }
 
         @Benchmark
         @Group("Store")
         @GroupThreads(getThreads)
-        public Integer get() throws InterruptedException {
+        public Tested get() throws InterruptedException {
             return simple.get();
         }
     }
@@ -410,13 +471,13 @@ public class LIFOThroughput {
     @Threads(threadsCount)
     public static class TrickyStoreBenchmarkManyPutGet {
 
-        private IStore<Integer> simple;
+        private IStore<Tested> simple;
         private IWaitStrategy strategy;
 
         @Setup
-        public void setup() throws InterruptedException {
+        public void setup() {
             strategy = new JmhWaitStrategy();
-            simple = new TrickyStore<>(size, Integer.class, strategy);
+            simple = new TrickyStore<>(size, Tested.class, strategy);
         }
 
         @Setup(Level.Iteration)
@@ -429,13 +490,13 @@ public class LIFOThroughput {
         @Group("TrickyStore")
         @GroupThreads(putThreads)
         public void put() throws InterruptedException {
-            simple.put(1);
+            simple.put(new Tested());
         }
 
         @Benchmark
         @Group("TrickyStore")
         @GroupThreads(getThreads)
-        public Integer get() throws InterruptedException {
+        public Tested get() throws InterruptedException {
             return simple.get();
         }
     }
@@ -454,7 +515,7 @@ public class LIFOThroughput {
         private IWaitStrategy strategy;
 
         @Setup
-        public void setup() throws InterruptedException {
+        public void setup() {
             strategy = new JmhWaitStrategy();
             simple = new StoreWithPark<>(size, Integer.class, 100, strategy);
         }
@@ -480,18 +541,18 @@ public class LIFOThroughput {
         }
     }
 
-
     public static void main(String[] args) {
         Options opt = new OptionsBuilder()
                 .include(LIFOThroughput.class.getSimpleName())
-                .warmupIterations(20)
-                .measurementIterations(5)
+                .warmupIterations(40)
+                .measurementIterations(20)
                 .operationsPerInvocation(insert_value)
                 .forks(1)
                 .threads(threadsCount)
                 .timeout(TimeValue.seconds(5))
                 .syncIterations(true)
-                .jvmArgs("-XX:+UseParallelGC")
+                .jvmArgs("-server","-Xms1024m", "-Xmx1024m")
+             //   .jvmArgs("-XX:+UseParallelGC")
               //  .jvmArgs("-XX:+UseFalcon")
                // .jvmArgs("-XX:+UseC2")
                // .shouldDoGC(true)

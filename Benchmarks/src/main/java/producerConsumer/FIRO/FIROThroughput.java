@@ -22,10 +22,9 @@ import java.util.concurrent.TimeUnit;
 
     Benchmarks was running using Intel Core i502310 CPU 2.90GHZ 3.20 GHZ 4 cores
     OS:
-        Windows7
         Ubuntu 17.0
     Compilers:
-        Oracle Java 9(WS7)
+        Oracle Java 11(Ubuntu)
         Oracle Java 10(Ubuntu)
         Zing(Ubuntu)
 
@@ -36,29 +35,20 @@ import java.util.concurrent.TimeUnit;
     private static final int getThreads = 2;
     thread count = 4
 
-    Windows 7 Oracle java 9
-    Benchmark                                                                                       Mode  Cnt    Score    Error   Units
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt    5  184,131 ± 32,658  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt    5   92,117 ± 16,758  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt    5   92,013 ± 15,902  ops/ns
+    Benchmark Oracle java 10                                                                        Mode  Cnt    Score   Error   Units
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt   40  198.002 ± 4.119  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt   40   99.058 ± 2.107  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt   40   98.944 ± 2.067  ops/ns
 
-    Ubuntu 17 Oracle Java 10
-    Benchmark                                                                                       Mode  Cnt    Score    Error   Units
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt    5  191.617 ± 12.091  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt    5   95.794 ±  6.047  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt    5   95.823 ±  6.047  ops/ns
+    Benchmark Oracle java 11                                                                        Mode  Cnt    Score   Error   Units
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt   40  203.474 ± 4.421  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt   40  101.746 ± 2.185  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt   40  101.728 ± 2.305  ops/ns
 
-    Ubuntu 17 Zing Falcon
-    Benchmark                                                                                       Mode  Cnt    Score    Error   Units
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt    5  178.591 ± 14.678  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt    5   89.252 ±  7.410  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt    5   89.339 ±  7.292  ops/ns
-
-    Ubuntu 17 Zing C2
-    Benchmark                                                                                       Mode  Cnt    Score   Error   Units
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt    5  168.649 ± 5.998  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt    5   84.343 ± 3.070  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt    5   84.306 ± 2.935  ops/ns
+    Benchmark Zing 19.0.2                                                                           Mode  Cnt    Score   Error   Units
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt   40  182.019 ± 1.631  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt   40   91.016 ± 0.816  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt   40   91.002 ± 0.816  ops/ns
 
     Test 2
     private static final int size = 128;
@@ -67,29 +57,22 @@ import java.util.concurrent.TimeUnit;
     private static final int getThreads = 4;
     thread count = 8
 
-    Windows 7 Oracle java 9
-    Benchmark                                                                                       Mode  Cnt    Score   Error   Units
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt    5  178,585 ± 9,877  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt    5   89,213 ± 6,680  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt    5   89,372 ± 3,611  ops/ns
+    Benchmark Oracle java 10                                                                        Mode  Cnt    Score   Error   Units
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt   40  195.363 ± 3.184  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt   40   97.688 ± 1.608  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt   40   97.675 ± 1.582  ops/ns
 
-    Ubuntu 17 Oracle Java 10
-    Benchmark                                                                                       Mode  Cnt    Score   Error   Units
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt    5  198.661 ± 2.833  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt    5   99.386 ± 2.034  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt    5   99.276 ± 1.395  ops/ns
 
-    Ubuntu 17 Zing Falcon
-    Benchmark                                                                                       Mode  Cnt    Score    Error   Units
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt    5  200.120 ± 21.536  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt    5  100.195 ± 10.777  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt    5   99.925 ± 10.779  ops/ns
+    Benchmark Oracle java 11                                                                        Mode  Cnt    Score   Error   Units
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt   40  188.778 ± 2.840  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt   40   94.391 ± 1.432  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt   40   94.387 ± 1.414  ops/ns
 
-    Ubuntu 17 Zing C2
-    Benchmark                                                                                       Mode  Cnt   Score    Error   Units
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt    5  64.075 ± 11.845  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt    5  32.050 ±  5.682  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt    5  32.025 ±  6.174  ops/ns
+
+    Benchmark Zing 19.0.2                                                                           Mode  Cnt    Score   Error   Units
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt   40  202.113 ± 6.688  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt   40  101.042 ± 3.328  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt   40  101.071 ± 3.362  ops/ns
 
     Test 3
     private static final int size = 128;
@@ -98,34 +81,47 @@ import java.util.concurrent.TimeUnit;
     private static final int getThreads = 8;
     thread count = 16
 
-    Windows 7 Oracle java 9
-    Benchmark                                                                                       Mode  Cnt    Score    Error   Units
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt    5  216.577 ± 79.261  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt    5  108.305 ± 39.677  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt    5  108.272 ± 39.626  ops/ns
+    Benchmark Oracle java 10                                                                        Mode  Cnt    Score   Error   Units
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt   40  198.002 ± 4.119  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt   40   99.058 ± 2.107  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt   40   98.944 ± 2.067  ops/ns
 
-    Ubuntu 17 Oracle java 10
-    Benchmark                                                                                       Mode  Cnt    Score   Error   Units
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt    5  181.989 ± 5.140  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt    5   91.210 ± 3.413  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt    5   90.779 ± 2.610  ops/ns
+    Benchmark Oracle java 11                                                                        Mode  Cnt    Score   Error   Units
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt   40  203.474 ± 4.421  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt   40  101.746 ± 2.185  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt   40  101.728 ± 2.305  ops/ns
 
-    Ubuntu 17 Zing C2
-    Benchmark                                                                                       Mode  Cnt   Score   Error   Units
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt    5  64.355 ± 3.562  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt    5  32.167 ± 1.749  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt    5  32.188 ± 1.909  ops/ns
-
-    Ubuntu 17 Zing Falcon
-    Benchmark                                                                                       Mode  Cnt    Score    Error   Units
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt    5  204.120 ± 15.058  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt    5  102.035 ±  7.253  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt    5  102.085 ±  7.887  ops/ns
+    Benchmark Zing 19.0.2                                                                           Mode  Cnt    Score   Error   Units
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt   40  219.104 ± 8.652  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt   40  109.494 ± 4.351  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt   40  109.611 ± 4.310  ops/ns
 
     Test 4
+    private static final int size = 128;
+    private static final int insert_value = 10000;
+    private static final int putThreads = 8;
+    private static final int getThreads = 8;
+    thread count = 16
 
-    Now we try single producer multiple reader strategy
-    TODO. Try to investigate why Zing gives worse time than Oracle Java
+    Benchmark Oracle java 10                                                                        Mode  Cnt    Score   Error   Units
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt   40  198.002 ± 4.119  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt   40   99.058 ± 2.107  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt   40   98.944 ± 2.067  ops/ns
+
+    Benchmark Oracle java 11                                                                        Mode  Cnt    Score   Error   Units
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt   40  184.144 ± 2.002  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt   40   92.082 ± 1.008  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt   40   92.062 ± 1.121  ops/ns
+
+    Benchmark Zing 19.0.2                                                                           Mode  Cnt    Score   Error   Units
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt   40  176.456 ± 1.554  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt   40   88.043 ± 0.880  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt   40   88.413 ± 0.767  ops/ns
+
+    Test 5
+
+    Now we try single producer multipel reader strategy
+    TODO. Try to investigate why Zing gives so worse time than Oracle Java
 
     private static final int size = 512;
     private static final int insert_value = 10000;
@@ -133,36 +129,30 @@ import java.util.concurrent.TimeUnit;
     private static final int getThreads = 15;
     thread count = 16
 
-    Benchmark                                                                                       Mode  Cnt    Score    Error   Units
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt    5  224,964 ± 11,756  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt    5  113,451 ± 12,467  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt    5  111,513 ±  6,173  ops/ns
+    Benchmark linux  jdk 10.0.2                                                                     Mode  Cnt   Score    Error   Units
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt   40  86.020 ± 14.815  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt   40  43.477 ±  7.406  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt   40  42.544 ±  7.432  ops/ns
 
-    Benchmark Oracle 10 Linux                                                                      Mode  Cnt    Score    Error   Units
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt   15  114.572 ± 28.406  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt   15   57.829 ± 14.170  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt   15   56.743 ± 14.280  ops/ns
 
-    Falcon
-    Benchmark                                                                                       Mode  Cnt   Score    Error   Units
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt    5  46.915 ± 22.778  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt    5  23.872 ± 11.472  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt    5  23.044 ± 11.398  ops/ns
+    Benchmark linux  jdk 11.0.2                                                                     Mode  Cnt   Score    Error   Units
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt   40  111.365 ± 15.214  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt   40   56.333 ±  7.669  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt   40   55.033 ±  7.570  ops/ns
 
-    C2
-    Benchmark                                                                                       Mode  Cnt   Score   Error   Units
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt    5  23.005 ± 6.465  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt    5  11.627 ± 3.220  ops/ns
-    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt    5  11.379 ± 3.256  ops/ns
+    Benchmark linux Zing 19.0.2                                                                     Mode  Cnt   Score   Error   Units
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore      thrpt   40  61.793 ± 6.553  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:get  thrpt   40  31.220 ± 3.311  ops/ns
+    producerConsumer.FIRO.FIROThroughput.RandomStartStoreBenchmarkManyPutGet.RandomStartStore:put  thrpt   40  30.573 ± 3.246  ops/ns
 
  */
 
 public class FIROThroughput {
 
-    private static final int size = 512;
+    private static final int size = 128;
     private static final int insert_value = 10000;
-    private static final int putThreads = 1;
-    private static final int getThreads = 15;
+    private static final int putThreads = 8;
+    private static final int getThreads = 8;
     private static final int threadsCount = getThreads + putThreads;
 
     @State(Scope.Group)
@@ -175,11 +165,16 @@ public class FIROThroughput {
     @Threads(threadsCount)
     public static class RandomStartStoreBenchmarkManyPutGet {
 
-        private IStore<Integer> simple;
+        private IStore<Tested> simple;
         private IWaitStrategy strategy;
 
+        @State(Scope.Thread)
+        public static class Tested {
+            public byte data[] = new byte[1000];
+        }
+
         @Setup(Level.Trial)
-        public void setup() throws InterruptedException {
+        public void setup() {
             strategy = new JmhWaitStrategy();
             simple = new RandomStartStore<>(size, strategy);
         }
@@ -195,13 +190,13 @@ public class FIROThroughput {
         @Group("RandomStartStore")
         @GroupThreads(putThreads)
         public void put() throws InterruptedException {
-            simple.put(1);
+            simple.put(new Tested());
         }
 
         @Benchmark
         @Group("RandomStartStore")
         @GroupThreads(getThreads)
-        public Integer get() throws InterruptedException {
+        public Tested get() throws InterruptedException {
             return simple.get();
         }
     }
@@ -210,15 +205,16 @@ public class FIROThroughput {
 
         Options opt = new OptionsBuilder()
                 .include(FIROThroughput.class.getSimpleName())
-                .warmupIterations(40)
-                .measurementIterations(5)
+                .warmupIterations(30)
+                .measurementIterations(20)
                 .operationsPerInvocation(insert_value)
                 .forks(1)
                 .threads(threadsCount)
-                .timeout(TimeValue.seconds(6))
+                .timeout(TimeValue.seconds(5))
                 .syncIterations(true)
+                .jvmArgs("-server","-Xms1024m", "-Xmx1024m")
            //  .jvmArgs("-XX:+UseC2")
-            .jvmArgs("-XX:+UseParallelGC")
+           //   .jvmArgs("-XX:+UseParallelGC")
            //     .jvmArgs("-XX:+UseFalcon")
                 .build();
         try {

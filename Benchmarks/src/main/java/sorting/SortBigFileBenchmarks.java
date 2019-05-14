@@ -42,23 +42,30 @@ import java.util.concurrent.TimeUnit;
   sorting.SortBigFileBenchmarks.sort          avgt    5  8363970167,600 ± 367984508,016  ns/op
   sorting.SortBigFileBenchmarks.sortParallel  avgt    5  5909683122,200 ± 442011119,673  ns/op
 
-  We see that decreasing total amount of array we get more acceleration but at the end we stuck in some treshhold.
+  We see that decreasing total amount of array we get more acceleration but at the end we stuck in some threshold.
 
-  When we increasing file size acceleration increasing drammatically. Look at Benchmarks below
-  MaxChunkLen = 32768
-  MaxCountOfChunks = 40
-  Created 61 files
-  Input file size ~ 50mb
+    When we increasing file size acceleration increasing dramatically. Look at Benchmarks below
+    MaxChunkLen = 8192
+    MaxCountOfChunks = 40
+    Created 163 files
+    Input file size ~ 50mb
+    Number of threads in parallel:4
 
-  Benchmark                                   Mode  Cnt            Score            Error  Units
-  sorting.SortBigFileBenchmarks.sort          avgt    5  41887314986,400 ±  556962955,104  ns/op
-  sorting.SortBigFileBenchmarks.sortParallel  avgt    5  21488288813,800 ± 1318599922,518  ns/op
+    Oracle 11
+    Benchmark                           Mode  Cnt   Score   Error  Units
+    SortBigFileBenchmarks.sort          avgt    5  41.360 ± 5.742   s/op
+    SortBigFileBenchmarks.sortParallel  avgt    5  21.853 ± 1.232   s/op
+
+    zing
+    Benchmark                           Mode  Cnt   Score   Error  Units
+    SortBigFileBenchmarks.sort          avgt    5  41.195 ± 1.186   s/op
+    SortBigFileBenchmarks.sortParallel  avgt    5  27.285 ± 1.841   s/op
 
 
  */
 @State(Scope.Thread)
 @BenchmarkMode(Mode.AverageTime)
-@OutputTimeUnit(TimeUnit.NANOSECONDS)
+@OutputTimeUnit(TimeUnit.SECONDS)
 @Warmup(iterations = 2)
 @Measurement(iterations = 5)
 @Fork(1)
@@ -67,7 +74,7 @@ public class SortBigFileBenchmarks {
     @Setup
     public void setup() {
         try {
-            Generator.main("-res AvgNumbers.txt -size 0.05".split(" "));
+            Generator.main("-res AvgNumbers.txt -size 0.5".split(" "));
         }catch (FileNotFoundException | UnsupportedEncodingException e){
             e.printStackTrace();
             throw new RuntimeException("Error while open scanner");
@@ -79,7 +86,7 @@ public class SortBigFileBenchmarks {
     public void sort() {
         SortBigFile sortBigFile =
                 SortBigFile.createSortBigFile(Integer.class)
-                        .setMaxChunkLen(8192)
+                        .setMaxChunkLen(2457600)
                         .setMaxCountOfChunks(40)
                         .setInputFileName("AvgNumbers.txt")
                         .setOutputFileName("Out.txt")
@@ -95,9 +102,9 @@ public class SortBigFileBenchmarks {
     public void sortParallel() {
         SortBigFile sortBigFile =
                 SortBigFile.createSortBigFile(Integer.class)
-                        .setMaxChunkLen(8192)
+                        .setMaxChunkLen(2457600)
                         .setMaxCountOfChunks(40)
-                        .setPoolSize(4)
+                        .setPoolSize(8)
                         .setInputFileName("AvgNumbers.txt")
                         .setOutputFileName("Out.txt")
                         .setValueScanner(new IntegerScanner())
@@ -112,10 +119,10 @@ public class SortBigFileBenchmarks {
 
         Options opt = new OptionsBuilder()
                 .include(SortBigFileBenchmarks.class.getSimpleName())
-                .warmupIterations(2)
+                .warmupIterations(4)
                 .measurementIterations(5)
                 .forks(1)
-                .jvmArgs("-ea")
+                .jvmArgs("-Xmx500m","-Xms500m")
                 .build();
         try {
             new Runner(opt).run();

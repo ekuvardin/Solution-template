@@ -87,6 +87,28 @@ import java.util.concurrent.TimeUnit;
     producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:get                    thrpt   15   29.176 ± 1.722  ops/ns
     producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:put                    thrpt   15   29.186 ± 1.733  ops/ns
 
+    Benchmark Zing Falcon                                                                                       Mode  Cnt    Score   Error   Units
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue              thrpt    5  122.427 ± 6.056  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:get          thrpt    5   61.213 ± 3.029  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:put          thrpt    5   61.214 ± 3.027  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore      thrpt    5  116.057 ± 2.700  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:get  thrpt    5   58.031 ± 1.343  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:put  thrpt    5   58.027 ± 1.357  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore                        thrpt    5  100.638 ± 5.084  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:get                    thrpt    5   50.330 ± 2.570  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:put                    thrpt    5   50.308 ± 2.517  ops/ns
+
+    Benchmark Oracle jdk 11.0.2                                                                                Mode  Cnt    Score   Error   Units
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue              thrpt   40  114.136 ± 1.590  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:get          thrpt   40   57.067 ± 0.795  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:put          thrpt   40   57.069 ± 0.795  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore      thrpt   40  103.765 ± 1.448  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:get  thrpt   40   51.885 ± 0.723  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:put  thrpt   40   51.880 ± 0.725  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore                        thrpt   40   98.693 ± 0.386  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:get                    thrpt   40   49.348 ± 0.194  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:put                    thrpt   40   49.345 ± 0.194  ops/ns
+
     Test 2
     private static final int size = 128;
     private static final int insert_value = 10000;
@@ -141,6 +163,28 @@ import java.util.concurrent.TimeUnit;
     producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:get                    thrpt   15   30.290 ± 1.913  ops/ns
     producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:put                    thrpt   15   30.281 ± 1.988  ops/ns
 
+    Benchmark                                                                                                   Mode  Cnt    Score    Error   Units
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue              thrpt    5   60.738 ± 15.750  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:get          thrpt    5   32.089 ±  4.245  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:put          thrpt    5   28.649 ± 13.565  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore      thrpt    5  116.789 ±  3.617  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:get  thrpt    5   58.416 ±  1.869  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:put  thrpt    5   58.372 ±  1.752  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore                        thrpt    5  101.789 ±  8.372  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:get                    thrpt    5   50.892 ±  4.181  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:put                    thrpt    5   50.898 ±  4.191  ops/ns
+
+    Benchmark                                                                                                   Mode  Cnt    Score   Error   Units
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue              thrpt   40   60.781 ± 1.750  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:get          thrpt   40   30.406 ± 0.877  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:put          thrpt   40   30.375 ± 0.886  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore      thrpt   40   99.789 ± 0.455  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:get  thrpt   40   49.900 ± 0.229  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:put  thrpt   40   49.889 ± 0.227  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore                        thrpt   40  109.422 ± 0.926  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:get                    thrpt   40   54.710 ± 0.467  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:put                    thrpt   40   54.712 ± 0.461  ops/ns
+
     Test 3
     private static final int size = 128;
     private static final int insert_value = 10000;
@@ -193,6 +237,28 @@ import java.util.concurrent.TimeUnit;
     producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore                        thrpt   15   66.163 ±  4.048  ops/ns
     producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:get                    thrpt   15   33.095 ±  2.037  ops/ns
     producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:put                    thrpt   15   33.068 ±  2.017  ops/ns
+
+    Benchmark                                                                                                   Mode  Cnt    Score   Error   Units
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue              thrpt   40   35.561 ± 3.231   ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:get          thrpt   40   17.840 ± 1.843   ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:put          thrpt   40   17.721 ± 1.938   ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore      thrpt   40  116.401 ± 2.940   ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:get  thrpt   40   58.161 ± 1.551   ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:put  thrpt   40   58.240 ± 1.408   ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore                        thrpt   40  132.267 ± 14.966  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:get                    thrpt   40   66.080 ± 29.500  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:put                    thrpt   40   66.105 ± 29.306  ops/ns
+
+    Benchmark     Oracle jdk 11.0.2                                                                             Mode  Cnt    Score   Error   Units
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue              thrpt   40   29.354 ± 1.285  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:get          thrpt   40   14.716 ± 0.672  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:put          thrpt   40   14.638 ± 0.744  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore      thrpt   40   99.885 ± 0.502  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:get  thrpt   40   49.939 ± 0.252  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:put  thrpt   40   49.946 ± 0.253  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore                        thrpt   40  130.652 ± 1.595  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:get                    thrpt   40   65.321 ± 0.797  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:put                    thrpt   40   65.332 ± 0.798  ops/ns
 
     Test 4
     Now we try single producer multiple reader strategy which is used in many paradigm of programming(For ex see Disruptor)
@@ -247,15 +313,41 @@ import java.util.concurrent.TimeUnit;
     producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:get                    thrpt   15   12.107 ± 3.024  ops/ns
     producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:put                    thrpt   15   12.096 ± 3.352  ops/ns
 
+    Benchmark                                                                                                   Mode  Cnt    Score   Error   Units
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue              thrpt   40   14.553 ± 0.405  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:get          thrpt   40    7.236 ± 0.216  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:put          thrpt   40    7.317 ± 0.196  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore      thrpt   40  111.650 ± 0.431  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:get  thrpt   40   55.775 ± 0.238  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:put  thrpt   40   55.875 ± 0.198  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore                        thrpt   40   44.720 ± 6.703  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:get                    thrpt   40   22.496 ± 3.336  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:put                    thrpt   40   22.224 ± 3.370  ops/ns
+
+    Benchmark Oracle                                                                                            Mode  Cnt    Score   Error   Units
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue              thrpt   40   21.679 ± 0.432  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:get          thrpt   40   10.843 ± 0.218  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.ArrayBlockingQueueBenchmarkManyPutGet.ArrayBlockingQueue:put          thrpt   40   10.836 ± 0.215  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore      thrpt   40  105.538 ± 1.215  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:get  thrpt   40   52.907 ± 0.619  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.CyclicLockOnEntryStoreBenchmarkManyPutGet.CyclicLockOnEntryStore:put  thrpt   40   52.630 ± 0.600  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore                        thrpt   40   56.490 ± 8.217  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:get                    thrpt   40   28.429 ± 4.052  ops/ns
+    producerConsumer.FIFO.FIFOThroughput.TwoLocksStoreBenchmarkManyPutGet.TwoLocksStore:put                    thrpt   40   28.061 ± 4.182  ops/ns
  */
 
 public class FIFOThroughput {
 
     private static final int size = 128;
     private static final int insert_value = 10000;
-    private static final int putThreads = 2;
-    private static final int getThreads = 2;
+    private static final int putThreads = 4;
+    private static final int getThreads = 4;
     private static final int threadsCount = getThreads + putThreads;
+
+    @State(Scope.Thread)
+    public static class Tested {
+        public byte data[] = new byte[1000];
+    }
 
     @State(Scope.Group)
     @BenchmarkMode(Mode.Throughput)
@@ -268,7 +360,7 @@ public class FIFOThroughput {
     @OperationsPerInvocation(insert_value)
     public static class ArrayBlockingQueueBenchmarkManyPutGet {
 
-        private ArrayBlockingQueue<Integer> arrayBlockingQueue;
+        private ArrayBlockingQueue<Tested> arrayBlockingQueue;
 
         @Setup
         public void setup() {
@@ -284,13 +376,13 @@ public class FIFOThroughput {
         @Group("ArrayBlockingQueue")
         @GroupThreads(putThreads)
         public void put() throws InterruptedException {
-            arrayBlockingQueue.put(1);
+            arrayBlockingQueue.put(new Tested());
         }
 
         @Benchmark
         @Group("ArrayBlockingQueue")
         @GroupThreads(getThreads)
-        public Integer get() throws InterruptedException {
+        public Tested get() throws InterruptedException {
             return arrayBlockingQueue.take();
         }
     }
@@ -306,7 +398,7 @@ public class FIFOThroughput {
     @OperationsPerInvocation(insert_value)
     public static class CyclicLockOnEntryStoreBenchmarkManyPutGet {
 
-        private IStore<Integer> simple;
+        private IStore<Tested> simple;
         private IWaitStrategy strategy;
 
         @Setup
@@ -324,13 +416,13 @@ public class FIFOThroughput {
         @Group("CyclicLockOnEntryStore")
         @GroupThreads(putThreads)
         public void put() throws InterruptedException {
-            simple.put(1);
+            simple.put(new Tested());
         }
 
         @Benchmark
         @Group("CyclicLockOnEntryStore")
         @GroupThreads(getThreads)
-        public Integer get() throws InterruptedException {
+        public Tested get() throws InterruptedException {
             return simple.get();
         }
     }
@@ -346,7 +438,7 @@ public class FIFOThroughput {
     @OperationsPerInvocation(insert_value)
     public static class TwoLocksStoreBenchmarkManyPutGet {
 
-        private IStore<Integer> simple;
+        private IStore<Tested> simple;
         private IWaitStrategy strategy;
 
         @Setup
@@ -364,13 +456,13 @@ public class FIFOThroughput {
         @Group("TwoLocksStore")
         @GroupThreads(putThreads)
         public void put() throws InterruptedException {
-            simple.put(1);
+            simple.put(new Tested());
         }
 
         @Benchmark
         @Group("TwoLocksStore")
         @GroupThreads(getThreads)
-        public Integer get() throws InterruptedException {
+        public Tested get() throws InterruptedException {
             return simple.get();
         }
     }
@@ -379,17 +471,18 @@ public class FIFOThroughput {
         Options opt = new OptionsBuilder()
                 .include(FIFOThroughput.class.getSimpleName())
                 .warmupIterations(30)
-                .measurementIterations(5)
-                .operationsPerInvocation(insert_value)
+                .measurementIterations(20)
+               // .operationsPerInvocation(insert_value)
                 .forks(1)
                 .threads(threadsCount)
                 .timeout(TimeValue.seconds(6))
-                .shouldDoGC(true)
+                // .shouldDoGC(true)
                 .syncIterations(true)
-               //  .jvmArgs("-XX:+UseFalcon","-XX:+LogVMOutput","-XX:+PrintCompilation","-XX:+TraceDeoptimization","-XX:LogFile=/home/ek/zing-jvm2.log")
+                //  .jvmArgs("-XX:+UseFalcon","-XX:+LogVMOutput","-XX:+PrintCompilation","-XX:+TraceDeoptimization","-XX:LogFile=/home/ek/zing-jvm2.log")
                 //.jvmArgs("-XX:+UseFalcon", "-XX:+UnlockDiagnosticVMOptions", "-XX:CompileCommand=print, producerConsumer.FIFO.TwoLocksStore::*")
-              //    .jvmArgs("-XX:+UseFalcon")
-                  .jvmArgs("-XX:+UseParallelGC")
+                //    .jvmArgs("-XX:+UseFalcon")
+                .jvmArgs("-XX:+ParallelGC")
+                .jvmArgs("-server","-Xms1024m", "-Xmx1024m","-XX:+UseLargePages", "-XX:LargePageSizeInBytes=2m")
                 .build();
         try {
             new Runner(opt).run();

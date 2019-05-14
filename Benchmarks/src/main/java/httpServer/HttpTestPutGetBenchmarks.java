@@ -1,7 +1,6 @@
-package temp;
+package httpServer;
 
 
-import jdk.internal.vm.annotation.Contended;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.impl.execchain.RequestAbortedException;
@@ -62,19 +61,7 @@ public class HttpTestPutGetBenchmarks {
         private final int threadNum;
 
         public PostThreadScope() {
-            map.put("sapNumber", "2");
-            map.put("title", "3");
-            map.put("firstName", "4");
-            map.put("lastName", "5");
-            map.put("functionCode", "9");
-            map.put("function", "8");
-            map.put("department", "9");
-            map.put("email", "test@test.ru");
-            map.put("emailMarketing", "true");
-            map.put("authorizedStatus", "true");
-            map.put("birthDate", "2000-01-27T00:00:00");
-            map.put("lastExport", "2000-01-27T00:00:00");
-            map.put("creationDate", "2000-01-27T00:00:00");
+            map.put("smth", "smth");
 
             threadNum = puts.decrementAndGet();
             uid = threadNum * step;
